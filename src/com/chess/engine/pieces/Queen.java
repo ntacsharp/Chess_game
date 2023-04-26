@@ -14,8 +14,8 @@ import com.chess.engine.board.Move.NeutralMove;
 
 public class Queen extends Piece {
 
-    public Queen(int row, int col, Party pieceParty) {
-        super(row, col, pieceParty, PieceType.QUEEN);
+    public Queen(int row, int col, Party pieceParty, final boolean isFirstMove) {
+        super(row, col, pieceParty, PieceType.QUEEN, isFirstMove);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class Queen extends Piece {
     }
 
     @Override
-    public Queen movedPiece(Move move) {
-        return new Queen(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty());
+    public Queen movePiece(Move move) {
+        return new Queen(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty(), false);
     }
 }

@@ -14,8 +14,8 @@ import com.chess.engine.board.Move.NeutralMove;
 
 public class King extends Piece {
 
-    public King(final int row, final int col, final Party pieceParty) {
-        super(row, col, pieceParty, PieceType.KING);
+    public King(final int row, final int col, final Party pieceParty, final boolean isFirstMove) {
+        super(row, col, pieceParty, PieceType.KING, isFirstMove);
     }
 
     @Override
@@ -44,6 +44,9 @@ public class King extends Piece {
                 }
             }
         }
+
+        
+        
         return legalMovesList;
     }
 
@@ -53,7 +56,7 @@ public class King extends Piece {
     }
 
     @Override
-    public King movedPiece(Move move) {
-        return new King(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty());
+    public King movePiece(Move move) {
+        return new King(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty(), false);
     }
 }

@@ -14,8 +14,8 @@ import com.chess.engine.board.Move.NeutralMove;
 
 public class Bishop extends Piece {
 
-    public Bishop(final int row, final int col, final Party pieceParty) {
-        super(row, col, pieceParty, PieceType.BISHOP);
+    public Bishop(final int row, final int col, final Party pieceParty, final boolean isFirstMove) {
+        super(row, col, pieceParty, PieceType.BISHOP, isFirstMove);
     }
 
     @Override
@@ -56,8 +56,8 @@ public class Bishop extends Piece {
     }
 
     @Override
-    public Bishop movedPiece(Move move) {
-        return new Bishop(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty());
+    public Bishop movePiece(Move move) {
+        return new Bishop(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty(), false);
     }
 
     

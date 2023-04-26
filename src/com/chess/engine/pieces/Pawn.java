@@ -4,18 +4,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import com.chess.engine.Party;
 import com.chess.engine.board.Board;
 import com.chess.engine.board.BoardUtils;
 import com.chess.engine.board.Move;
 import com.chess.engine.board.Tile;
 import com.chess.engine.board.Move.AttackingMove;
+import com.chess.engine.board.Move.EnPassant;
 import com.chess.engine.board.Move.NeutralMove;
+import com.chess.engine.board.Move.PawnJump;
 
 public class Pawn extends Piece {
 
-    public Pawn(final int row, final int col, final Party pieceParty) {
-        super(row, col, pieceParty, PieceType.PAWN);
+    public Pawn(final int row, final int col, final Party pieceParty, final boolean isFirstMove) {
+        super(row, col, pieceParty, PieceType.PAWN, isFirstMove);
     }
 
     @Override
@@ -42,7 +46,7 @@ public class Pawn extends Piece {
 
         if (this.isFirstMove() && BoardUtils.isCorValid(r2, c)) {
             if (!normalTile.isOccupied() && !startingTile.isOccupied()) {
-                legalMovesList.add(new NeutralMove(board, this, r2, c));
+                legalMovesList.add(new PawnJump(board, this, r2, c));
             }
         }
 
@@ -59,6 +63,12 @@ public class Pawn extends Piece {
                     if (this.pieceParty != destinationParty) {
                         legalMovesList.add(new AttackingMove(board, this, r1, c, pieceAtDestination));
                     }
+                } else {
+                    final Tile nextTile = board.getTile(this.row, c);
+                    final Piece nextPiece = nextTile.getPiece();
+                    if (nextPiece.equals(board.getEnPassantPawn())) {
+                        legalMovesList.add(new EnPassant(board, this, r1, c, nextPiece));
+                    }
                 }
             }
         }
@@ -72,7 +82,28 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public Pawn movedPiece(Move move) {
-        return new Pawn(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty());
+    public Pawn movePiece(Move move) {
+        return new Pawn(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty(), false);
+    }
+
+    public Piece promote(Move move) {
+        // NEED_ANOTHER_WAY_TO_CHOOSE_PIECE_HERE
+        final String[] options = { "Knight", "Bishop", "Rook", "Queen" };
+        var promotionPiece = JOptionPane.showOptionDialog(null, "Choose a piece!", "Promote to:", 0, 3, null, options,
+                options[3]);
+        switch (promotionPiece) {
+            case 0:
+                return new Knight(move.getDestinationRow(), move.getDestinationCol(),
+                        move.getMovePiece().getPieceParty(), false);
+            case 1:
+                return new Bishop(move.getDestinationRow(), move.getDestinationCol(),
+                        move.getMovePiece().getPieceParty(), false);
+            case 2:
+                return new Rook(move.getDestinationRow(), move.getDestinationCol(),
+                        move.getMovePiece().getPieceParty(), false);
+            default:
+                return new Queen(move.getDestinationRow(), move.getDestinationCol(),
+                        move.getMovePiece().getPieceParty(), false);
+        }
     }
 }

@@ -14,8 +14,8 @@ import com.chess.engine.board.Move.NeutralMove;
 
 public class Rook extends Piece {
 
-    public Rook(int row, int col, Party pieceParty) {
-        super(row, col, pieceParty, PieceType.ROOK);
+    public Rook(int row, int col, Party pieceParty, final boolean isFirstMove) {
+        super(row, col, pieceParty, PieceType.ROOK, isFirstMove);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class Rook extends Piece {
     }
 
     @Override
-    public Rook movedPiece(Move move) {
-        return new Rook(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty());
+    public Rook movePiece(Move move) {
+        return new Rook(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty(), false);
     }
 }

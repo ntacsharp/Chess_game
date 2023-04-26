@@ -17,6 +17,4 @@ public class MoveTrans {
     public MoveStatus getMoveStatus() {
         return moveStatus;
     }
-
-    
 }

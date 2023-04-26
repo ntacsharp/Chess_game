@@ -5,7 +5,7 @@ public class BoardUtils {
     public static final int NUM_TILE_PER_COL = 8;
 
     private BoardUtils() {
-        throw new RuntimeException("Cannot instantiate!");
+        throw new RuntimeException(":D");
     }
 
     public static boolean isCorValid(final int row, final int col) {

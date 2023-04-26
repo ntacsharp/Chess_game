@@ -14,8 +14,8 @@ import com.chess.engine.board.Move.NeutralMove;
 
 public class Knight extends Piece {
 
-    public Knight(final int row, final int col, final Party pieceParty) {
-        super(row, col, pieceParty, PieceType.KNIGHT);
+    public Knight(final int row, final int col, final Party pieceParty, final boolean isFirstMove) {
+        super(row, col, pieceParty, PieceType.KNIGHT, isFirstMove);
     }
 
     public Collection<Move> legalMoves(final Board board) {
@@ -53,7 +53,7 @@ public class Knight extends Piece {
     }
 
     @Override
-    public Knight movedPiece(Move move) {
-        return new Knight(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty());
+    public Knight movePiece(Move move) {
+        return new Knight(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty(), false);
     }
 }

@@ -81,10 +81,6 @@ public abstract class Player {
         return (!this.isInCheck && !haveEscapeMoves());
     }
 
-    public boolean isCastled() {
-        return false;
-    }
-
     public MoveTrans moveTrans(final Move move) {
         if (!isMoveLegal(move)) {
             return new MoveTrans(this.board, move, MoveStatus.ILLEGAL);

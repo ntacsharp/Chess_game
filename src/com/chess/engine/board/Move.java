@@ -83,7 +83,11 @@ public abstract class Move {
             builder.setPiece(piece);
         }
 
-        builder.setPiece(this.movePiece.movedPiece(this));
+        if (this.movePiece.isPawn() && this.movePiece.getPieceParty().isPromotionRow(this.destinationRow)) {
+            Pawn promotePawn = (Pawn)this.movePiece;
+            builder.setPiece(promotePawn.promote(this));
+        } else
+            builder.setPiece(this.movePiece.movePiece(this));
         builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getParty());
         return builder.build();
     }
@@ -148,12 +152,12 @@ public abstract class Move {
             }
 
             for (Piece piece : this.board.getCurrentPlayer().getOpponent().activePiecesList()) {
-                if(!this.attackedPiece.equals(piece)){
+                if (!this.attackedPiece.equals(piece)) {
                     builder.setPiece(piece);
                 }
             }
 
-            builder.setPiece(this.movePiece.movedPiece(this));
+            builder.setPiece(this.movePiece.movePiece(this));
             builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getParty());
             return builder.build();
         }
@@ -180,7 +184,7 @@ public abstract class Move {
                 builder.setPiece(piece);
             }
 
-            final Pawn movedPawn = (Pawn) this.movePiece.movedPiece(this);
+            final Pawn movedPawn = (Pawn) this.movePiece.movePiece(this);
             builder.setPiece(movedPawn);
             builder.setEnPassantPawn(movedPawn);
             builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getParty());
@@ -224,11 +228,11 @@ public abstract class Move {
                 builder.setPiece(piece);
             }
 
-            builder.setPiece(this.movePiece.movedPiece(this));
+            builder.setPiece(this.movePiece.movePiece(this));
             if (this.movePiece.getPieceParty().isBlack())
-                builder.setPiece(new Rook(0, 3, Party.BLACK));
+                builder.setPiece(new Rook(0, 3, Party.BLACK, false));
             else
-                builder.setPiece(new Rook(7, 3, Party.WHITE));
+                builder.setPiece(new Rook(7, 3, Party.WHITE, false));
             builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getParty());
             return builder.build();
         }
@@ -255,11 +259,11 @@ public abstract class Move {
                 builder.setPiece(piece);
             }
 
-            builder.setPiece(this.movePiece.movedPiece(this));
+            builder.setPiece(this.movePiece.movePiece(this));
             if (this.movePiece.getPieceParty().isBlack())
-                builder.setPiece(new Rook(0, 5, Party.BLACK));
+                builder.setPiece(new Rook(0, 5, Party.BLACK, false));
             else
-                builder.setPiece(new Rook(7, 5, Party.WHITE));
+                builder.setPiece(new Rook(7, 5, Party.WHITE, false));
             builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getParty());
             return builder.build();
         }

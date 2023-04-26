@@ -15,11 +15,11 @@ public abstract class Piece {
     protected final PieceType pieceType;
     protected final Party pieceParty;
 
-    public Piece(final int row, final int col, final Party pieceParty, final PieceType pieceType) {
+    public Piece(final int row, final int col, final Party pieceParty, final PieceType pieceType, final boolean isFirstMove) {
         this.row = row;
         this.col = col;
         this.pieceParty = pieceParty;
-        this.isFirstMove = true;
+        this.isFirstMove = isFirstMove;
         this.pieceType = pieceType;
     }
 
@@ -72,7 +72,7 @@ public abstract class Piece {
         return this.pieceType == PieceType.PAWN ? true : false;
     }
 
-    public abstract Piece movedPiece(Move move);
+    public abstract Piece movePiece(Move move);
 
     public abstract Collection<Move> legalMoves(final Board board);
 
