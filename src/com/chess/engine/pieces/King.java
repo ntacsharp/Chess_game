@@ -14,16 +14,15 @@ import com.chess.engine.board.Move.NeutralMove;
 
 public class King extends Piece {
 
-    private static final int[][] CANDIDATE_MOVE_SET = {
-            { -1, 0 }, { 0, -1 }, { -1, 0 }, { 1, 0 }, { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 }
-    };
-
     public King(final int row, final int col, final Party pieceParty) {
-        super(row, col, pieceParty);
+        super(row, col, pieceParty, PieceType.KING);
     }
 
     @Override
     public Collection<Move> legalMoves(final Board board) {
+        final int[][] CANDIDATE_MOVE_SET = {
+                { -1, 0 }, { 0, -1 }, { -1, 0 }, { 1, 0 }, { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 }
+        };
         int r, c;
         List<Move> legalMovesList = new ArrayList<>();
 
@@ -48,4 +47,13 @@ public class King extends Piece {
         return legalMovesList;
     }
 
+    @Override
+    public String toString() {
+        return PieceType.KING.toString();
+    }
+
+    @Override
+    public King movedPiece(Move move) {
+        return new King(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty());
+    }
 }

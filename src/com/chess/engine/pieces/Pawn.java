@@ -14,23 +14,22 @@ import com.chess.engine.board.Move.NeutralMove;
 
 public class Pawn extends Piece {
 
-    private static final int[][] ATTACKING_MOVE_SET = {
-            { 1, -1 }, { 1, 1 }
-    };
-    private static final int[] STARTING_MOVE = { 2, 0 };
-    private static final int[] NORMAL_MOVE = { 1, 0 };
-
     public Pawn(final int row, final int col, final Party pieceParty) {
-        super(row, col, pieceParty);
+        super(row, col, pieceParty, PieceType.PAWN);
     }
 
     @Override
     public Collection<Move> legalMoves(Board board) {
+        final int[][] ATTACKING_MOVE_SET = {
+                { 1, -1 }, { 1, 1 }
+        };
+        final int[] JUMP_MOVE = { 2, 0 };
+        final int[] NORMAL_MOVE = { 1, 0 };
         int r1, c, r2;
         List<Move> legalMovesList = new ArrayList<>();
 
         r1 = this.row + this.getPieceParty().getDirecion() * NORMAL_MOVE[0];
-        r2 = this.row + this.getPieceParty().getDirecion() * STARTING_MOVE[0];
+        r2 = this.row + this.getPieceParty().getDirecion() * JUMP_MOVE[0];
         c = this.col;
         final Tile normalTile = board.getTile(r1, c);
         final Tile startingTile = board.getTile(r1, c);
@@ -41,13 +40,13 @@ public class Pawn extends Piece {
             }
         }
 
-        if(this.isFirstMove() && BoardUtils.isCorValid(r2, c)){
-            if(!normalTile.isOccupied() && !startingTile.isOccupied()){
+        if (this.isFirstMove() && BoardUtils.isCorValid(r2, c)) {
+            if (!normalTile.isOccupied() && !startingTile.isOccupied()) {
                 legalMovesList.add(new NeutralMove(board, this, r2, c));
             }
         }
 
-        for(int[] moveSet: ATTACKING_MOVE_SET){
+        for (int[] moveSet : ATTACKING_MOVE_SET) {
             c = moveSet[1] + this.col;
 
             if (BoardUtils.isCorValid(r1, c)) {
@@ -67,4 +66,13 @@ public class Pawn extends Piece {
         return legalMovesList;
     }
 
+    @Override
+    public String toString() {
+        return PieceType.PAWN.toString();
+    }
+
+    @Override
+    public Pawn movedPiece(Move move) {
+        return new Pawn(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty());
+    }
 }

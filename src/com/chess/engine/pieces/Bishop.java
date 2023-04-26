@@ -14,16 +14,15 @@ import com.chess.engine.board.Move.NeutralMove;
 
 public class Bishop extends Piece {
 
-    private static final int[][] CANDIDATE_MOVE_SET = {
-            { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 }
-    };
-
     public Bishop(final int row, final int col, final Party pieceParty) {
-        super(row, col, pieceParty);
+        super(row, col, pieceParty, PieceType.BISHOP);
     }
 
     @Override
     public Collection<Move> legalMoves(final Board board) {
+        final int[][] CANDIDATE_MOVE_SET = {
+                { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 }
+        };
         int r, c;
         List<Move> legalMovesList = new ArrayList<>();
 
@@ -51,4 +50,15 @@ public class Bishop extends Piece {
         return legalMovesList;
     }
 
+    @Override
+    public String toString() {
+        return PieceType.BISHOP.toString();
+    }
+
+    @Override
+    public Bishop movedPiece(Move move) {
+        return new Bishop(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty());
+    }
+
+    
 }

@@ -14,19 +14,18 @@ import com.chess.engine.board.Move.NeutralMove;
 
 public class Knight extends Piece {
 
-    private static final int[][] CANDIDATE_MOVE_SET = {
-            { 2, 1 }, { 2, -1 }, { 1, 2 }, { 1, -2 }, { -1, 2 }, { -1, -2 }, { -2, 1 }, { -2, -1 }
-    };
-
     public Knight(final int row, final int col, final Party pieceParty) {
-        super(row, col, pieceParty);
+        super(row, col, pieceParty, PieceType.KNIGHT);
     }
 
     public Collection<Move> legalMoves(final Board board) {
+        final int[][] CANDIDATE_MOVE_SET = {
+                { 2, 1 }, { 2, -1 }, { 1, 2 }, { 1, -2 }, { -1, 2 }, { -1, -2 }, { -2, 1 }, { -2, -1 }
+        };
         int r, c;
         List<Move> legalMovesList = new ArrayList<>();
 
-        for (int[] moveSet: CANDIDATE_MOVE_SET) {
+        for (int[] moveSet : CANDIDATE_MOVE_SET) {
             r = moveSet[0] + this.row;
             c = moveSet[1] + this.col;
 
@@ -46,5 +45,15 @@ public class Knight extends Piece {
             }
         }
         return legalMovesList;
+    }
+
+    @Override
+    public String toString() {
+        return PieceType.KNIGHT.toString();
+    }
+
+    @Override
+    public Knight movedPiece(Move move) {
+        return new Knight(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty());
     }
 }

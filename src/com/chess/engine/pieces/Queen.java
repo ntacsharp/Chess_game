@@ -14,16 +14,15 @@ import com.chess.engine.board.Move.NeutralMove;
 
 public class Queen extends Piece {
 
-    private static final int[][] CANDIDATE_MOVE_SET = {
-            { -1, 0 }, { 0, -1 }, { -1, 0 }, { 1, 0 }, { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 }
-    };
-
     public Queen(int row, int col, Party pieceParty) {
-        super(row, col, pieceParty);
+        super(row, col, pieceParty, PieceType.QUEEN);
     }
 
     @Override
     public Collection<Move> legalMoves(final Board board) {
+        final int[][] CANDIDATE_MOVE_SET = {
+                { -1, 0 }, { 0, -1 }, { -1, 0 }, { 1, 0 }, { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 }
+        };
         int r, c;
         List<Move> legalMovesList = new ArrayList<>();
 
@@ -51,4 +50,13 @@ public class Queen extends Piece {
         return legalMovesList;
     }
 
+    @Override
+    public String toString() {
+        return PieceType.QUEEN.toString();
+    }
+
+    @Override
+    public Queen movedPiece(Move move) {
+        return new Queen(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty());
+    }
 }

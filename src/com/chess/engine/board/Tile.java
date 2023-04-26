@@ -39,9 +39,14 @@ public abstract class Tile {
 
     public abstract Piece getPiece();
 
-    public static final class EmptyTile extends Tile {
+    public static class EmptyTile extends Tile {
         private EmptyTile(final int row, final int col) {
             super(row, col);
+        }
+
+        @Override
+        public String toString() {
+            return ".";
         }
 
         public boolean isOccupied() {
@@ -53,12 +58,21 @@ public abstract class Tile {
         }
     }
 
-    public static final class OccupiedTile extends Tile {
+    public static class OccupiedTile extends Tile {
         private Piece pieceOnTile;
 
         private OccupiedTile(final int row, final int col, Piece piece) {
             super(row, col);
             this.pieceOnTile = piece;
+        }
+
+        @Override
+        public String toString() {
+            Piece piece = getPiece();       
+            if(piece.getPieceParty().isBlack()){
+                return piece.toString().toLowerCase();
+            }             
+            else return piece.toString();
         }
 
         public boolean isOccupied() {
