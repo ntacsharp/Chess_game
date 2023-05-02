@@ -21,7 +21,7 @@ public class Rook extends Piece {
     @Override
     public Collection<Move> legalMoves(final Board board) {
         final int[][] CANDIDATE_MOVE_SET = {
-            { -1, 0 }, { 0, -1 }, { -1, 0 }, { 1, 0 }
+            { -1, 0 }, { 0, -1 }, { 0, 1 }, { 1, 0 }
     };
         int r, c;
         List<Move> legalMovesList = new ArrayList<>();

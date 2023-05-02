@@ -18,6 +18,8 @@ import com.chess.engine.board.Move.PawnJump;
 
 public class Pawn extends Piece {
 
+    private Piece promoteToPiece = null;
+
     public Pawn(final int row, final int col, final Party pieceParty, final boolean isFirstMove) {
         super(row, col, pieceParty, PieceType.PAWN, isFirstMove);
     }
@@ -65,15 +67,21 @@ public class Pawn extends Piece {
                     }
                 } else {
                     final Tile nextTile = board.getTile(this.row, c);
-                    final Piece nextPiece = nextTile.getPiece();
-                    if (nextPiece.equals(board.getEnPassantPawn())) {
-                        legalMovesList.add(new EnPassant(board, this, r1, c, nextPiece));
+                    if (nextTile.isOccupied()) {
+                        final Piece nextPiece = nextTile.getPiece();
+                        if (nextPiece.equals(board.getEnPassantPawn())) {
+                            legalMovesList.add(new EnPassant(board, this, r1, c, nextPiece));
+                        }
                     }
                 }
             }
         }
 
         return legalMovesList;
+    }
+
+    public Piece getPromoteToPiece() {
+        return promoteToPiece;
     }
 
     @Override
@@ -93,17 +101,22 @@ public class Pawn extends Piece {
                 options[3]);
         switch (promotionPiece) {
             case 0:
-                return new Knight(move.getDestinationRow(), move.getDestinationCol(),
+                promoteToPiece = new Knight(move.getDestinationRow(), move.getDestinationCol(),
                         move.getMovePiece().getPieceParty(), false);
+                break;
             case 1:
-                return new Bishop(move.getDestinationRow(), move.getDestinationCol(),
+                promoteToPiece = new Bishop(move.getDestinationRow(), move.getDestinationCol(),
                         move.getMovePiece().getPieceParty(), false);
+                break;
             case 2:
-                return new Rook(move.getDestinationRow(), move.getDestinationCol(),
+                promoteToPiece = new Rook(move.getDestinationRow(), move.getDestinationCol(),
                         move.getMovePiece().getPieceParty(), false);
+                break;
             default:
-                return new Queen(move.getDestinationRow(), move.getDestinationCol(),
+                promoteToPiece = new Queen(move.getDestinationRow(), move.getDestinationCol(),
                         move.getMovePiece().getPieceParty(), false);
+                break;
         }
+        return promoteToPiece;
     }
 }

@@ -1,6 +1,5 @@
 package com.chess.engine;
 
-import com.chess.engine.board.BoardUtils;
 import com.chess.engine.player.BlackPlayer;
 import com.chess.engine.player.Player;
 import com.chess.engine.player.WhitePlayer;
@@ -19,7 +18,7 @@ public enum Party {
 
         @Override
         public Player choosePlayer(WhitePlayer whitePlayer, BlackPlayer blackPlayer) {
-            return blackPlayer;            
+            return whitePlayer;            
         }
 
         @Override
@@ -40,7 +39,7 @@ public enum Party {
 
         @Override
         public Player choosePlayer(WhitePlayer whitePlayer, BlackPlayer blackPlayer) {
-            return whitePlayer;
+            return blackPlayer;
         }
 
         @Override

@@ -15,7 +15,8 @@ public abstract class Piece {
     protected final PieceType pieceType;
     protected final Party pieceParty;
 
-    public Piece(final int row, final int col, final Party pieceParty, final PieceType pieceType, final boolean isFirstMove) {
+    public Piece(final int row, final int col, final Party pieceParty, final PieceType pieceType,
+            final boolean isFirstMove) {
         this.row = row;
         this.col = col;
         this.pieceParty = pieceParty;
@@ -60,6 +61,10 @@ public abstract class Piece {
         return this.pieceType;
     }
 
+    public int getPieceValue() {
+        return this.pieceType.getPieceValue();
+    }
+
     public boolean isKing() {
         return this.pieceType == PieceType.KING ? true : false;
     }
@@ -77,23 +82,31 @@ public abstract class Piece {
     public abstract Collection<Move> legalMoves(final Board board);
 
     public enum PieceType {
-        BISHOP("B"),
-        KING("K"),
-        KNIGHT("N"),
-        PAWN("P"),
-        QUEEN("Q"),
-        ROOK("R");
+        BISHOP("B", 300),
+        KING("K", 10000),
+        KNIGHT("N", 299),
+        PAWN("P", 100),
+        QUEEN("Q", 900),
+        ROOK("R", 500);
 
         private String pieceName;
+        private int pieceValue;
 
-        PieceType(final String pieceName) {
+        PieceType(final String pieceName, final int pieceValue) {
             this.pieceName = pieceName;
+            this.pieceValue = pieceValue;
+        }
+
+        public int getPieceValue() {
+            return this.pieceValue;
         }
 
         @Override
         public String toString() {
             return this.pieceName;
         }
+
+        // public abstract int getPieceValue();
 
     }
 }

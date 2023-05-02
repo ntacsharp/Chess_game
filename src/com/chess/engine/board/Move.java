@@ -11,12 +11,14 @@ public abstract class Move {
     protected final Piece movePiece;
     protected final int destinationCol;
     protected final int destinationRow;
+    protected boolean isPromoteMove;
 
-    Move(Board board, Piece movePiece, int destinationCol, int destinationRow) {
+    Move(Board board, Piece movePiece, int destinationRow, int destinationCol) {
         this.board = board;
         this.movePiece = movePiece;
-        this.destinationCol = destinationCol;
         this.destinationRow = destinationRow;
+        this.destinationCol = destinationCol;
+        this.isPromoteMove = false;
     }
 
     @Override
@@ -84,8 +86,9 @@ public abstract class Move {
         }
 
         if (this.movePiece.isPawn() && this.movePiece.getPieceParty().isPromotionRow(this.destinationRow)) {
-            Pawn promotePawn = (Pawn)this.movePiece;
+            Pawn promotePawn = (Pawn) this.movePiece;
             builder.setPiece(promotePawn.promote(this));
+            this.isPromoteMove = true;
         } else
             builder.setPiece(this.movePiece.movePiece(this));
         builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getParty());
@@ -94,19 +97,29 @@ public abstract class Move {
 
     public static class NeutralMove extends Move {
 
-        public NeutralMove(final Board board, final Piece movePiece, final int destinationCol,
-                final int destinationRow) {
-            super(board, movePiece, destinationCol, destinationRow);
+        public NeutralMove(final Board board, final Piece movePiece, final int destinationRow,
+                final int destinationCol) {
+            super(board, movePiece, destinationRow, destinationCol);
         }
 
+        @Override
+        public String toString() {
+            String moveString = this.movePiece.toString() + BoardUtils.getStringByCor(this.getCurrentCor()) + "-"
+                    + BoardUtils.getStringByCor(this.getDestinationCor());
+            if (this.isPromoteMove) {
+                Pawn movePawn = (Pawn) this.movePiece;
+                moveString += "=" + movePawn.getPromoteToPiece().toString();
+            }
+            return moveString;
+        }
     }
 
     public static class AttackingMove extends Move {
         protected final Piece attackedPiece;
 
-        public AttackingMove(final Board board, final Piece movePiece, final int destinationCol,
-                final int destinationRow, final Piece attackedPiece) {
-            super(board, movePiece, destinationCol, destinationRow);
+        public AttackingMove(final Board board, final Piece movePiece, final int destinationRow,
+                final int destinationCol, final Piece attackedPiece) {
+            super(board, movePiece, destinationRow, destinationCol);
             this.attackedPiece = attackedPiece;
         }
 
@@ -132,12 +145,23 @@ public abstract class Move {
                 return false;
             return true;
         }
+
+        @Override
+        public String toString() {
+            String moveString = this.movePiece.toString() + BoardUtils.getStringByCor(this.getCurrentCor()) + "x"
+                    + BoardUtils.getStringByCor(this.getDestinationCor());
+            if (this.isPromoteMove) {
+                Pawn movePawn = (Pawn) this.movePiece;
+                moveString += "=" + movePawn.getPromoteToPiece().toString();
+            }
+            return moveString;
+        }
     }
 
-    public static final class EnPassant extends AttackingMove {
-        public EnPassant(final Board board, final Piece movePiece, final int destinationCol,
-                final int destinationRow, final Piece attackedPiece) {
-            super(board, movePiece, destinationCol, destinationRow, attackedPiece);
+    public static class EnPassant extends AttackingMove {
+        public EnPassant(final Board board, final Piece movePiece, final int destinationRow,
+                final int destinationCol, final Piece attackedPiece) {
+            super(board, movePiece, destinationRow, destinationCol, attackedPiece);
         }
 
         @Override
@@ -161,12 +185,17 @@ public abstract class Move {
             builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getParty());
             return builder.build();
         }
+
+        @Override
+        public String toString() {
+            return super.toString() + "e.p";
+        }
     }
 
-    public static final class PawnJump extends Move {
-        public PawnJump(final Board board, final Piece movePiece, final int destinationCol,
-                final int destinationRow) {
-            super(board, movePiece, destinationCol, destinationRow);
+    public static final class PawnJump extends NeutralMove {
+        public PawnJump(final Board board, final Piece movePiece, final int destinationRow,
+                final int destinationCol) {
+            super(board, movePiece, destinationRow, destinationCol);
         }
 
         @Override
@@ -192,12 +221,12 @@ public abstract class Move {
         }
     }
 
-    public static abstract class Castle extends Move {
+    public static abstract class Castle extends NeutralMove {
         protected Piece moveRook;
 
-        public Castle(final Board board, final Piece movePiece, final int destinationCol,
-                final int destinationRow, final Piece moveRook) {
-            super(board, movePiece, destinationCol, destinationRow);
+        public Castle(final Board board, final Piece movePiece, final int destinationRow,
+                final int destinationCol, final Piece moveRook) {
+            super(board, movePiece, destinationRow, destinationCol);
             this.moveRook = moveRook;
         }
 
@@ -208,9 +237,9 @@ public abstract class Move {
     }
 
     public static final class QueenSideCastle extends Castle {
-        public QueenSideCastle(final Board board, final Piece movePiece, final int destinationCol,
-                final int destinationRow, final Piece moveRook) {
-            super(board, movePiece, destinationCol, destinationRow, moveRook);
+        public QueenSideCastle(final Board board, final Piece movePiece, final int destinationRow,
+                final int destinationCol, final Piece moveRook) {
+            super(board, movePiece, destinationRow, destinationCol, moveRook);
         }
 
         @Override
@@ -236,12 +265,17 @@ public abstract class Move {
             builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getParty());
             return builder.build();
         }
+
+        @Override
+        public String toString() {
+            return "O-O-O";
+        }
     }
 
     public static class KingSideCastle extends Castle {
-        public KingSideCastle(final Board board, final Piece movePiece, final int destinationCol,
-                final int destinationRow, final Piece moveRook) {
-            super(board, movePiece, destinationCol, destinationRow, moveRook);
+        public KingSideCastle(final Board board, final Piece movePiece, final int destinationRow,
+                final int destinationCol, final Piece moveRook) {
+            super(board, movePiece, destinationRow, destinationCol, moveRook);
         }
 
         @Override
@@ -267,18 +301,26 @@ public abstract class Move {
             builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getParty());
             return builder.build();
         }
+
+        @Override
+        public String toString() {
+            return "O-O";
+        }
     }
 
     public static class MoveFactory {
         private MoveFactory() {
         }
 
-        public static Move createMove(final Board board,
+        public static Move findMove(final Board board,
                 final int currentCor,
                 final int destinationCor) {
-            for (Move move : board.getAllLegalMove()) {
+            for (Move move : board.getCurrentPlayer().getLegalMoves()) {
+                System.out.println(move.toString());
                 if (move.getCurrentCor() == currentCor && move.getDestinationCor() == destinationCor)
                     return move;
+                // System.out.println(move.getMovePiece() + " " + move.getCurrentCor() + " " +
+                // move.getDestinationRow() + " " + move.getDestinationCol());
             }
             return null;
         }

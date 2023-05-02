@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.chess.engine.Party;
 import com.chess.engine.pieces.Bishop;
@@ -34,6 +32,7 @@ public class Board {
 
     private Board(Builder builder) {
         this.gameBoard = createGameBoard(builder);
+        this.enPassantPawn = builder.enPassantPawn;
         this.whitePieces = findActivePiece(this.gameBoard, Party.WHITE);
         this.blackPieces = findActivePiece(this.gameBoard, Party.BLACK);
 
@@ -43,7 +42,6 @@ public class Board {
         this.whitePlayer = new WhitePlayer(this, whiteLegalMoves, blackLegalMoves);
         this.blackPlayer = new BlackPlayer(this, blackLegalMoves, whiteLegalMoves);
         this.currentPlayer = builder.nextMoveMaker.choosePlayer(this.whitePlayer, this.blackPlayer);
-        this.enPassantPawn = builder.enPassantPawn;
     }
 
     public Player getCurrentPlayer() {
@@ -70,12 +68,12 @@ public class Board {
         return enPassantPawn;
     }
 
-    public Collection<Move> getAllLegalMove() {
-        final Collection<Move> allLegalMoves = Stream
-                .concat(this.whiteLegalMoves.stream(), this.blackLegalMoves.stream())
-                .collect(Collectors.toList());
-        return allLegalMoves;
-    }
+    // public Collection<Move> getAllLegalMove() {
+    //     final Collection<Move> allLegalMoves = Stream
+    //             .concat(this.whiteLegalMoves.stream(), this.blackLegalMoves.stream())
+    //             .collect(Collectors.toList());
+    //     return allLegalMoves;
+    // }
 
     @Override
     public String toString() {
@@ -97,7 +95,7 @@ public class Board {
             legaMovesList.addAll(piece.legalMoves(this));
         }
 
-        return null;
+        return legaMovesList;
     }
 
     private static Collection<Piece> findActivePiece(final List<Tile> gameBoard, final Party party) {

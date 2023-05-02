@@ -3,22 +3,22 @@ package com.chess.engine.player;
 public enum MoveStatus {
     DONE {
         @Override
-        boolean isDone() {
+        public boolean isDone() {
             return true;
         }
     },
     ILLEGAL {
         @Override
-        boolean isDone() {
+        public boolean isDone() {
             return false;
         }
     },
     PLAYER_STILL_CHECKED {
         @Override
-        boolean isDone() {
+        public boolean isDone() {
             return false;
         }
     };
 
-    abstract boolean isDone();
+    public abstract boolean isDone();
 }

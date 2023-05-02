@@ -16,14 +16,16 @@ public abstract class Player {
     protected final Board board;
     protected final King king;
     protected final Collection<Move> legalMoves;
+    protected final Collection<Move> castleMoves;
 
     private final boolean isInCheck;
 
     Player(Board board, Collection<Move> playerMoves, Collection<Move> opponentMoves) {
         this.board = board;
         this.king = findKing();
+        this.castleMoves = this.legalCastleMoves(playerMoves, opponentMoves);
         this.legalMoves = Stream
-                .concat(playerMoves.stream(), this.legalCastleMoves(playerMoves, opponentMoves).stream())
+                .concat(playerMoves.stream(), this.castleMoves.stream())
                 .collect(Collectors.toList());
         this.isInCheck = !Player.checkAttackOnTile(this.king.getCorID(), opponentMoves).isEmpty();
     }
@@ -62,7 +64,11 @@ public abstract class Player {
     }
 
     public Collection<Move> getLegalMoves() {
-        return legalMoves;
+        return this.legalMoves;
+    }
+
+    public Collection<Move> getCastleMoves() {
+        return this.castleMoves;
     }
 
     public boolean isMoveLegal(final Move move) {
@@ -83,7 +89,7 @@ public abstract class Player {
 
     public MoveTrans moveTrans(final Move move) {
         if (!isMoveLegal(move)) {
-            return new MoveTrans(this.board, move, MoveStatus.ILLEGAL);
+            return new MoveTrans(this.board, MoveStatus.ILLEGAL);
         }
 
         final Board transBoard = move.execute();
@@ -93,10 +99,10 @@ public abstract class Player {
                 transBoard.getCurrentPlayer().getLegalMoves());
 
         if (!attackOnTileList.isEmpty()) {
-            return new MoveTrans(this.board, move, MoveStatus.PLAYER_STILL_CHECKED);
+            return new MoveTrans(this.board, MoveStatus.PLAYER_STILL_CHECKED);
         }
 
-        return new MoveTrans(transBoard, move, MoveStatus.DONE);
+        return new MoveTrans(transBoard, MoveStatus.DONE);
     }
 
     public abstract Collection<Piece> activePiecesList();

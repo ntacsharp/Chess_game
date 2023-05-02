@@ -39,6 +39,18 @@ public abstract class Tile {
 
     public abstract Piece getPiece();
 
+    public int getRow() {
+        return row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public int getCor() {
+        return row * BoardUtils.NUM_TILE_PER_ROW + col;
+    }
+
     public static class EmptyTile extends Tile {
         private EmptyTile(final int row, final int col) {
             super(row, col);

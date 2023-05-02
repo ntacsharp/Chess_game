@@ -21,15 +21,20 @@ public class Queen extends Piece {
     @Override
     public Collection<Move> legalMoves(final Board board) {
         final int[][] CANDIDATE_MOVE_SET = {
-                { -1, 0 }, { 0, -1 }, { -1, 0 }, { 1, 0 }, { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 }
+                { -1, 0 }, { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 }
         };
         int r, c;
         List<Move> legalMovesList = new ArrayList<>();
 
         for (final int[] moveSet : CANDIDATE_MOVE_SET) {
-            r = this.row + moveSet[0];
-            c = this.col + moveSet[1];
+            r = this.row;
+            c = this.col;
             while (BoardUtils.isCorValid(r, c)) {
+                if (r == this.row && c == this.col) {
+                    r += moveSet[0];
+                    c += moveSet[1];
+                    continue;
+                }
                 final Tile destinationTile = board.getTile(r, c);
 
                 if (!destinationTile.isOccupied()) {
@@ -57,6 +62,7 @@ public class Queen extends Piece {
 
     @Override
     public Queen movePiece(Move move) {
-        return new Queen(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty(), false);
+        return new Queen(move.getDestinationRow(), move.getDestinationCol(), move.getMovePiece().getPieceParty(),
+                false);
     }
 }
