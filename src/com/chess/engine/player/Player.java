@@ -23,11 +23,11 @@ public abstract class Player {
     Player(Board board, Collection<Move> playerMoves, Collection<Move> opponentMoves) {
         this.board = board;
         this.king = findKing();
+        this.isInCheck = !Player.checkAttackOnTile(this.king.getCorID(), opponentMoves).isEmpty();
         this.castleMoves = this.legalCastleMoves(playerMoves, opponentMoves);
         this.legalMoves = Stream
                 .concat(playerMoves.stream(), this.castleMoves.stream())
                 .collect(Collectors.toList());
-        this.isInCheck = !Player.checkAttackOnTile(this.king.getCorID(), opponentMoves).isEmpty();
     }
 
     public King getKing() {
@@ -55,7 +55,7 @@ public abstract class Player {
 
     protected boolean haveEscapeMoves() {
         for (Move move : this.legalMoves) {
-            final MoveTrans transition = moveTrans(move);
+            final MoveTrans transition = moveTrans(move, false);
             if (transition.getMoveStatus().isDone()) {
                 return true;
             }
@@ -71,7 +71,7 @@ public abstract class Player {
         return this.castleMoves;
     }
 
-    public boolean isMoveLegal(final Move move) {
+    public boolean isMoveLegal(Move move) {
         return this.legalMoves.contains(move);
     }
 
@@ -87,12 +87,11 @@ public abstract class Player {
         return (!this.isInCheck && !haveEscapeMoves());
     }
 
-    public MoveTrans moveTrans(final Move move) {
-        if (!isMoveLegal(move)) {
+    public MoveTrans moveTrans(Move move, boolean isRealMove) {
+        if (!this.isMoveLegal(move)) {
             return new MoveTrans(this.board, MoveStatus.ILLEGAL);
         }
-
-        final Board transBoard = move.execute();
+        final Board transBoard = move.execute(isRealMove);
 
         final Collection<Move> attackOnTileList = Player.checkAttackOnTile(
                 transBoard.getCurrentPlayer().getOpponent().getKing().getCorID(),

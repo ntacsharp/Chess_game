@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.chess.engine.Party;
 import com.chess.engine.pieces.Bishop;
@@ -68,12 +70,12 @@ public class Board {
         return enPassantPawn;
     }
 
-    // public Collection<Move> getAllLegalMove() {
-    //     final Collection<Move> allLegalMoves = Stream
-    //             .concat(this.whiteLegalMoves.stream(), this.blackLegalMoves.stream())
-    //             .collect(Collectors.toList());
-    //     return allLegalMoves;
-    // }
+    public Collection<Move> getAllLegalMove() {
+        final Collection<Move> allLegalMoves = Stream
+                .concat(this.whiteLegalMoves.stream(), this.blackLegalMoves.stream())
+                .collect(Collectors.toList());
+        return allLegalMoves;
+    }
 
     @Override
     public String toString() {

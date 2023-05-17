@@ -25,7 +25,7 @@ import com.chess.GUI.Table.MoveLog;
 
 public class TakenPiecesPanel extends JPanel {
     private static final EtchedBorder TAKEN_PIECES_PANEL_BORDER = new EtchedBorder(EtchedBorder.RAISED);
-    private static final Dimension TAKEN_PIECES_PANEL_DIMENSION = new Dimension(60, 80);
+    private static final Dimension TAKEN_PIECES_PANEL_DIMENSION = new Dimension(40, 80);
     private static final Color PANEL_COLOR = Color.decode("0xFDF5E6");
     private JPanel upperPanel;
     private final JPanel lowerPanel;
@@ -93,7 +93,7 @@ public class TakenPiecesPanel extends JPanel {
                         + takenPiece.toString() + ".png"));
                 final ImageIcon icon = new ImageIcon(bufferedImage);
                 final JLabel imageLabel = new JLabel(new ImageIcon(icon.getImage().getScaledInstance(
-                        icon.getIconWidth() - 15, icon.getIconHeight() - 15, Image.SCALE_SMOOTH)));
+                        icon.getIconWidth() - 25, icon.getIconWidth() - 20, Image.SCALE_SMOOTH)));
                 if (tmp == 0) {
                     tmpPanel = new TmpPanel();
                     tmpPanel.add(imageLabel);
@@ -118,7 +118,7 @@ public class TakenPiecesPanel extends JPanel {
                         + takenPiece.toString() + ".png"));
                 final ImageIcon icon = new ImageIcon(bufferedImage);
                 final JLabel imageLabel = new JLabel(new ImageIcon(icon.getImage().getScaledInstance(
-                        icon.getIconWidth() - 15, icon.getIconHeight() - 15, Image.SCALE_SMOOTH)));
+                        icon.getIconWidth() - 25, icon.getIconWidth() - 20, Image.SCALE_SMOOTH)));
                 if (tmp == 0) {
                     tmpPanel = new TmpPanel();
                     tmpPanel.add(imageLabel);
@@ -138,8 +138,8 @@ public class TakenPiecesPanel extends JPanel {
         validate();
     }
 
-    private static final class TmpPanel extends JPanel{
-        public TmpPanel(){
+    private static final class TmpPanel extends JPanel {
+        public TmpPanel() {
             this.setLayout(new GridLayout(1, 2));
             this.setBackground(PANEL_COLOR);
         }

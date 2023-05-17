@@ -1,5 +1,8 @@
 package com.chess.engine.board;
 
+import com.chess.engine.player.MoveStatus;
+import com.chess.engine.player.MoveTrans;
+
 public class BoardUtils {
     public static final int NUM_TILE_PER_ROW = 8;
     public static final int NUM_TILE_PER_COL = 8;
@@ -26,5 +29,16 @@ public class BoardUtils {
 
     public static String getStringByCor(final int cor){
         return corToString[cor];
+    }
+
+    public static boolean isEndGame(final Board board){
+        if(board.getCurrentPlayer().isCheckmated() || board.getCurrentPlayer().isStalemated()) return true;
+        else return false;
+    }
+
+    public static boolean isThreatKingMove(Move move, Board board){
+        final MoveTrans moveTrans = board.getCurrentPlayer().moveTrans(move, false);
+        if(moveTrans.getMoveStatus() == MoveStatus.PLAYER_STILL_CHECKED) return true;
+        else return false;
     }
 }

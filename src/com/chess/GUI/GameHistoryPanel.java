@@ -16,7 +16,7 @@ import com.chess.engine.board.Board;
 import com.chess.engine.board.Move;
 
 public class GameHistoryPanel extends JPanel {
-    private static final Dimension GAME_HISTORY_PANEL_DIMENSION = new Dimension(130, 400);
+    private static final Dimension GAME_HISTORY_PANEL_DIMENSION = new Dimension(100, 40);
 
     private final DataModel model;
     private final JScrollPane scrollPane;

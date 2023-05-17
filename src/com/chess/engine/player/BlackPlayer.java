@@ -44,7 +44,7 @@ public class BlackPlayer extends Player {
                         if (Player.checkAttackOnTile(1, opponentMoves).isEmpty()
                                 && Player.checkAttackOnTile(2, opponentMoves).isEmpty()
                                 && Player.checkAttackOnTile(3, opponentMoves).isEmpty()) {
-                            castleMoves.add(new Move.KingSideCastle(board, this.king, 0, 6, rookPiece));
+                            castleMoves.add(new Move.QueenSideCastle(board, this.king, 0, 2, rookPiece));
                         }
                     }
                 }
@@ -57,7 +57,7 @@ public class BlackPlayer extends Player {
                     if (!this.board.getTile(0, 5).isOccupied() && !this.board.getTile(0, 6).isOccupied()) {
                         if (Player.checkAttackOnTile(5, opponentMoves).isEmpty()
                                 && Player.checkAttackOnTile(6, opponentMoves).isEmpty()) {
-                            castleMoves.add(new Move.QueenSideCastle(board, this.king, 0, 2, rookPiece));
+                            castleMoves.add(new Move.KingSideCastle(board, this.king, 0, 6, rookPiece));
                         }
                     }
                 }

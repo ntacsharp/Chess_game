@@ -23,6 +23,8 @@ public abstract class Move {
 
     @Override
     public boolean equals(final Object obj) {
+        if (obj == null)
+            return false;
         if (this == obj)
             return true;
         if (!(obj instanceof Move))
@@ -30,7 +32,7 @@ public abstract class Move {
         Move objMove = (Move) obj;
         if (this.destinationCol != objMove.getDestinationCol()
                 || this.destinationRow != objMove.getDestinationRow()
-                || this.movePiece.equals(objMove.getMovePiece()))
+                || !this.movePiece.equals(objMove.getMovePiece()))
             return false;
         return true;
     }
@@ -71,7 +73,7 @@ public abstract class Move {
         return this.movePiece.getCorID();
     }
 
-    public Board execute() {
+    public Board execute(final boolean isRealMove) {
 
         final Builder builder = new Builder();
 
@@ -85,7 +87,7 @@ public abstract class Move {
             builder.setPiece(piece);
         }
 
-        if (this.movePiece.isPawn() && this.movePiece.getPieceParty().isPromotionRow(this.destinationRow)) {
+        if (isRealMove && this.movePiece.isPawn() && this.movePiece.getPieceParty().isPromotionRow(this.destinationRow)) {
             Pawn promotePawn = (Pawn) this.movePiece;
             builder.setPiece(promotePawn.promote(this));
             this.isPromoteMove = true;
@@ -112,6 +114,11 @@ public abstract class Move {
             }
             return moveString;
         }
+
+        @Override
+        public boolean equals(final Object obj){
+            return this == obj || obj instanceof NeutralMove && super.equals(obj);
+        }
     }
 
     public static class AttackingMove extends Move {
@@ -134,16 +141,8 @@ public abstract class Move {
         }
 
         @Override
-        public boolean equals(final Object obj) {
-            if (this == obj)
-                return true;
-            if (!(obj instanceof AttackingMove))
-                return false;
-            Move objMove = (AttackingMove) obj;
-            if (!super.equals(objMove)
-                    || this.attackedPiece != objMove.getAttackedPiece())
-                return false;
-            return true;
+        public boolean equals(final Object obj){
+            return this == obj || obj instanceof AttackingMove && super.equals(obj);
         }
 
         @Override
@@ -165,7 +164,7 @@ public abstract class Move {
         }
 
         @Override
-        public Board execute() {
+        public Board execute(final boolean isRealMove) {
 
             final Builder builder = new Builder();
 
@@ -187,6 +186,11 @@ public abstract class Move {
         }
 
         @Override
+        public boolean equals(final Object obj){
+            return this == obj || obj instanceof EnPassant && super.equals(obj);
+        }
+
+        @Override
         public String toString() {
             return super.toString() + "e.p";
         }
@@ -199,8 +203,7 @@ public abstract class Move {
         }
 
         @Override
-        public Board execute() {
-
+        public Board execute(final boolean isRealMove) {
             final Builder builder = new Builder();
 
             for (Piece piece : this.board.getCurrentPlayer().activePiecesList()) {
@@ -219,6 +222,11 @@ public abstract class Move {
             builder.setMoveMaker(this.board.getCurrentPlayer().getOpponent().getParty());
             return builder.build();
         }
+
+        @Override
+        public boolean equals(final Object obj){
+            return this == obj || obj instanceof PawnJump && super.equals(obj);
+        }
     }
 
     public static abstract class Castle extends NeutralMove {
@@ -234,6 +242,11 @@ public abstract class Move {
         public boolean isCastle() {
             return true;
         }
+
+        @Override
+        public boolean equals(final Object obj){
+            return this == obj || obj instanceof Castle && super.equals(obj);
+        }
     }
 
     public static final class QueenSideCastle extends Castle {
@@ -243,8 +256,7 @@ public abstract class Move {
         }
 
         @Override
-        public Board execute() {
-
+        public Board execute(final boolean isRealMove) {
             final Builder builder = new Builder();
 
             for (Piece piece : this.board.getCurrentPlayer().activePiecesList()) {
@@ -267,6 +279,11 @@ public abstract class Move {
         }
 
         @Override
+        public boolean equals(final Object obj){
+            return this == obj || obj instanceof QueenSideCastle && super.equals(obj);
+        }
+
+        @Override
         public String toString() {
             return "O-O-O";
         }
@@ -279,7 +296,7 @@ public abstract class Move {
         }
 
         @Override
-        public Board execute() {
+        public Board execute(final boolean isRealMove) {
 
             final Builder builder = new Builder();
 
@@ -303,6 +320,11 @@ public abstract class Move {
         }
 
         @Override
+        public boolean equals(final Object obj){
+            return this == obj || obj instanceof KingSideCastle && super.equals(obj);
+        }
+
+        @Override
         public String toString() {
             return "O-O";
         }
@@ -316,11 +338,8 @@ public abstract class Move {
                 final int currentCor,
                 final int destinationCor) {
             for (Move move : board.getCurrentPlayer().getLegalMoves()) {
-                System.out.println(move.toString());
                 if (move.getCurrentCor() == currentCor && move.getDestinationCor() == destinationCor)
                     return move;
-                // System.out.println(move.getMovePiece() + " " + move.getCurrentCor() + " " +
-                // move.getDestinationRow() + " " + move.getDestinationCol());
             }
             return null;
         }

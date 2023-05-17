@@ -37,17 +37,15 @@ public class Pawn extends Piece {
         r1 = this.row + this.getPieceParty().getDirecion() * NORMAL_MOVE[0];
         r2 = this.row + this.getPieceParty().getDirecion() * JUMP_MOVE[0];
         c = this.col;
-        final Tile normalTile = board.getTile(r1, c);
-        final Tile startingTile = board.getTile(r1, c);
 
         if (BoardUtils.isCorValid(r1, c)) {
-            if (!normalTile.isOccupied()) {
+            if (!board.getTile(r1, c).isOccupied()) {
                 legalMovesList.add(new NeutralMove(board, this, r1, c));
             }
         }
 
         if (this.isFirstMove() && BoardUtils.isCorValid(r2, c)) {
-            if (!normalTile.isOccupied() && !startingTile.isOccupied()) {
+            if (!board.getTile(r1, c).isOccupied() && !board.getTile(r2, c).isOccupied()) {
                 legalMovesList.add(new PawnJump(board, this, r2, c));
             }
         }

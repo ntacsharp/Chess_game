@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import com.chess.engine.board.Board;
+import com.chess.engine.board.BoardUtils;
 import com.chess.engine.board.Move;
 import com.chess.engine.board.Tile;
 import com.chess.engine.pieces.Piece;
@@ -23,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Table {
-    private static final Dimension FRAME_DIMENSION = new Dimension(700, 600);
+    private static final Dimension FRAME_DIMENSION = new Dimension(600, 600);
     private static final Dimension BOARD_PANEL_DIMENSION = new Dimension(400, 350);
     private static final Dimension TILE_PANEL_DIMENSION = new Dimension(10, 10);
 
@@ -234,6 +235,9 @@ public class Table {
 
                 @Override
                 public void mouseClicked(MouseEvent e) {
+                    System.out.println(row + " " +col);
+                    if (BoardUtils.isEndGame(chessBoard))
+                        return;
                     if (SwingUtilities.isRightMouseButton(e)) {
                         sourceTile = null;
                         destinationTile = null;
@@ -241,32 +245,27 @@ public class Table {
 
                     } else if (SwingUtilities.isLeftMouseButton(e)) {
                         if (sourceTile == null) {
+                            
                             sourceTile = chessBoard.getTile(row, col);
                             if (sourceTile.isOccupied()) {
                                 movedPiece = sourceTile.getPiece();
                                 if (movedPiece.getPieceParty() != chessBoard.getCurrentPlayer().getParty()) {
                                     sourceTile = null;
                                     movedPiece = null;
-                                } else {
-                                    for (Move move2 : movedPiece.legalMoves(chessBoard)) {
-                                        System.out.println(move2.toString());
-                                    }
                                 }
                             } else {
-
                                 sourceTile = null;
                             }
 
                         } else {
                             if (row != sourceTile.getRow() || col != sourceTile.getCol()) {
+                                
                                 destinationTile = chessBoard.getTile(row, col);
                                 final Move move = Move.MoveFactory.findMove(chessBoard,
                                         sourceTile.getCor(),
                                         destinationTile.getCor());
-                                // System.out.println(move.toString());
-                                final MoveTrans transition = chessBoard.getCurrentPlayer().moveTrans(move);
+                                final MoveTrans transition = chessBoard.getCurrentPlayer().moveTrans(move, true);
                                 if (transition.getMoveStatus().isDone()) {
-                                    // System.out.println(sourceTile.getCor() + " " + destinationTile.getCor());
                                     chessBoard = transition.getBoard();
                                     moveLog.addMove(move);
                                     sourceTile = null;
@@ -274,6 +273,7 @@ public class Table {
                                     movedPiece = null;
                                 } else {
                                     if (destinationTile.isOccupied()) {
+                                        sourceTile = destinationTile;
                                         movedPiece = destinationTile.getPiece();
                                         if (movedPiece.getPieceParty() != chessBoard.getCurrentPlayer().getParty()) {
                                             sourceTile = null;
@@ -287,6 +287,10 @@ public class Table {
                                     }
 
                                 }
+                            }
+                            else{
+                                sourceTile = null;
+                                movedPiece = null;
                             }
                         }
                     }
@@ -351,14 +355,16 @@ public class Table {
             if (highlightLegalMoves) {
                 for (Move move : calculateLegalMoves(board)) {
                     if (move.getDestinationRow() == this.row && move.getDestinationCol() == this.col) {
-                        if (move.isAttackingMove()) {
-                            setBackground(((this.row + this.col) % 2 == 0) ? lightHighlight : darkHighlight);
-                        } else {
-                            try {
-                                BufferedImage icon = ImageIO.read(new File("art/other/green_dot.png"));
-                                add(new JLabel(new ImageIcon(icon)));
-                            } catch (Exception e) {
-                                System.out.println(e);
+                        if (!BoardUtils.isThreatKingMove(move, board)) {
+                            if (move.isAttackingMove()) {
+                                setBackground(((this.row + this.col) % 2 == 0) ? lightHighlight : darkHighlight);
+                            } else {
+                                try {
+                                    BufferedImage icon = ImageIO.read(new File("art/other/green_dot.png"));
+                                    add(new JLabel(new ImageIcon(icon)));
+                                } catch (Exception e) {
+                                    System.out.println(e);
+                                }
                             }
                         }
                     }
