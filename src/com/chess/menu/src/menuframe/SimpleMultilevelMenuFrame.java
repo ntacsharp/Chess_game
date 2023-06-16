@@ -59,9 +59,6 @@ public class SimpleMultilevelMenuFrame extends MultilevelMenuFrameAbstract {
 
         this.setButtonPanel(new ButtonMutilevelGridBagPanel(3));
 
-        menuLabel = new Label("Menu");
-        menuLabel.setAlignment(Label.CENTER);
-        menuLabelPanel.add(menuLabel);
 
         this.add(menuPanel);
     }

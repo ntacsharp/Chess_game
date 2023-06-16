@@ -1,4 +1,4 @@
-package com.chess.menu.src.leveled;
+package com.chess.menu.src.component_list;
 
 public interface LeveledComponentInterface<T> {
     void addComponentLeveled(T obj, int level);
