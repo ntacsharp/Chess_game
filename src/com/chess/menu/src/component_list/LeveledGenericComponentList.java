@@ -1,14 +1,14 @@
-package com.chess.menu.src.leveled;
+package com.chess.menu.src.component_list;
 
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.util.ArrayList;
 
-public class LeveledGenericComponentList<Comp extends  Component> extends JPanel implements ComponentListInterface<Comp>, LeveledComponentInterface<Comp> {
+public class LeveledGenericComponentList<Comp extends  JComponent> extends JPanel implements ComponentListInterface<Comp>, LeveledComponentInterface<Comp> {
     int levelSize;
-    GridBagConstraints gbc1=new GridBagConstraints();
-    GridBagConstraints gbc2=new GridBagConstraints();
+    Border border1;
 
     @Override
     public void addComponentToList(Comp obj) {
@@ -18,7 +18,7 @@ public class LeveledGenericComponentList<Comp extends  Component> extends JPanel
     @Override
     public void removeComponentFromList(Comp obj) {
         for(int i=0;i<levelSize;i++){
-            Component[] a= ((JPanel)this.getComponent(i)).getComponents();
+            Component[] a= ((JPanel)this.getComponent(i+1)).getComponents();
             for(int j=0;j<a.length;j++){
                 if(a[j].equals(obj)){
                     ((JPanel)this.getComponent(i)).remove(j);
@@ -29,11 +29,11 @@ public class LeveledGenericComponentList<Comp extends  Component> extends JPanel
     }
     @Override
     public void removeComponentLeveled(Comp obj,int level) {
-        ((JPanel)this.getComponent(level)).remove(obj);
+        ((JPanel)this.getComponent(level+1)).remove(obj);
     }
     public void removeComponentFromListAll(Comp obj) {
         for(int i=0;i<levelSize;i++){
-            Component[] a= ((JPanel)this.getComponent(i)).getComponents();
+            Component[] a= ((JPanel)this.getComponent(i+1)).getComponents();
             for(int j=0;j<a.length;j++){
                 if(a[j].equals(obj)){
                     ((JPanel)this.getComponent(i)).remove(j);
@@ -43,17 +43,17 @@ public class LeveledGenericComponentList<Comp extends  Component> extends JPanel
     }
     @Override
     public Comp getBackFromList() {
-        Component[] a= ((JPanel)this.getComponent(levelSize-1)).getComponents();
+        Component[] a= ((JPanel)this.getComponent(levelSize-1+1)).getComponents();
         return (Comp)a[a.length-1];
     }
 
     @Override
     public Comp getFirstFromList() {
-        Component[] a= ((JPanel)this.getComponent(0)).getComponents();
+        Component[] a= ((JPanel)this.getComponent(0+1)).getComponents();
         return (Comp)a[0];
     }
     public Comp get(int level,int noInLevel){
-        Component[] a= ((JPanel)this.getComponent(level<levelSize?level:levelSize-1)).getComponents();
+        Component[] a= ((JPanel)this.getComponent(level<levelSize?level+1:levelSize-1+1)).getComponents();
         return (Comp)a[noInLevel<a.length?noInLevel:a.length-1];
     }
     @Deprecated
@@ -68,30 +68,21 @@ public class LeveledGenericComponentList<Comp extends  Component> extends JPanel
             addComponentLeveled(obj,levelSize-1);
             return;
         }
-        ((JPanel)this.getComponent(level)).add(obj,gbc2);
-    }
-    private void _init(){
-        Border _border = BorderFactory.createEmptyBorder(5, 10, 5, 10);
-        this.setLayout(new GridBagLayout());
-        for(int i=0;i<levelSize;i++){
-            JPanel temp=new JPanel(new GridBagLayout());
-            temp.setBorder(_border);
-            this.add(temp,gbc1);
-        }
-    }
-    public LeveledGenericComponentList(int levelSize, GridBagConstraints gbc1, GridBagConstraints gbc2){
-        this.levelSize=levelSize;
-        this.gbc1=gbc1;
-        this.gbc2=gbc2;
-        _init();
+        obj.setAlignmentX(CENTER_ALIGNMENT);
+        ((JPanel)this.getComponent(level+1)).add(obj);
     }
     public LeveledGenericComponentList(int levelSize){
-        GridBagConstraints gbc=new GridBagConstraints();
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx=0.8;
-        this.gbc1=gbc;
-        this.gbc2=gbc;
-        _init();
+        this.levelSize=levelSize;
+        border1 = BorderFactory.createEmptyBorder(5, 10, 5, 10);
+        this.setAlignmentY(CENTER_ALIGNMENT);
+        this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+        this.add(Box.createVerticalGlue());
+        for(int i=0;i<levelSize;i++){
+            JPanel temp=new JPanel();
+            temp.setLayout(new BoxLayout(temp,BoxLayout.Y_AXIS));
+            temp.setBorder(border1);
+            this.add(temp);
+        }
+        this.add(Box.createVerticalGlue());
     }
 }
