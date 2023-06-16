@@ -1,6 +1,7 @@
 package com.chess.menu;
 
-import com.chess.GUI.Table;
+
+import com.chess.engine.maingame.GUI.Table;
 import com.chess.menu.src.button.SimpleButton;
 import com.chess.menu.src.menuframe.SimpleMultilevelMenuFrame;
 
