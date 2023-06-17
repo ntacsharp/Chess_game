@@ -9,7 +9,12 @@ import java.util.Random;
 
 import com.chess.engine.maingame.board.BoardUtils;
 import com.chess.engine.minigame.pieces.MiniPiece;
+import com.chess.engine.minigame.pieces.enemy.Archer;
+import com.chess.engine.minigame.pieces.enemy.Beast;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
+import com.chess.engine.minigame.pieces.enemy.Shaman;
+import com.chess.engine.minigame.pieces.enemy.Spider;
+import com.chess.engine.minigame.pieces.enemy.Swordman;
 import com.chess.engine.minigame.pieces.player.Babarian;
 import com.chess.engine.minigame.pieces.player.PlayerPiece;
 import com.chess.engine.minigame.pieces.player.PlayerPiece.PieceType;
@@ -62,11 +67,42 @@ public class MiniBoard {
 
         generateFloor(floor, builder);
 
-        return null;
+        return builder.build();
     }
 
     private static void generateFloor(final int floor, final Builder builder) {
-        
+        int difficulty = 2 + 2 * floor;
+        Random rand = new Random();
+        while (difficulty > 0) {
+            int x = rand.nextInt(1, 6);
+            int r = rand.nextInt(4);
+            int c = rand.nextInt(5);
+            while (builder.boardConfig.get(r * 5 + c) != null) {
+                r = rand.nextInt(4);
+                c = rand.nextInt(5);
+            }
+            if (difficulty - x >= 0) {
+                if (x == 1) {
+                    builder.setPiece(new Beast(r, c, 0));
+                } else if (x == 2) {
+                    int tmp = rand.nextInt(3);
+                    if(tmp == 0) builder.setPiece(new Spider(r, c, 0));
+                    else if(tmp == 1) builder.setPiece(new Swordman(r, c, false, false, 0));
+                    else if(tmp == 2) builder.setPiece(new Archer(r, c, false, false, 0));
+                }
+                else if (x == 3) {
+                    int tmp = rand.nextInt(2);
+                    if(tmp == 0) builder.setPiece(new Swordman(r, c, true, true, 0));
+                    else if(tmp == 1) builder.setPiece(new Archer(r, c, true, true, 0));
+                }
+                else if (x == 4){
+                    builder.setPiece(new Shaman(r, c, false, false, 0));
+                }
+                else if (x == 5){
+                    builder.setPiece(new Shaman(r, c, true, true, 0));
+                }
+            }
+        }
     }
 
     private static boolean existedCor(final List<EnemyPiece> list, final int r, final int c) {
@@ -77,9 +113,10 @@ public class MiniBoard {
         return false;
     }
 
-    public EnemyPiece notMoved(final int turn){
+    public EnemyPiece notMoved(final int turn) {
         for (EnemyPiece enemyPiece : this.enemyPieces) {
-            if(enemyPiece.getTurn() < turn) return enemyPiece;
+            if (enemyPiece.getTurn() < turn)
+                return enemyPiece;
         }
         return null;
     }
