@@ -39,6 +39,7 @@ public class Table {
 
     public static final String PIECE_ICON_PATH = "art/pieces/";
 
+    private final JFrame gameFrame;
     private Board chessBoard;
     private final GameHistoryPanel gameHistoryPanel;
     private final TakenPiecesPanel takenPiecesPanel;
@@ -50,28 +51,45 @@ public class Table {
     private boolean highlightLegalMoves;
     private final MoveLog moveLog;
 
-    public Table(final JFrame gameFrame) {
+    public Table() {
         this.chessBoard = Board.createStandardBoard();
-        gameFrame.setTitle("Clasic chess game");
-        gameFrame.setLayout(new BorderLayout());
-        gameFrame.setJMenuBar(addMenuBar(gameFrame));
-        gameFrame.setSize(FRAME_DIMENSION);
+        this.gameFrame = new JFrame();
+        this.gameFrame.setTitle("Clasic chess game");
+        this.gameFrame.setLayout(new BorderLayout());
+        this.gameFrame.setJMenuBar(setUpMenuBar(this.gameFrame));
+        this.gameFrame.setSize(FRAME_DIMENSION);
         this.boardPanel = new BoardPanel();
         this.gameHistoryPanel = new GameHistoryPanel();
         this.takenPiecesPanel = new TakenPiecesPanel();
-        gameFrame.add(this.gameHistoryPanel, BorderLayout.EAST);
-        gameFrame.add(this.takenPiecesPanel, BorderLayout.WEST);
-        gameFrame.add(this.boardPanel, BorderLayout.CENTER);
-        gameFrame.setVisible(true);
+        this.gameFrame.add(this.gameHistoryPanel, BorderLayout.EAST);
+        this.gameFrame.add(this.takenPiecesPanel, BorderLayout.WEST);
+        this.gameFrame.add(this.boardPanel, BorderLayout.CENTER);
+        this.gameFrame.setVisible(true);
         this.boardDirection = BoardDirection.NORMAL;
         this.highlightLegalMoves = true;
         this.moveLog = new MoveLog();
     }
 
-    private JMenuBar addMenuBar(final JFrame gameFrame) {
-        final JMenuBar menubar = gameFrame.getJMenuBar();
+    private JMenuBar setUpMenuBar(final JFrame gameFrame) {
+        final JMenuBar menubar = new JMenuBar();
+        menubar.add(createFileMenu());
         menubar.add(createViewMenu());
         return menubar;
+    }
+
+    private static JMenu createFileMenu() {
+        final JMenu fileMenu = new JMenu("File");
+
+        final JMenuItem exitMenuItem = new JMenuItem("Exit");
+        exitMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+        fileMenu.add(exitMenuItem);
+
+        return fileMenu;
     }
 
     private JMenu createViewMenu() {

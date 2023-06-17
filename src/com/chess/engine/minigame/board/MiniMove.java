@@ -105,6 +105,34 @@ public abstract class MiniMove {
         }
     }
 
+    public static class NimbleMove extends NeutralMove {
+        public NimbleMove(MiniBoard board, MiniPiece movePiece, int destinationRow, int destinationCol) {
+            super(board, movePiece, destinationRow, destinationCol);
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            return this == obj || obj instanceof NimbleMove && super.equals(obj);
+        }
+
+        @Override
+        public MiniBoard execute() {
+
+            final Builder builder = new Builder();
+
+            builder.setPiece(this.board.getPlayerPiece());
+            for (MiniPiece piece : this.board.getEnemyPieces()) {
+                if (!this.movePiece.equals(piece)) {
+                    builder.setPiece(piece);
+                }
+            }
+            EnemyPiece piece = (EnemyPiece)this.movePiece;
+            builder.setPiece(piece.nimbledPiece(this));
+
+            return builder.build();
+        }
+    }
+
     // public static class MoveFactory {
     // private MoveFactory() {
     // }

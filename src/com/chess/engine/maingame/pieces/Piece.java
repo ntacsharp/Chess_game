@@ -11,8 +11,8 @@ public abstract class Piece {
 
     protected final int row;
     protected final int col;
-    protected final boolean isFirstMove;
-    protected final PieceType pieceType;
+    private final boolean isFirstMove;
+    private final PieceType pieceType;
     protected final Party pieceParty;
 
     protected Piece(final int row, final int col, final Party pieceParty, final PieceType pieceType,

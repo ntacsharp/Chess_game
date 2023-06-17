@@ -43,8 +43,6 @@ public class MiniTable {
     private static final String POWER_ICON_PATH = "art/other/power/";
 
     public MiniTable(final JFrame gameFrame) {
-        this.chessBoard = MiniBoard.createStandardBoard(1, PieceType.BABARIAN);
-        this.deck = new Deck(this.chessBoard.getPlayerPiece());
         gameFrame.setTitle("Pawnbarian Mode");
         gameFrame.setLayout(new BorderLayout());
         this.boardPanel = new BoardPanel();

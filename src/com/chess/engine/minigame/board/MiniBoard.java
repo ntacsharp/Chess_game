@@ -66,55 +66,7 @@ public class MiniBoard {
     }
 
     private static void generateFloor(final int floor, final Builder builder) {
-        int difficulty = 4, r, c, tmp;
-        Random rand = new Random();
-        List<EnemyPiece> generatedEnemies = new ArrayList<EnemyPiece>();
-        r = rand.nextInt(4);
-        c = rand.nextInt(5);
-        generatedEnemies.add(new EnemyPiece(r, c, rand.nextInt(2), false, false, false, false, false, false, false));
-        while (existedCor(generatedEnemies, r, c)) {
-            r = rand.nextInt(4);
-            c = rand.nextInt(5);
-        }
-        generatedEnemies.add(new EnemyPiece(r, c, rand.nextInt(2), false, false, false, false, false, false, false));
-        while (existedCor(generatedEnemies, r, c)) {
-            r = rand.nextInt(4);
-            c = rand.nextInt(5);
-        }
-        tmp = rand.nextInt(2);
-        generatedEnemies
-                .add(new EnemyPiece(r, c, rand.nextInt(2), tmp == 0, tmp == 1, false, false, false, false, false));
-        while (difficulty < 2 + floor * 2) {
-            tmp = rand.nextInt(3);
-            while ((tmp == 0 && generatedEnemies.size() == 20) || (tmp == 1 && allFullPower(generatedEnemies))
-                    || (tmp == 2 && allFullRange(generatedEnemies))) {
-                if ((tmp == 0 && generatedEnemies.size() == 20) && (tmp == 1 && allFullPower(generatedEnemies))
-                        && (tmp == 2 && allFullRange(generatedEnemies))) {
-                    throw new RuntimeException("Bugged :(");
-                }
-                tmp = rand.nextInt(3);
-            }
-            if (tmp == 0) {
-                r = rand.nextInt(4);
-                c = rand.nextInt(5);
-                generatedEnemies
-                        .add(new EnemyPiece(r, c, rand.nextInt(2), false, false, false, false, false, false, false));
-            } else if (tmp == 1) {
-                tmp = rand.nextInt(generatedEnemies.size());
-                EnemyPiece enemyPiece = generatedEnemies.get(tmp);
-                while (enemyPiece.isFullPower())
-                    tmp = rand.nextInt(generatedEnemies.size());
-                enemyPiece.grantRandomPower();
-                generatedEnemies.set(tmp, enemyPiece);
-            } else {
-                tmp = rand.nextInt(generatedEnemies.size());
-                EnemyPiece enemyPiece = generatedEnemies.get(tmp);
-                while (enemyPiece.isFullRange())
-                    tmp = rand.nextInt(generatedEnemies.size());
-                enemyPiece.grantMoreRange();
-                generatedEnemies.set(tmp, enemyPiece);
-            }
-        }
+        
     }
 
     private static boolean existedCor(final List<EnemyPiece> list, final int r, final int c) {
@@ -125,20 +77,11 @@ public class MiniBoard {
         return false;
     }
 
-    private static boolean allFullPower(final List<EnemyPiece> list) {
-        for (EnemyPiece enemyPiece : list) {
-            if (!enemyPiece.isFullPower())
-                return false;
+    public EnemyPiece notMoved(final int turn){
+        for (EnemyPiece enemyPiece : this.enemyPieces) {
+            if(enemyPiece.getTurn() < turn) return enemyPiece;
         }
-        return true;
-    }
-
-    private static boolean allFullRange(final List<EnemyPiece> list) {
-        for (EnemyPiece enemyPiece : list) {
-            if (!enemyPiece.isFullRange())
-                return false;
-        }
-        return true;
+        return null;
     }
 
     private static Collection<EnemyPiece> findEnemyPiece(final List<MiniTile> gameBoard) {

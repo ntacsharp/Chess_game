@@ -1,177 +1,85 @@
 package com.chess.engine.minigame.pieces.enemy;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import com.chess.engine.minigame.board.MiniBoard;
-import com.chess.engine.minigame.board.MiniBoardUtils;
 import com.chess.engine.minigame.board.MiniMove;
-import com.chess.engine.minigame.board.MiniMove.NeutralMove;
+import com.chess.engine.minigame.board.MiniMove.NimbleMove;
 import com.chess.engine.minigame.pieces.MiniPiece;
 import com.chess.engine.minigame.pieces.player.PlayerPiece;
 
-public class EnemyPiece extends MiniPiece {
-    private static final int[][][] RANGE_SET = {
-            {
-                    { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 }, { 1, 1 }
-            },
-            {
-                    { -2, -2 }, { -2, -1 }, { -2, 0 }, { -2, 1 }, { -2, 2 }, { -1, -2 }, { -1, 2 }, { 0, -2 }, { 0, 2 },
-                    { 1, -2 }, { 1, 2 }, { 2, -2 }, { 2, -1 }, { 2, 0 }, { 2, 1 }, { 2, 2 }
-            },
-            {
-                    { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 }, { 1, 1 }, { -2, -2 },
-                    { -2, -1 }, { -2, 0 }, { -2, 1 }, { -2, 2 }, { -1, -2 }, { -1, 2 }, { 0, -2 }, { 0, 2 },
-                    { 1, -2 }, { 1, 2 }, { 2, -2 }, { 2, -1 }, { 2, 0 }, { 2, 1 }, { 2, 2 }
-            },
-    };
-    private static final int[][] MOVE_SET = {
+public abstract class EnemyPiece extends MiniPiece {
+    protected final int[][] MOVE_SET = {
             { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 }, { 1, 1 }
     };
 
-    private int type;
-    private List<Boolean> hasPower;
-    private boolean immune;
+    protected boolean immune;
+    private final PieceType pieceType;
+    private final int turn;
+    private final boolean nimble;
+    private boolean isCurrentlyNimble;
 
-    public EnemyPiece(final int row, final int col, final int type, final boolean brawler,
-            final boolean vigilant, final boolean nimble, final boolean webWeaver, final boolean blightWake,
-            final boolean blightBlast, final boolean blightHost) {
+    public EnemyPiece(final int row, final int col, final PieceType pieceType, final boolean nimble,
+            final boolean isCurrentlyNimble, final int turn) {
         super(row, col);
-        this.type = type;
-        this.hasPower = new ArrayList<Boolean>();
-        this.hasPower.add(brawler);
-        this.hasPower.add(vigilant);
-        this.hasPower.add(nimble);
-        this.hasPower.add(webWeaver);
-        this.hasPower.add(blightWake);
-        this.hasPower.add(blightBlast);
-        this.hasPower.add(blightHost);
+        this.pieceType = pieceType;
         this.immune = false;
+        this.turn = turn;
+        this.nimble = nimble;
+        this.isCurrentlyNimble = isCurrentlyNimble;
     }
 
-    public int getType() {
-        return this.type;
+    public PieceType getPieceType() {
+        return this.pieceType;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public int getPieceValue() {
+        return this.pieceType.getPieceValue();
     }
 
-    public List<Boolean> getHasPower() {
-        return this.hasPower;
-    }
-
-    public Boolean getHasPowerByID(final int id) {
-        return this.hasPower.get(id);
-    }
-
-    public void setHasPowerByID(final int id, final boolean newVal) {
-        this.hasPower.set(id, newVal);
+    public boolean isCurrentlyNimble(){
+        return this.isCurrentlyNimble;
     }
 
     public boolean isImmune() {
         return this.immune;
     }
 
-    public boolean isFullPower() {
-        for (int i = 2; i < 7; i++) {
-            boolean power = this.hasPower.get(i);
-            if (!power)
-                return false;
-        }
-        if (!this.hasPower.get(0) && !this.hasPower.get(1))
-            return false;
-        return true;
+    public int getTurn() {
+        return turn;
     }
 
-    public boolean isFullRange() {
-        if (this.type < 2)
-            return false;
-        return true;
+    public boolean isNimble() {
+        return nimble;
     }
 
-    public void grantRandomPower(){
-        Random rand = new Random();
-        int tmp = rand.nextInt(this.hasPower.size());
-        while((tmp == 0 && this.hasPower.get(1)) || (tmp == 1 && this.hasPower.get(0)) || this.hasPower.get(tmp)){
-            tmp = rand.nextInt(this.hasPower.size());
-        }
-        this.setHasPowerByID(tmp, true);
+    public void triggerEffect(final MiniBoard board) {
     }
 
-    public void grantMoreRange(){
-        this.setType(2);
-    }
-
-    public void triggerTrait(final MiniBoard board) {
-        // if (this.brawler) {
-        // for (int[] pos : RANGE_SET[0]) {
-        // if (board.getTile(pos[0], pos[1]).isOccupied()) {
-        // MiniPiece piece = board.getTile(pos[0], pos[1]).getPiece();
-        // if (piece instanceof PlayerPiece) {
-        // this.immune = true;
-        // break;
-        // }
-        // }
-        // }
-        // }
-
-        // if (this.vigilant) {
-        // boolean flag = false;
-        // for (int[] pos : RANGE_SET[0]) {
-        // if (board.getTile(pos[0], pos[1]).isOccupied()) {
-        // MiniPiece piece = board.getTile(pos[0], pos[1]).getPiece();
-        // if (piece instanceof PlayerPiece) {
-        // flag = true;
-        // break;
-        // }
-        // }
-        // }
-        // if (!flag)
-        // this.immune = true;
-        // }
-    }
-
-    public void triggerNimble() {
-
-    }
-
-    public MiniMove move(final MiniBoard board) {
-        Random rand = new Random();
-        int r, c;
-        List<int[]> possibleMove = new ArrayList<int[]>();
-        for (int[] move : MOVE_SET) {
-            r = this.row + move[0];
-            c = this.col + move[1];
-            if (MiniBoardUtils.isCorValid(r, c)) {
-                if (!board.getTile(r, c).isOccupied()) {
-                    int r1, c1;
-                    for (int[] des : RANGE_SET[this.type]) {
-                        r1 = r + des[0];
-                        c1 = c + des[1];
-                        if (r1 == board.getPlayerPiece().getRow() && c1 == board.getPlayerPiece().getCol()) {
-                            possibleMove.add(move);
-                        }
-                    }
-                }
-            }
-        }
-        if (possibleMove.isEmpty()) {
+    public MiniBoard triggerNimble(final MiniBoard board) {
+        PlayerPiece playerPiece = board.getPlayerPiece();
+        int rDif = this.getRow() - playerPiece.getRow();
+        int cDif = this.getCol() - playerPiece.getCol();
+        if (rDif != 0)
+            rDif /= Math.abs(rDif);
+        if (cDif != 0)
+            cDif /= Math.abs(cDif);
+        if (!board.getTile(this.getRow() + rDif, this.getCol() + cDif).isOccupied()) {
+            MiniMove move = new NimbleMove(board, this, this.getRow() + rDif, this.getCol() + cDif);
+            return move.execute();
+        } else {
             for (int[] move : MOVE_SET) {
-                r = this.row + move[0];
-                c = this.col + move[1];
-                if (MiniBoardUtils.isCorValid(r, c)) {
-                    if (!board.getTile(r, c).isOccupied()) {
-                        possibleMove.add(move);
+                int r = this.getRow() + move[0];
+                int c = this.getRow() + move[1];
+                int tmp = 0;
+                if (!board.getTile(r, c).isOccupied()) {
+                    if (Math.abs(r - playerPiece.getRow()) + Math.abs(c - playerPiece.getCol()) > tmp) {
+                        rDif = r;
+                        cDif = c;
                     }
                 }
             }
+            MiniMove move = new NimbleMove(board, this, rDif, cDif);
+            return move.execute();
         }
-        int tmp = rand.nextInt(possibleMove.size());
-        r = this.row + possibleMove.get(tmp)[0];
-        c = this.col + possibleMove.get(tmp)[1];
-        return new NeutralMove(board, this, r, c);
     }
 
     @Override
@@ -184,16 +92,42 @@ public class EnemyPiece extends MiniPiece {
             return false;
         EnemyPiece objPiece = (EnemyPiece) obj;
         if (!super.equals(obj)
-                || this.type != objPiece.getType()
-                || this.hasPower != objPiece.getHasPower())
+                || this.turn != objPiece.getTurn()
+                || this.isNimble() != objPiece.isNimble())
             return false;
         return true;
     }
+    public abstract MiniBoard move(final MiniBoard board);
 
     @Override
-    public MiniPiece movePiece(MiniMove move) {
-        return new EnemyPiece(move.getDestinationRow(), move.getDestinationRow(), this.getType(),
-                this.getHasPowerByID(0), this.getHasPowerByID(1), this.getHasPowerByID(2), this.getHasPowerByID(3),
-                this.getHasPowerByID(4), this.getHasPowerByID(5), this.getHasPowerByID(6));
+    public abstract EnemyPiece movePiece(MiniMove move);
+
+    public abstract EnemyPiece nimbledPiece(MiniMove move);
+
+    public enum PieceType {
+        INFECTED("IF", 0),
+        BEAST("BE", 1),
+        SWORDMAN("SW", 2),
+        ARCHER("AR", 2),
+        SPIDER("SP", 2),
+        SHAMAN("SH", 4);
+
+
+        private String pieceName;
+        private int pieceValue;
+
+        PieceType(final String pieceName, final int pieceValue) {
+            this.pieceName = pieceName;
+            this.pieceValue = pieceValue;
+        }
+
+        public int getPieceValue() {
+            return this.pieceValue;
+        }
+
+        @Override
+        public String toString() {
+            return this.pieceName;
+        }
     }
 }
