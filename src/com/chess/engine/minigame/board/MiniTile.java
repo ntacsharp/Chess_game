@@ -1,44 +1,35 @@
 package com.chess.engine.minigame.board;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.chess.engine.minigame.pieces.MiniPiece;
 
 public abstract class MiniTile {
     protected final int row;
     protected final int col;
+    protected final boolean blighted;
 
-    private static final Map<Integer, EmptyTile> EMPTY_TILES = createEmpty5x5Tiles();
-
-    private static Map<Integer, EmptyTile> createEmpty5x5Tiles() {
-        final Map<Integer, EmptyTile> emptyTileMap = new HashMap<>();
-
-        for (int r = 0; r < MiniBoardUtils.NUM_TILE_PER_ROW; r++) {
-            for (int c = 0; c < MiniBoardUtils.NUM_TILE_PER_COL; c++) {
-                emptyTileMap.put(r * MiniBoardUtils.NUM_TILE_PER_ROW + c, new EmptyTile(r, c));
-            }
-        }
-
-        return emptyTileMap;
-    }
-
-    public static MiniTile createTile(final int row, final int col, final MiniPiece piece) {
+    public static MiniTile createTile(final int row, final int col, final MiniPiece piece, final boolean blighted) {
         if (piece != null) {
-            return new OccupiedTile(row, col, piece);
+            return new OccupiedTile(row, col, piece, blighted);
         } else {
-            return EMPTY_TILES.get(row * MiniBoardUtils.NUM_TILE_PER_ROW + col);
+            return new EmptyTile(row, col, blighted);
         }
     }
 
-    private MiniTile(int row, int col) {
+    private MiniTile(int row, int col, final boolean blighted) {
         this.row = row;
         this.col = col;
+        this.blighted = blighted;
     }
 
     public abstract boolean isOccupied();
 
     public abstract MiniPiece getPiece();
+
+    public abstract void setPiece(final MiniPiece piece);
+
+    public boolean isBlighted() {
+        return blighted;
+    }
 
     public int getRow() {
         return row;
@@ -53,8 +44,8 @@ public abstract class MiniTile {
     }
 
     private static class EmptyTile extends MiniTile {
-        private EmptyTile(final int row, final int col) {
-            super(row, col);
+        private EmptyTile(final int row, final int col, final boolean blighted) {
+            super(row, col, blighted);
         }
 
         @Override
@@ -66,27 +57,26 @@ public abstract class MiniTile {
             return false;
         }
 
+        @Override
         public MiniPiece getPiece() {
             return null;
         }
+
+        @Override
+        public void setPiece(final MiniPiece piece){}
     }
 
     private static class OccupiedTile extends MiniTile {
         private MiniPiece pieceOnTile;
 
-        private OccupiedTile(final int row, final int col, MiniPiece piece) {
-            super(row, col);
+        private OccupiedTile(final int row, final int col, MiniPiece piece, final boolean blighted) {
+            super(row, col, blighted);
             this.pieceOnTile = piece;
         }
 
         @Override
         public String toString() {
             return "";
-            // MiniPiece piece = getPiece();       
-            // if(piece.getPieceParty().isBlack()){
-            //     return piece.toString().toLowerCase();
-            // }             
-            // else return piece.toString();
         }
 
         public boolean isOccupied() {
@@ -95,6 +85,11 @@ public abstract class MiniTile {
 
         public MiniPiece getPiece() {
             return pieceOnTile;
+        }
+
+        @Override
+        public void setPiece(final MiniPiece piece){
+            this.pieceOnTile = piece;
         }
     }
 }

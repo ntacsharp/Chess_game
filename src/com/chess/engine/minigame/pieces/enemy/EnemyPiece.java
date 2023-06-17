@@ -51,9 +51,6 @@ public abstract class EnemyPiece extends MiniPiece {
         return nimble;
     }
 
-    public void triggerEffect(final MiniBoard board) {
-    }
-
     public MiniBoard triggerNimble(final MiniBoard board) {
         PlayerPiece playerPiece = board.getPlayerPiece();
         int rDif = this.getRow() - playerPiece.getRow();
@@ -107,10 +104,10 @@ public abstract class EnemyPiece extends MiniPiece {
     public enum PieceType {
         INFECTED("IF", 0),
         BEAST("BE", 1),
-        SWORDMAN("SW", 2),
-        ARCHER("AR", 2),
         SPIDER("SP", 2),
-        SHAMAN("SH", 4);
+        SWORDMAN("SW", 3),
+        ARCHER("AR", 3),
+        SHAMAN("SH", 5);
 
 
         private String pieceName;

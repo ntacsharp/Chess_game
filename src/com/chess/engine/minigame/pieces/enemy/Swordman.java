@@ -14,7 +14,7 @@ public class Swordman extends EnemyPiece {
             { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 }, { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 }
     };
 
-    public Swordman(int row, int col, boolean nimble, boolean isCurrentlyNimble, int turn) {
+    public Swordman(final int row,final int col,final boolean nimble,final boolean isCurrentlyNimble,final int turn) {
         super(row, col, PieceType.SWORDMAN, nimble, isCurrentlyNimble, turn);
     }
 

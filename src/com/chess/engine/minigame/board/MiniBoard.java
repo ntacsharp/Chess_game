@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import com.chess.engine.maingame.board.BoardUtils;
 import com.chess.engine.minigame.pieces.MiniPiece;
 import com.chess.engine.minigame.pieces.enemy.Archer;
 import com.chess.engine.minigame.pieces.enemy.Beast;
@@ -28,6 +27,12 @@ public class MiniBoard {
         this.gameBoard = createGameBoard(builder);
         enemyPieces = findEnemyPiece(gameBoard);
         playerPiece = findPlayerPiece(gameBoard);
+        for (EnemyPiece enemyPiece : enemyPieces) {
+            if(enemyPiece instanceof Shaman){
+                Shaman oldShaman = (Shaman)enemyPiece;
+                Shaman newShaman = oldShaman.triggerImmune(this);
+            }
+        }
     }
 
     public MiniTile getTile(final int row, final int col) {
@@ -50,7 +55,8 @@ public class MiniBoard {
         List<MiniTile> tiles = new ArrayList<>();
         for (int r = 0; r < 5; r++) {
             for (int c = 0; c < 5; c++) {
-                tiles.add(MiniTile.createTile(r, c, builder.boardConfig.get(r * MiniBoardUtils.NUM_TILE_PER_ROW + c)));
+                tiles.add(MiniTile.createTile(r, c, builder.boardConfig.get(r * MiniBoardUtils.NUM_TILE_PER_ROW + c),
+                        (builder.blightMap.get(r * MiniBoardUtils.NUM_TILE_PER_ROW + c) != null)));
             }
         }
         return tiles;
@@ -74,7 +80,7 @@ public class MiniBoard {
         int difficulty = 2 + 2 * floor;
         Random rand = new Random();
         while (difficulty > 0) {
-            int x = rand.nextInt(1, 6);
+            int x = rand.nextInt(1, 7);
             int r = rand.nextInt(4);
             int c = rand.nextInt(5);
             while (builder.boardConfig.get(r * 5 + c) != null) {
@@ -85,33 +91,36 @@ public class MiniBoard {
                 if (x == 1) {
                     builder.setPiece(new Beast(r, c, 0));
                 } else if (x == 2) {
-                    int tmp = rand.nextInt(3);
-                    if(tmp == 0) builder.setPiece(new Spider(r, c, 0));
-                    else if(tmp == 1) builder.setPiece(new Swordman(r, c, false, false, 0));
-                    else if(tmp == 2) builder.setPiece(new Archer(r, c, false, false, 0));
-                }
-                else if (x == 3) {
+                    builder.setPiece(new Spider(r, c, 0));
+                } else if (x == 3) {
                     int tmp = rand.nextInt(2);
-                    if(tmp == 0) builder.setPiece(new Swordman(r, c, true, true, 0));
-                    else if(tmp == 1) builder.setPiece(new Archer(r, c, true, true, 0));
-                }
-                else if (x == 4){
+                    if (tmp == 0)
+                        builder.setPiece(new Swordman(r, c, false, false, 0));
+                    else if (tmp == 1)
+                        builder.setPiece(new Archer(r, c, false, false, 0));
+                } else if (x == 4) {
+                    int tmp = rand.nextInt(2);
+                    if (tmp == 0)
+                        builder.setPiece(new Swordman(r, c, true, true, 0));
+                    else if (tmp == 1)
+                        builder.setPiece(new Archer(r, c, true, true, 0));
+                } else if (x == 5) {
                     builder.setPiece(new Shaman(r, c, false, false, 0));
-                }
-                else if (x == 5){
+                } else if (x == 6) {
                     builder.setPiece(new Shaman(r, c, true, true, 0));
                 }
             }
         }
     }
 
-    private static boolean existedCor(final List<EnemyPiece> list, final int r, final int c) {
-        for (EnemyPiece enemyPiece : list) {
-            if (r == enemyPiece.getRow() && c == enemyPiece.getCol())
-                return true;
-        }
-        return false;
-    }
+    // private static boolean existedCor(final List<EnemyPiece> list, final int r,
+    // final int c) {
+    // for (EnemyPiece enemyPiece : list) {
+    // if (r == enemyPiece.getRow() && c == enemyPiece.getCol())
+    // return true;
+    // }
+    // return false;
+    // }
 
     public EnemyPiece notMoved(final int turn) {
         for (EnemyPiece enemyPiece : this.enemyPieces) {
@@ -150,13 +159,19 @@ public class MiniBoard {
 
     public static class Builder {
         Map<Integer, MiniPiece> boardConfig;
+        Map<Integer, Boolean> blightMap;
 
         public Builder() {
             this.boardConfig = new HashMap<>();
         }
 
+        public Builder setBlight(final int cor) {
+            this.blightMap.put(cor, true);
+            return this;
+        }
+
         public Builder setPiece(final MiniPiece piece) {
-            this.boardConfig.put(0, piece);
+            this.boardConfig.put(piece.getCorID(), piece);
             return this;
         }
 

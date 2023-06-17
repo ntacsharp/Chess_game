@@ -27,18 +27,28 @@ public abstract class Card {
         return cardID;
     }
 
-    public Power getPowerByID(int id){
+    public Power getPowerByID(int id) {
         for (Power power : Power.values()) {
-            if(power.getID() == id) return power;
+            if (power.getID() == id)
+                return power;
         }
         return null;
     }
 
-    public boolean getHasPower(int id){
+    public boolean getHasPower(int id) {
         return this.hasPower.get(id);
     }
 
-    public void setHasPower(int id, boolean newVal){
+    public boolean isFullPower() {
+        for(int i = 0; i < 4; i++){
+            if(!this.hasPower.get(i)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void setHasPower(int id, boolean newVal) {
         this.hasPower.set(id, newVal);
     }
 
@@ -47,17 +57,18 @@ public abstract class Card {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         String res = this.cardType.toString();
-        for(int i = 0; i < 4; i++){
-            if(this.getHasPower(i)) res += ("_" + this.getPowerByID(i).toString());
+        for (int i = 0; i < 4; i++) {
+            if (this.getHasPower(i))
+                res += ("_" + this.getPowerByID(i).toString());
         }
         return res;
     }
 
     public abstract List<MiniMove> legalMoves(final MiniBoard board, final PlayerPiece piece);
 
-    public enum CardType{
+    public enum CardType {
         BISHOP("B"),
         KING("K"),
         KNIGHT("N"),
@@ -67,7 +78,7 @@ public abstract class Card {
 
         private String cardName;
 
-        CardType(final String cardName){
+        CardType(final String cardName) {
             this.cardName = cardName;
         }
 
@@ -77,7 +88,7 @@ public abstract class Card {
         }
     }
 
-    public enum Power{
+    public enum Power {
         CROSS(0, "+"),
         DIAGONAL(1, "x"),
         SHIELD(2, "s"),
@@ -86,17 +97,17 @@ public abstract class Card {
         private int powerID;
         private String powerName;
 
-        Power(int powerID, String powerName){
+        Power(int powerID, String powerName) {
             this.powerID = powerID;
             this.powerName = powerName;
         }
 
-        public int getID(){
+        public int getID() {
             return this.powerID;
         }
 
         @Override
-        public String toString(){
+        public String toString() {
             return this.powerName;
         }
     }

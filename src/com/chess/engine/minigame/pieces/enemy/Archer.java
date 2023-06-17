@@ -15,7 +15,7 @@ public class Archer extends EnemyPiece {
             { 1, -2 }, { 1, 2 }, { 2, -2 }, { 2, -1 }, { 2, 0 }, { 2, 1 }, { 2, 2 }
     };
 
-    public Archer(int row, int col, boolean nimble, boolean isCurrentlyNimble, int turn) {
+    public Archer(final int row,final int col,final boolean nimble,final boolean isCurrentlyNimble,final int turn) {
         super(row, col, PieceType.ARCHER, nimble, isCurrentlyNimble, turn);
     }
 

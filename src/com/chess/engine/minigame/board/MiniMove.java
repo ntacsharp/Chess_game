@@ -1,8 +1,13 @@
 package com.chess.engine.minigame.board;
 
+import java.util.Random;
+
 import com.chess.engine.minigame.board.MiniBoard.Builder;
 import com.chess.engine.minigame.pieces.MiniPiece;
+import com.chess.engine.minigame.pieces.enemy.Beast;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
+import com.chess.engine.minigame.pieces.enemy.Infected;
+import com.chess.engine.minigame.pieces.enemy.Spider;
 import com.chess.engine.minigame.pieces.player.PlayerPiece;
 
 public abstract class MiniMove {
@@ -54,6 +59,12 @@ public abstract class MiniMove {
     public MiniBoard execute() {
 
         final Builder builder = new Builder();
+        for (int i = 0; i < MiniBoardUtils.NUM_TILE_PER_COL; i++) {
+            for (int j = 0; j < MiniBoardUtils.NUM_TILE_PER_ROW; j++) {
+                if (this.board.getTile(i, j).isBlighted())
+                    builder.setBlight(i * MiniBoardUtils.NUM_TILE_PER_ROW + j);
+            }
+        }
 
         if (this.movePiece instanceof PlayerPiece) {
             for (MiniPiece piece : this.board.getEnemyPieces()) {
@@ -103,6 +114,70 @@ public abstract class MiniMove {
         public boolean isAttackingMove() {
             return true;
         }
+
+        @Override
+        public MiniBoard execute() {
+            final Builder builder = new Builder();
+            for (int i = 0; i < MiniBoardUtils.NUM_TILE_PER_COL; i++) {
+                for (int j = 0; j < MiniBoardUtils.NUM_TILE_PER_ROW; j++) {
+                    if (this.board.getTile(i, j).isBlighted())
+                        builder.setBlight(i * MiniBoardUtils.NUM_TILE_PER_ROW + j);
+                }
+            }
+            for (int i = 0; i < MiniBoardUtils.NUM_TILE_PER_COL; i++) {
+                for (int j = 0; j < MiniBoardUtils.NUM_TILE_PER_ROW; j++) {
+                    if (this.board.getTile(i, j).isBlighted())
+                        builder.setBlight(i * MiniBoardUtils.NUM_TILE_PER_ROW + j);
+                }
+            }
+
+            if (attackedPiece.isCurrentlyNimble()) {
+                MiniBoard newBoard = attackedPiece.triggerNimble(this.board);
+                for (MiniPiece piece : newBoard.getEnemyPieces()) {
+                    builder.setPiece(piece);
+                }
+                builder.setPiece(this.movePiece.movePiece(this));
+            } else if (attackedPiece instanceof Beast) {
+                Random rand = new Random();
+                int r = rand.nextInt(5);
+                int c = rand.nextInt(5);
+                while ((r == this.destinationRow && c == this.destinationCol)
+                        || (this.board.getTile(r, c).isOccupied())) {
+                    r = rand.nextInt(5);
+                    c = rand.nextInt(5);
+                }
+                builder.setPiece(new Infected(r, c, attackedPiece.getTurn()));
+                for (MiniPiece piece : this.board.getEnemyPieces()) {
+                    if (!attackedPiece.equals(piece))
+                        builder.setPiece(piece);
+                }
+                builder.setPiece(this.movePiece.movePiece(this));
+            } else if (attackedPiece instanceof Spider) {
+                Spider spider = (Spider) attackedPiece;
+                spider.triggerEffect(builder);
+                for (MiniPiece piece : this.board.getEnemyPieces()) {
+                    if (!attackedPiece.equals(piece))
+                        builder.setPiece(piece);
+                }
+                builder.setPiece(this.movePiece.movePiece(this));
+            } else if (attackedPiece instanceof Infected) {
+                Infected infected = (Infected) attackedPiece;
+                infected.triggerEffect(builder);
+                for (MiniPiece piece : this.board.getEnemyPieces()) {
+                    if (!attackedPiece.equals(piece))
+                        builder.setPiece(piece);
+                }
+                builder.setPiece(this.movePiece.movePiece(this));
+            } else {
+                for (MiniPiece piece : this.board.getEnemyPieces()) {
+                    if (!attackedPiece.equals(piece))
+                        builder.setPiece(piece);
+                }
+                builder.setPiece(this.movePiece.movePiece(this));
+            }
+
+            return builder.build();
+        }
     }
 
     public static class NimbleMove extends NeutralMove {
@@ -119,14 +194,19 @@ public abstract class MiniMove {
         public MiniBoard execute() {
 
             final Builder builder = new Builder();
-
+            for (int i = 0; i < MiniBoardUtils.NUM_TILE_PER_COL; i++) {
+                for (int j = 0; j < MiniBoardUtils.NUM_TILE_PER_ROW; j++) {
+                    if (this.board.getTile(i, j).isBlighted())
+                        builder.setBlight(i * MiniBoardUtils.NUM_TILE_PER_ROW + j);
+                }
+            }
             builder.setPiece(this.board.getPlayerPiece());
             for (MiniPiece piece : this.board.getEnemyPieces()) {
                 if (!this.movePiece.equals(piece)) {
                     builder.setPiece(piece);
                 }
             }
-            EnemyPiece piece = (EnemyPiece)this.movePiece;
+            EnemyPiece piece = (EnemyPiece) this.movePiece;
             builder.setPiece(piece.nimbledPiece(this));
 
             return builder.build();

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.chess.engine.minigame.board.MiniBoard;
+import com.chess.engine.minigame.board.MiniBoard.Builder;
 import com.chess.engine.minigame.board.MiniBoardUtils;
 import com.chess.engine.minigame.board.MiniMove;
 import com.chess.engine.minigame.board.MiniMove.NeutralMove;
@@ -12,6 +13,10 @@ import com.chess.engine.minigame.board.MiniMove.NeutralMove;
 public class Infected extends EnemyPiece {
     public Infected(final int row, final int col, final int turn) {
         super(row, col, PieceType.INFECTED, false, false, turn);
+    }
+
+    public void triggerEffect(final Builder builder){
+        builder.setBlight(this.row * MiniBoardUtils.NUM_TILE_PER_ROW + this.col);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.chess.engine.minigame.cards;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import com.chess.engine.minigame.pieces.player.PlayerPiece;
 
@@ -36,6 +37,11 @@ public class Deck {
         }
     }
 
+    public void returnHand(){
+        this.currentDeck.addAll(this.hand);
+        this.hand.clear();
+    }
+
     public void draw() {
         Collections.shuffle(this.currentDeck);
         this.hand.add(this.currentDeck.get(0));
@@ -53,6 +59,26 @@ public class Deck {
     public void handToString(){
         for (Card card : hand) {
             System.out.println(card.toString());
+        }
+    }
+
+    public void generateShoppingRound(){
+        Random rand = new Random();
+        List<Card> shoppingList = new ArrayList<Card>();
+        List<Integer> powerList = new ArrayList<Integer>();
+        for(int i = 0; i < 5; i++){
+            int tmp = rand.nextInt(totalDeck.size());
+            Card card = totalDeck.get(tmp);
+            while(shoppingList.contains(card) || card.isFullPower()){
+                tmp = rand.nextInt(totalDeck.size());
+                card = totalDeck.get(tmp);
+            }
+            shoppingList.add(card);
+            tmp = rand.nextInt(4);
+            while(card.getHasPower(tmp)){
+                tmp = rand.nextInt(4);
+            }
+            powerList.add(tmp);
         }
     }
 }

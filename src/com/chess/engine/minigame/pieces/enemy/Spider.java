@@ -7,6 +7,7 @@ import java.util.Random;
 import com.chess.engine.minigame.board.MiniBoard;
 import com.chess.engine.minigame.board.MiniBoardUtils;
 import com.chess.engine.minigame.board.MiniMove;
+import com.chess.engine.minigame.board.MiniBoard.Builder;
 import com.chess.engine.minigame.board.MiniMove.NeutralMove;
 
 public class Spider extends EnemyPiece {
@@ -16,6 +17,17 @@ public class Spider extends EnemyPiece {
 
     public Spider(final int row, final int col, final int turn) {
         super(row, col, PieceType.SPIDER, false, false, turn);
+    }
+
+    public void triggerEffect(final Builder builder){
+        builder.setBlight(this.row * MiniBoardUtils.NUM_TILE_PER_ROW + this.col);
+        for (int[] move : this.MOVE_SET) {
+            int r = this.row + move[0];
+            int c = this.col + move[1];
+            if (MiniBoardUtils.isCorValid(r, c)){
+                builder.setBlight(r * MiniBoardUtils.NUM_TILE_PER_ROW + c);
+            }
+        }
     }
 
     @Override

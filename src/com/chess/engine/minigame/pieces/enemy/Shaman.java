@@ -18,7 +18,7 @@ public class Shaman extends EnemyPiece {
             { 2, 2 }
     };
 
-    public Shaman(int row, int col, boolean nimble, boolean isCurrentlyNimble, int turn) {
+    public Shaman(final int row,final int col,final boolean nimble,final boolean isCurrentlyNimble,final int turn) {
         super(row, col, PieceType.SHAMAN, nimble, isCurrentlyNimble, turn);
     }
 
@@ -62,15 +62,19 @@ public class Shaman extends EnemyPiece {
     }
 
     @Override
-    public Shaman movePiece(MiniMove move) {
+    public Shaman movePiece(final MiniMove move) {
         return new Shaman(move.getDestinationRow(), move.getDestinationCol(), this.isNimble(), this.isNimble(),
                 this.getTurn() + 1);
     }
 
     @Override
-    public Shaman nimbledPiece(MiniMove move) {
+    public Shaman nimbledPiece(final MiniMove move) {
         return new Shaman(move.getDestinationRow(), move.getDestinationCol(), this.isNimble(), false,
                 this.getTurn());
     }
 
+    public Shaman triggerImmune(final MiniBoard board){
+        if(board.getEnemyPieces().isEmpty()) this.immune = false;
+        return this;
+    }
 }
