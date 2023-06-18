@@ -62,6 +62,22 @@ public class Shaman extends EnemyPiece {
     }
 
     @Override
+    public void triggerImmune(final MiniBoard board){
+        if(board.getEnemyPieces().size() <= 1) this.immune = false;
+        else this.immune = true;
+    }
+
+    @Override
+    public int calculateDmg(final MiniBoard board){
+        for (int[] range : this.RANGE) {
+            int r = this.row + range[0];
+            int c = this.col + range[1];
+            if(board.getPlayerPiece().getRow() == r && board.getPlayerPiece().getCol() == c) return 1;
+        }
+        return 0;
+    }
+
+    @Override
     public Shaman movePiece(final MiniMove move) {
         return new Shaman(move.getDestinationRow(), move.getDestinationCol(), this.isNimble(), this.isNimble(),
                 this.getTurn() + 1);
@@ -73,8 +89,5 @@ public class Shaman extends EnemyPiece {
                 this.getTurn());
     }
 
-    public Shaman triggerImmune(final MiniBoard board){
-        if(board.getEnemyPieces().isEmpty()) this.immune = false;
-        return this;
-    }
+
 }

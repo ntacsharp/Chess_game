@@ -41,6 +41,16 @@ public class Infected extends EnemyPiece {
     }
 
     @Override
+    public void triggerImmune(final MiniBoard board){
+        this.immune = false;
+    }
+
+    @Override
+    public int calculateDmg(final MiniBoard board){
+        return 0;
+    }
+
+    @Override
     public Infected movePiece(final MiniMove move) {
         return new Infected(move.getDestinationRow(), move.getDestinationCol(), this.getTurn() + 1);
     }

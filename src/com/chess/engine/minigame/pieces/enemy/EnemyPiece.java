@@ -101,6 +101,10 @@ public abstract class EnemyPiece extends MiniPiece {
 
     public abstract EnemyPiece nimbledPiece(MiniMove move);
 
+    public abstract void triggerImmune(final MiniBoard board);
+
+    public abstract int calculateDmg(final MiniBoard board);
+
     public enum PieceType {
         INFECTED("IF", 0),
         BEAST("BE", 1),

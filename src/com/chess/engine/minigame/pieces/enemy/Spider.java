@@ -70,6 +70,21 @@ public class Spider extends EnemyPiece {
     }
 
     @Override
+    public void triggerImmune(final MiniBoard board){
+        this.immune = false;
+    }
+
+    @Override
+    public int calculateDmg(final MiniBoard board){
+        for (int[] range : this.RANGE) {
+            int r = this.row + range[0];
+            int c = this.col + range[1];
+            if(board.getPlayerPiece().getRow() == r && board.getPlayerPiece().getCol() == c) return 1;
+        }
+        return 0;
+    }
+
+    @Override
     public Spider movePiece(final MiniMove move) {
         return new Spider(move.getDestinationRow(), move.getDestinationCol(), this.getTurn() + 1);
     }

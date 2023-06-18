@@ -37,10 +37,10 @@ public class Deck {
         }
     }
 
-    public void returnHand(){
-        this.currentDeck.addAll(this.hand);
-        this.hand.clear();
-    }
+    // public void returnHand(){
+    //     this.currentDeck.addAll(this.hand);
+    //     this.hand.clear();
+    // }
 
     public void draw() {
         Collections.shuffle(this.currentDeck);

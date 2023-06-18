@@ -20,7 +20,7 @@ public class Archer extends EnemyPiece {
     }
 
     @Override
-    public MiniBoard move(MiniBoard board) {
+    public MiniBoard move(final MiniBoard board) {
         Random rand = new Random();
         int r, c;
         List<int[]> possibleMove = new ArrayList<int[]>();
@@ -59,13 +59,31 @@ public class Archer extends EnemyPiece {
     }
 
     @Override
-    public Archer movePiece(MiniMove move) {
+    public void triggerImmune(final MiniBoard board){
+        int r = board.getPlayerPiece().getRow();
+        int c = board.getPlayerPiece().getCol();
+        if(Math.max(Math.abs(r - this.row), Math.abs(c - this.col)) == 1) this.immune = false;
+        else this.immune = true; 
+    }
+
+    @Override
+    public int calculateDmg(final MiniBoard board){
+        for (int[] range : this.RANGE) {
+            int r = this.row + range[0];
+            int c = this.col + range[1];
+            if(board.getPlayerPiece().getRow() == r && board.getPlayerPiece().getCol() == c) return 1;
+        }
+        return 0;
+    }
+
+    @Override
+    public Archer movePiece(final MiniMove move) {
         return new Archer(move.getDestinationRow(), move.getDestinationCol(), this.isNimble(), this.isNimble(),
                 this.getTurn() + 1);
     }
 
     @Override
-    public Archer nimbledPiece(MiniMove move) {
+    public Archer nimbledPiece(final MiniMove move) {
         return new Archer(move.getDestinationRow(), move.getDestinationCol(), this.isNimble(), false,
                 this.getTurn());
     }

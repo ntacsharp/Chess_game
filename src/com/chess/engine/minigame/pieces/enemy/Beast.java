@@ -58,6 +58,21 @@ public class Beast extends EnemyPiece{
     }
 
     @Override
+    public void triggerImmune(final MiniBoard board){
+        this.immune = false;
+    }
+
+    @Override
+    public int calculateDmg(final MiniBoard board){
+        for (int[] range : this.RANGE) {
+            int r = this.row + range[0];
+            int c = this.col + range[1];
+            if(board.getPlayerPiece().getRow() == r && board.getPlayerPiece().getCol() == c) return 1;
+        }
+        return 0;
+    }
+
+    @Override
     public Beast movePiece(MiniMove move) {
         return new Beast(move.getDestinationRow(), move.getDestinationCol(), this.getTurn() + 1);
     }

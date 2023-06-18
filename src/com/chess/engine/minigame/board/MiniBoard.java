@@ -28,10 +28,7 @@ public class MiniBoard {
         enemyPieces = findEnemyPiece(gameBoard);
         playerPiece = findPlayerPiece(gameBoard);
         for (EnemyPiece enemyPiece : enemyPieces) {
-            if(enemyPiece instanceof Shaman){
-                Shaman oldShaman = (Shaman)enemyPiece;
-                Shaman newShaman = oldShaman.triggerImmune(this);
-            }
+            enemyPiece.triggerImmune(this);
         }
     }
 
@@ -77,6 +74,7 @@ public class MiniBoard {
     }
 
     private static void generateFloor(final int floor, final Builder builder) {
+        int shCount = 0;
         int difficulty = 2 + 2 * floor;
         Random rand = new Random();
         while (difficulty > 0) {
@@ -90,24 +88,40 @@ public class MiniBoard {
             if (difficulty - x >= 0) {
                 if (x == 1) {
                     builder.setPiece(new Beast(r, c, 0));
+                    difficulty -= 1;
                 } else if (x == 2) {
                     builder.setPiece(new Spider(r, c, 0));
+                    difficulty -= 2;
                 } else if (x == 3) {
                     int tmp = rand.nextInt(2);
-                    if (tmp == 0)
+                    if (tmp == 0){
                         builder.setPiece(new Swordman(r, c, false, false, 0));
-                    else if (tmp == 1)
+                        difficulty -= 3;
+                    }
+                    else if (tmp == 1){
                         builder.setPiece(new Archer(r, c, false, false, 0));
+                        difficulty -= 3;
+                    }                        
                 } else if (x == 4) {
                     int tmp = rand.nextInt(2);
-                    if (tmp == 0)
+                    if (tmp == 0){
                         builder.setPiece(new Swordman(r, c, true, true, 0));
-                    else if (tmp == 1)
+                        difficulty -= 4;
+                    }
+                    else if (tmp == 1){
                         builder.setPiece(new Archer(r, c, true, true, 0));
+                        difficulty -= 4;
+                    }  
                 } else if (x == 5) {
-                    builder.setPiece(new Shaman(r, c, false, false, 0));
+                    if(shCount == 0){
+                        builder.setPiece(new Shaman(r, c, false, false, 0));
+                        difficulty -= 5;
+                    }
                 } else if (x == 6) {
-                    builder.setPiece(new Shaman(r, c, true, true, 0));
+                    if(shCount == 0){
+                        builder.setPiece(new Shaman(r, c, true, true, 0));
+                        difficulty -= 6;
+                    }
                 }
             }
         }
@@ -155,6 +169,15 @@ public class MiniBoard {
             }
         }
         return null;
+    }
+
+    public int calculateDamage(){
+        int res = 0;
+        for (EnemyPiece enemyPiece : enemyPieces) {
+            res += enemyPiece.calculateDmg(this);
+        }
+        if(this.getTile(this.getPlayerPiece().getRow(), this.getPlayerPiece().getCol()).isBlighted()) res++;
+        return res;
     }
 
     public static class Builder {

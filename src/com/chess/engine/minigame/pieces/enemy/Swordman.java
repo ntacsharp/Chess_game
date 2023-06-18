@@ -58,6 +58,24 @@ public class Swordman extends EnemyPiece {
     }
 
     @Override
+    public void triggerImmune(final MiniBoard board){
+        int r = board.getPlayerPiece().getRow();
+        int c = board.getPlayerPiece().getCol();
+        if(Math.abs(r - this.row) + Math.abs(c - this.col) == 1) this.immune = true;
+        else this.immune = false; 
+    }
+
+    @Override
+    public int calculateDmg(final MiniBoard board){
+        for (int[] range : this.RANGE) {
+            int r = this.row + range[0];
+            int c = this.col + range[1];
+            if(board.getPlayerPiece().getRow() == r && board.getPlayerPiece().getCol() == c) return 1;
+        }
+        return 0;
+    }
+
+    @Override
     public Swordman movePiece(MiniMove move) {
         return new Swordman(move.getDestinationRow(), move.getDestinationCol(), this.isNimble(), this.isNimble(),
                 this.getTurn() + 1);

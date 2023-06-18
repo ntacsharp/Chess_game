@@ -32,14 +32,24 @@ public class GameState {
         if(this.moveLeft == 0){
             enemyTurn();
         }
+        else playerTurn();
     }
 
     private void enemyTurn(){
+        if(this.turn > 1) this.currentHealth -= this.chessBoard.calculateDamage();
         while(this.chessBoard.notMoved(this.turn) != null){
             EnemyPiece enemyPiece = this.chessBoard.notMoved(this.turn);
             this.chessBoard = enemyPiece.move(this.chessBoard);
         }
         this.setMoveLeft(3);
+        this.checkTurn();
+    }
+
+    private void playerTurn(){
+        deck.fillHand(3);
+        while(this.moveLeft > 0){
+
+        }
     }
 
     public MiniBoard getChessBoard() {
@@ -77,6 +87,4 @@ public class GameState {
     public void setCurrentHealth(int currentHealth) {
         this.currentHealth = currentHealth;
     }
-
-    
 }
