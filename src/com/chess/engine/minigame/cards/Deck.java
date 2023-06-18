@@ -48,6 +48,10 @@ public class Deck {
         this.currentDeck.remove(0);
     }
 
+    public List<Card> getHand() {
+        return hand;
+    }
+
     public Card getCardInHand(final int id) {
         return this.hand.get(id);
     }

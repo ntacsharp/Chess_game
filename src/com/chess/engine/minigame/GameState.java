@@ -13,10 +13,12 @@ public class GameState {
     private int turn;
     private int maxHealth;
     private int currentHealth;
+    private int floor;
 
     public GameState(PieceType playerPieceType){
         this.chessBoard = MiniBoard.createStandardBoard(1, PieceType.BABARIAN);
         this.deck = new Deck(this.chessBoard.getPlayerPiece());
+        this.floor = 1;
         this.moveLeft = 0;
         this.turn = 1;
         this.maxHealth = 3;
@@ -28,7 +30,16 @@ public class GameState {
         this.moveLeft = moveLeft;
     }
 
+    private boolean isCleared(){
+        if(this.chessBoard.getEnemyPieces().isEmpty()) return true;
+        return false;
+    }
+
     private void checkTurn(){
+        if(this.isCleared()){
+            this.chessBoard = MiniBoard.createStandardBoard(++this.floor, PieceType.BABARIAN);
+            this.deck = new Deck(this.chessBoard.getPlayerPiece());
+        } 
         if(this.moveLeft == 0){
             enemyTurn();
         }
@@ -46,10 +57,10 @@ public class GameState {
     }
 
     private void playerTurn(){
-        deck.fillHand(3);
-        while(this.moveLeft > 0){
+        // deck.fillHand(3);
+        // while(this.moveLeft > 0){
 
-        }
+        // }
     }
 
     public MiniBoard getChessBoard() {

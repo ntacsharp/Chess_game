@@ -19,16 +19,18 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import com.chess.engine.minigame.board.MiniMove;
+import com.chess.engine.minigame.GameState;
 import com.chess.engine.minigame.board.MiniBoard;
 import com.chess.engine.minigame.cards.Card;
 import com.chess.engine.minigame.cards.Deck;
 import com.chess.engine.minigame.pieces.player.PlayerPiece.PieceType;
 
 public class MiniTable {
-    private MiniBoard chessBoard;
+    private final JFrame gameFrame;
+    private GameState gameState;
     private Card chosenCard;
     private BoardPanel boardPanel;
-    private Deck deck;
+    private HandPanel handPanel;
 
     // private static final Color lightTileColor = new Color(99, 105, 136);
     // private static final Color darkTileColor = new Color(56, 57, 97);
@@ -42,17 +44,42 @@ public class MiniTable {
     private static final String PIECE_ICON_PATH = "art/pieces/";
     private static final String POWER_ICON_PATH = "art/other/power/";
 
-    public MiniTable(final JFrame gameFrame) {
-        gameFrame.setTitle("Pawnbarian Mode");
-        gameFrame.setLayout(new BorderLayout());
+    public MiniTable() {
+        this.gameState = new GameState(PieceType.BABARIAN);
+        this.gameFrame = new JFrame();
+        this.gameFrame.setTitle("Pawnbarian Mode");
+        this.gameFrame.setLayout(new BorderLayout());
+        
+        
+    }
+
+    private void setUpShoppingRound(){
+        this.gameFrame.removeAll();
+
+    }
+
+    private void setUpGamingRound(){
+        this.gameFrame.removeAll();
         this.boardPanel = new BoardPanel();
-        gameFrame.add(this.boardPanel, BorderLayout.CENTER);
-        gameFrame.setVisible(true);
+        this.handPanel = new HandPanel();
+        this.gameFrame.add(this.boardPanel, BorderLayout.CENTER);
+        this.gameFrame.add(this.handPanel, BorderLayout.SOUTH);
+        this.gameFrame.setVisible(true);
     }
 
     private class HandPanel extends JPanel {
-        //final List<CardPanel> handCards;
+        final List<CardPanel> handCards;
 
+        HandPanel() {
+            super(new FlowLayout());
+            this.handCards = new ArrayList<CardPanel>();
+            for (int i = 0; i < gameState.getDeck().getHand().size(); i++) {
+                final CardPanel cardPanel = new CardPanel(this, gameState.getDeck().getHand().get(i));
+                this.handCards.add(cardPanel);
+                add(cardPanel);
+            }
+            validate();
+        }
     }
 
     private class CardPanel extends JPanel {
@@ -124,7 +151,7 @@ public class MiniTable {
             this.col = col;
             // setPreferredSize(TILE_PANEL_DIMENSION);
             colorTile();
-            placePieceIconOnTile(chessBoard);
+            placePieceIconOnTile(gameState.getChessBoard());
             validate();
         }
 
@@ -168,7 +195,7 @@ public class MiniTable {
         }
 
         private Collection<MiniMove> calculateLegalMoves(final MiniBoard board) {
-            return chosenCard.legalMoves(chessBoard, board.getPlayerPiece());
+            return chosenCard.legalMoves(gameState.getChessBoard(), board.getPlayerPiece());
         }
     }
 }
