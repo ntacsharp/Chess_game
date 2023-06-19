@@ -1,7 +1,6 @@
 package com.chess.engine.minigame.cards;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -43,9 +42,10 @@ public class Deck {
     // }
 
     public void draw() {
-        Collections.shuffle(this.currentDeck);
-        this.hand.add(this.currentDeck.get(0));
-        this.currentDeck.remove(0);
+        Random rand = new Random();
+        int tmp = rand.nextInt(this.currentDeck.size());
+        this.hand.add(this.currentDeck.get(tmp));
+        this.currentDeck.remove(tmp);
     }
 
     public List<Card> getHand() {

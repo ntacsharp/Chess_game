@@ -8,7 +8,7 @@ import com.chess.engine.minigame.board.MiniBoard;
 import com.chess.engine.minigame.board.MiniBoard.Builder;
 import com.chess.engine.minigame.board.MiniBoardUtils;
 import com.chess.engine.minigame.board.MiniMove;
-import com.chess.engine.minigame.board.MiniMove.NeutralMove;
+import com.chess.engine.minigame.board.MiniMove.EnemyMove;
 
 public class Infected extends EnemyPiece {
     public Infected(final int row, final int col, final int turn) {
@@ -36,7 +36,7 @@ public class Infected extends EnemyPiece {
         int tmp = rand.nextInt(possibleMove.size());
         r = this.row + possibleMove.get(tmp)[0];
         c = this.col + possibleMove.get(tmp)[1];
-        MiniMove move = new NeutralMove(board, this, r, c);
+        MiniMove move = new EnemyMove(board, this, r, c);
         return move.execute();
     }
 

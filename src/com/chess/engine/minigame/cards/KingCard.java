@@ -7,9 +7,7 @@ import com.chess.engine.minigame.board.MiniBoard;
 import com.chess.engine.minigame.board.MiniBoardUtils;
 import com.chess.engine.minigame.board.MiniMove;
 import com.chess.engine.minigame.board.MiniTile;
-import com.chess.engine.minigame.board.MiniMove.AttackingMove;
-import com.chess.engine.minigame.board.MiniMove.NeutralMove;
-import com.chess.engine.minigame.pieces.MiniPiece;
+import com.chess.engine.minigame.board.MiniMove.PlayerMove;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
 import com.chess.engine.minigame.pieces.player.PlayerPiece;
 
@@ -34,15 +32,20 @@ public class KingCard extends Card {
 
             if (MiniBoardUtils.isCorValid(r, c)) {
                 final MiniTile destinationTile = board.getTile(r, c);
-                if (!destinationTile.isOccupied()) {
-                    legalMovesList.add(new NeutralMove(board, playerPiece, r, c));
+                List<EnemyPiece> attackedPieces = new ArrayList<>();
+                if (destinationTile.isOccupied() && destinationTile.getPiece() instanceof PlayerPiece) {
+                    throw new RuntimeException("Buged :(");
                 } else {
-                    final MiniPiece pieceAtDestination = destinationTile.getPiece();
-
-                    if (pieceAtDestination instanceof EnemyPiece) {
-                        EnemyPiece enemyPiece = (EnemyPiece) pieceAtDestination;
-                        if (!enemyPiece.isImmune())
-                            legalMovesList.add(new AttackingMove(board, playerPiece, r, c, enemyPiece));
+                    if (destinationTile.isOccupied()) {
+                        final EnemyPiece enemyPiece = (EnemyPiece) destinationTile.getPiece();
+                        if (!enemyPiece.isImmune()) {
+                            attackedPieces.add(enemyPiece);
+                            attackedPieces.addAll(this.getAffectedPieces(board, r, c));
+                            legalMovesList.add(new PlayerMove(board, playerPiece, r, c, attackedPieces));
+                        }
+                    } else {
+                        attackedPieces.addAll(this.getAffectedPieces(board, r, c));
+                        legalMovesList.add(new PlayerMove(board, playerPiece, r, c, attackedPieces));
                     }
                 }
             }

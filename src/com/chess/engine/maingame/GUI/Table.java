@@ -57,6 +57,7 @@ public class Table {
         this.gameFrame.setTitle("Clasic chess game");
         this.gameFrame.setLayout(new BorderLayout());
         this.gameFrame.setJMenuBar(setUpMenuBar(this.gameFrame));
+        this.gameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.gameFrame.setSize(FRAME_DIMENSION);
         this.boardPanel = new BoardPanel();
         this.gameHistoryPanel = new GameHistoryPanel();
@@ -72,24 +73,8 @@ public class Table {
 
     private JMenuBar setUpMenuBar(final JFrame gameFrame) {
         final JMenuBar menubar = new JMenuBar();
-        menubar.add(createFileMenu());
         menubar.add(createViewMenu());
         return menubar;
-    }
-
-    private static JMenu createFileMenu() {
-        final JMenu fileMenu = new JMenu("File");
-
-        final JMenuItem exitMenuItem = new JMenuItem("Exit");
-        exitMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
-        fileMenu.add(exitMenuItem);
-
-        return fileMenu;
     }
 
     private JMenu createViewMenu() {

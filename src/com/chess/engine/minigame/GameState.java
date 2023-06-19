@@ -34,7 +34,6 @@ public class GameState {
         if(this.chessBoard.getEnemyPieces().isEmpty()) return true;
         return false;
     }
-
     private void checkTurn(){
         if(this.isCleared()){
             this.chessBoard = MiniBoard.createStandardBoard(++this.floor, PieceType.BABARIAN);
@@ -47,12 +46,15 @@ public class GameState {
     }
 
     private void enemyTurn(){
-        if(this.turn > 1) this.currentHealth -= this.chessBoard.calculateDamage();
+        if(this.turn > 1){
+            this.currentHealth -= this.chessBoard.calculateDamage();
+            if(this.currentHealth <= 0) return;
+        }
         while(this.chessBoard.notMoved(this.turn) != null){
             EnemyPiece enemyPiece = this.chessBoard.notMoved(this.turn);
             this.chessBoard = enemyPiece.move(this.chessBoard);
         }
-        this.setMoveLeft(3);
+        this.setMoveLeft(2);
         this.checkTurn();
     }
 

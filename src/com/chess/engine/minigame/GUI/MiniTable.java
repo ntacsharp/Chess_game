@@ -5,6 +5,10 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +20,12 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 
 import com.chess.engine.minigame.board.MiniMove;
 import com.chess.engine.minigame.GameState;
@@ -49,16 +58,15 @@ public class MiniTable {
         this.gameFrame = new JFrame();
         this.gameFrame.setTitle("Pawnbarian Mode");
         this.gameFrame.setLayout(new BorderLayout());
-        
-        
+        this.gameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
-    private void setUpShoppingRound(){
+    private void setUpShoppingRound() {
         this.gameFrame.removeAll();
 
     }
 
-    private void setUpGamingRound(){
+    private void setUpGamingRound() {
         this.gameFrame.removeAll();
         this.boardPanel = new BoardPanel();
         this.handPanel = new HandPanel();
@@ -80,6 +88,16 @@ public class MiniTable {
             }
             validate();
         }
+
+        public void drawHand(Deck deck) {
+            removeAll();
+            for (CardPanel cardPanel : handCards) {
+                cardPanel.drawCard(deck);
+                add(cardPanel);
+            }
+            validate();
+            repaint();
+        }
     }
 
     private class CardPanel extends JPanel {
@@ -90,6 +108,46 @@ public class MiniTable {
             this.card = card;
             setBackground(cardBackground);
             decorateCard();
+            addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (SwingUtilities.isLeftMouseButton(e)) {
+                        chosenCard = card;
+                    } else if (SwingUtilities.isRightMouseButton(e)) {
+                        chosenCard = null;
+                    }
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            handPanel.drawHand(gameState.getDeck());
+                        }
+                    });
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    // TODO Auto-generated method stub
+                    throw new UnsupportedOperationException("Unimplemented method 'mousePressed'");
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    // TODO Auto-generated method stub
+                    throw new UnsupportedOperationException("Unimplemented method 'mouseReleased'");
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    // TODO Auto-generated method stub
+                    throw new UnsupportedOperationException("Unimplemented method 'mouseEntered'");
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    // TODO Auto-generated method stub
+                    throw new UnsupportedOperationException("Unimplemented method 'mouseExited'");
+                }
+            });
         }
 
         private void decorateCard() {
@@ -111,6 +169,13 @@ public class MiniTable {
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
+        }
+
+        public void drawCard(Deck deck) {
+            setBackground(cardBackground);
+            decorateCard();
+            validate();
+            repaint();
         }
     }
 
@@ -183,9 +248,10 @@ public class MiniTable {
         }
 
         private void legalMovesHighlighter(final MiniBoard board) {
+            // To_do
             for (MiniMove move : calculateLegalMoves(board)) {
                 if (move.getDestinationRow() == this.row && move.getDestinationCol() == this.col) {
-                    if (move.isAttackingMove()) {
+                    if (move.isPlayerMove()) {
                         setBackground(redHighlight);
                     } else {
                         setBackground(((this.row + this.col) % 2 == 0) ? lightHighlight : darkHighlight);
