@@ -5,11 +5,12 @@ import java.util.List;
 import java.util.Random;
 
 import com.chess.engine.minigame.board.MiniBoard.Builder;
+import com.chess.engine.minigame.cards.Card;
 import com.chess.engine.minigame.pieces.MiniPiece;
 import com.chess.engine.minigame.pieces.enemy.Beast;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
 import com.chess.engine.minigame.pieces.enemy.Infected;
-import com.chess.engine.minigame.pieces.enemy.Spider;
+import com.chess.engine.minigame.pieces.enemy.Zombie;
 
 public abstract class MiniMove {
     protected final MiniBoard board;
@@ -51,6 +52,10 @@ public abstract class MiniMove {
 
     public int getDestinationCor() {
         return this.destinationRow * MiniBoardUtils.NUM_TILE_PER_ROW + this.destinationCol;
+    }
+
+    public int getCurrentCor() {
+        return this.movePiece.getCorID();
     }
 
     public boolean isPlayerMove() {
@@ -140,8 +145,8 @@ public abstract class MiniMove {
                             builder.setPiece(piece);
                     }
                     builder.setPiece(this.movePiece.movePiece(this));
-                } else if (attackedPiece instanceof Spider) {
-                    Spider spider = (Spider) attackedPiece;
+                } else if (attackedPiece instanceof Zombie) {
+                    Zombie spider = (Zombie) attackedPiece;
                     spider.triggerEffect(builder);
                     for (MiniPiece piece : this.board.getEnemyPieces()) {
                         if (!attackedPiece.equals(piece))
@@ -202,19 +207,19 @@ public abstract class MiniMove {
         }
     }
 
-    // public static class MoveFactory {
-    // private MoveFactory() {
-    // }
+    public static class MoveFactory {
+        private MoveFactory() {
+        }
 
-    // public static MiniMove findMove(final MiniBoard board,
-    // final int currentCor,
-    // final int destinationCor) {
-    // for (MiniMove move : board.getCurrentPlayer().getLegalMoves()) {
-    // if (move.getCurrentCor() == currentCor && move.getDestinationCor() ==
-    // destinationCor)
-    // return move;
-    // }
-    // return null;
-    // }
-    // }
+        public static MiniMove findMove(final MiniBoard board,
+                final Card chosenCard,
+                final int currentCor,
+                final int destinationCor) {
+            for (MiniMove move : chosenCard.legalMoves(board, board.getPlayerPiece())) {
+                if (move.getCurrentCor() == currentCor && move.getDestinationCor() == destinationCor)
+                    return move;
+            }
+            return null;
+        }
+    }
 }

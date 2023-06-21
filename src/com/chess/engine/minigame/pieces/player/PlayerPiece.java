@@ -17,10 +17,25 @@ public abstract class PlayerPiece extends MiniPiece{
         return pieceType;
     }
 
+    @Override
+    public String toString(){
+        return this.getPieceType().toString();
+    }
+
     public abstract Collection<Card> getDefaultDeck();
 
     public enum PieceType {
-        BABARIAN,
-        TEMPLAR,
+        BABARIAN ("BA"),
+        TEMPLAR ("TE");
+
+        private String pieceName;
+
+        PieceType(String pieceName){
+            this.pieceName = pieceName;
+        }
+
+        public String toString() {
+            return pieceName;
+        }
     }
 }

@@ -15,7 +15,7 @@ public class Infected extends EnemyPiece {
         super(row, col, PieceType.INFECTED, false, false, turn);
     }
 
-    public void triggerEffect(final Builder builder){
+    public void triggerEffect(final Builder builder) {
         builder.setBlight(this.row * MiniBoardUtils.NUM_TILE_PER_ROW + this.col);
     }
 
@@ -24,16 +24,23 @@ public class Infected extends EnemyPiece {
         Random rand = new Random();
         int r, c;
         List<int[]> possibleMove = new ArrayList<int[]>();
+        int tmp = Integer.MAX_VALUE;
         for (int[] move : this.MOVE_SET) {
             r = this.row + move[0];
             c = this.col + move[1];
             if (MiniBoardUtils.isCorValid(r, c)) {
                 if (!board.getTile(r, c).isOccupied()) {
-                    possibleMove.add(move);
+                    if (board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c < tmp) {
+                        possibleMove.clear();
+                        possibleMove.add(move);
+                        tmp = board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c;
+                    } else if (board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c == tmp) {
+                        possibleMove.add(move);
+                    }
                 }
             }
         }
-        int tmp = rand.nextInt(possibleMove.size());
+        tmp = rand.nextInt(possibleMove.size());
         r = this.row + possibleMove.get(tmp)[0];
         c = this.col + possibleMove.get(tmp)[1];
         MiniMove move = new EnemyMove(board, this, r, c);
@@ -41,12 +48,12 @@ public class Infected extends EnemyPiece {
     }
 
     @Override
-    public void triggerImmune(final MiniBoard board){
+    public void triggerImmune(final MiniBoard board) {
         this.immune = false;
     }
 
     @Override
-    public int calculateDmg(final MiniBoard board){
+    public int calculateDmg(final MiniBoard board) {
         return 0;
     }
 
@@ -58,5 +65,10 @@ public class Infected extends EnemyPiece {
     @Override
     public Infected nimbledPiece(final MiniMove move) {
         return null;
+    }
+
+    @Override
+    public boolean canAttactk(final int r, final int c) {
+        return false;
     }
 }

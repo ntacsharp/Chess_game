@@ -76,7 +76,8 @@ public abstract class MiniTile {
 
         @Override
         public String toString() {
-            return "";
+            MiniPiece piece = getPiece();
+            return piece.toString();
         }
 
         public boolean isOccupied() {

@@ -211,7 +211,6 @@ public class Table {
             addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    System.out.println(row + " " + col);
                     if (BoardUtils.isEndGame(chessBoard))
                         return;
                     if (SwingUtilities.isRightMouseButton(e)) {

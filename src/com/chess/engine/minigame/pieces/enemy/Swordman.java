@@ -39,18 +39,26 @@ public class Swordman extends EnemyPiece {
                 }
             }
         }
+        int tmp = Integer.MAX_VALUE;
         if (possibleMove.isEmpty()) {
             for (int[] move : this.MOVE_SET) {
                 r = this.row + move[0];
                 c = this.col + move[1];
                 if (MiniBoardUtils.isCorValid(r, c)) {
                     if (!board.getTile(r, c).isOccupied()) {
-                        possibleMove.add(move);
+                        if(board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c < tmp){
+                            possibleMove.clear();
+                            possibleMove.add(move);
+                            tmp = board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c;
+                        }
+                        else if(board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c == tmp){
+                            possibleMove.add(move);
+                        }
                     }
                 }
             }
         }
-        int tmp = rand.nextInt(possibleMove.size());
+        tmp = rand.nextInt(possibleMove.size());
         r = this.row + possibleMove.get(tmp)[0];
         c = this.col + possibleMove.get(tmp)[1];
         MiniMove move = new EnemyMove(board, this, r, c);
@@ -87,4 +95,11 @@ public class Swordman extends EnemyPiece {
                 this.getTurn());
     }
 
+    @Override
+    public boolean canAttactk(final int r, final int c){
+        for (int[] range : this.RANGE) {
+            if(this.row + range[0] == r && this.col + range[1] == c) return true;
+        }
+        return false;
+    }
 }

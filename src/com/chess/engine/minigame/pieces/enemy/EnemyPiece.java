@@ -35,7 +35,7 @@ public abstract class EnemyPiece extends MiniPiece {
         return this.pieceType.getPieceValue();
     }
 
-    public boolean isCurrentlyNimble(){
+    public boolean isCurrentlyNimble() {
         return this.isCurrentlyNimble;
     }
 
@@ -94,6 +94,9 @@ public abstract class EnemyPiece extends MiniPiece {
             return false;
         return true;
     }
+
+    public abstract boolean canAttactk(final int r, final int c);
+
     public abstract MiniBoard move(final MiniBoard board);
 
     @Override
@@ -105,14 +108,18 @@ public abstract class EnemyPiece extends MiniPiece {
 
     public abstract int calculateDmg(final MiniBoard board);
 
+    @Override
+    public String toString() {
+        return this.getPieceType().toString();
+    }
+
     public enum PieceType {
         INFECTED("IF", 0),
         BEAST("BE", 1),
-        SPIDER("SP", 2),
+        ZOMBIE("ZM", 2),
         SWORDMAN("SW", 3),
         ARCHER("AR", 3),
         SHAMAN("SH", 5);
-
 
         private String pieceName;
         private int pieceValue;

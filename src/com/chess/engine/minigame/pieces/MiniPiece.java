@@ -38,5 +38,8 @@ public abstract class MiniPiece {
         return true;
     }
 
+    @Override
+    public abstract String toString();
+
     public abstract MiniPiece movePiece(MiniMove move);
 }

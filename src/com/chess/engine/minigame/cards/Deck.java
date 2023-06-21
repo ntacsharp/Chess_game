@@ -16,6 +16,8 @@ public class Deck {
         this.currentDeck = new ArrayList<Card>();
         this.hand = new ArrayList<Card>();
         this.totalDeck.addAll(playerPiece.getDefaultDeck());
+        refillCurrentDeck();
+        fillHand(3);
     }
 
     public void refillCurrentDeck() {

@@ -12,7 +12,7 @@ import com.chess.engine.minigame.pieces.enemy.Archer;
 import com.chess.engine.minigame.pieces.enemy.Beast;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
 import com.chess.engine.minigame.pieces.enemy.Shaman;
-import com.chess.engine.minigame.pieces.enemy.Spider;
+import com.chess.engine.minigame.pieces.enemy.Zombie;
 import com.chess.engine.minigame.pieces.enemy.Swordman;
 import com.chess.engine.minigame.pieces.player.Babarian;
 import com.chess.engine.minigame.pieces.player.PlayerPiece;
@@ -48,6 +48,19 @@ public class MiniBoard {
         return playerPiece;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        for (int r = 0; r < 5; r++) {
+            for (int c = 0; c < 5; c++) {
+                final String tileString = this.gameBoard.get(r * 5 + c).toString();
+                builder.append(String.format("%3s", tileString));
+            }
+            builder.append("\n");
+        }
+        return builder.toString();
+    }
+
     private static List<MiniTile> createGameBoard(final Builder builder) {
         List<MiniTile> tiles = new ArrayList<>();
         for (int r = 0; r < 5; r++) {
@@ -78,7 +91,7 @@ public class MiniBoard {
         int difficulty = 2 + 2 * floor;
         Random rand = new Random();
         while (difficulty > 0) {
-            int x = rand.nextInt(1, 7);
+            int x = rand.nextInt(1, Math.min(7, difficulty + 1));
             int r = rand.nextInt(4);
             int c = rand.nextInt(5);
             while (builder.boardConfig.get(r * 5 + c) != null) {
@@ -90,51 +103,42 @@ public class MiniBoard {
                     builder.setPiece(new Beast(r, c, 0));
                     difficulty -= 1;
                 } else if (x == 2) {
-                    builder.setPiece(new Spider(r, c, 0));
+                    builder.setPiece(new Zombie(r, c, 0));
                     difficulty -= 2;
                 } else if (x == 3) {
                     int tmp = rand.nextInt(2);
-                    if (tmp == 0){
+                    if (tmp == 0) {
                         builder.setPiece(new Swordman(r, c, false, false, 0));
                         difficulty -= 3;
-                    }
-                    else if (tmp == 1){
+                    } else if (tmp == 1) {
                         builder.setPiece(new Archer(r, c, false, false, 0));
                         difficulty -= 3;
-                    }                        
+                    }
                 } else if (x == 4) {
                     int tmp = rand.nextInt(2);
-                    if (tmp == 0){
+                    if (tmp == 0) {
                         builder.setPiece(new Swordman(r, c, true, true, 0));
                         difficulty -= 4;
-                    }
-                    else if (tmp == 1){
+                    } else if (tmp == 1) {
                         builder.setPiece(new Archer(r, c, true, true, 0));
                         difficulty -= 4;
-                    }  
+                    }
                 } else if (x == 5) {
-                    if(shCount == 0){
+                    if (shCount == 0) {
                         builder.setPiece(new Shaman(r, c, false, false, 0));
                         difficulty -= 5;
+                        shCount++;
                     }
                 } else if (x == 6) {
-                    if(shCount == 0){
+                    if (shCount == 0) {
                         builder.setPiece(new Shaman(r, c, true, true, 0));
                         difficulty -= 6;
+                        shCount++;
                     }
                 }
             }
         }
     }
-
-    // private static boolean existedCor(final List<EnemyPiece> list, final int r,
-    // final int c) {
-    // for (EnemyPiece enemyPiece : list) {
-    // if (r == enemyPiece.getRow() && c == enemyPiece.getCol())
-    // return true;
-    // }
-    // return false;
-    // }
 
     public EnemyPiece notMoved(final int turn) {
         for (EnemyPiece enemyPiece : this.enemyPieces) {
@@ -171,12 +175,13 @@ public class MiniBoard {
         return null;
     }
 
-    public int calculateDamage(){
+    public int calculateDamage() {
         int res = 0;
         for (EnemyPiece enemyPiece : enemyPieces) {
             res += enemyPiece.calculateDmg(this);
         }
-        if(this.getTile(this.getPlayerPiece().getRow(), this.getPlayerPiece().getCol()).isBlighted()) res++;
+        if (this.getTile(this.getPlayerPiece().getRow(), this.getPlayerPiece().getCol()).isBlighted())
+            res++;
         return res;
     }
 
@@ -186,6 +191,7 @@ public class MiniBoard {
 
         public Builder() {
             this.boardConfig = new HashMap<>();
+            this.blightMap = new HashMap<>();
         }
 
         public Builder setBlight(final int cor) {

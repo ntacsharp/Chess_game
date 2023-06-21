@@ -13,9 +13,10 @@ public class GameState {
     private int turn;
     private int maxHealth;
     private int currentHealth;
+    private int shield;
     private int floor;
 
-    public GameState(PieceType playerPieceType){
+    public GameState(PieceType playerPieceType) {
         this.chessBoard = MiniBoard.createStandardBoard(1, PieceType.BABARIAN);
         this.deck = new Deck(this.chessBoard.getPlayerPiece());
         this.floor = 1;
@@ -23,34 +24,54 @@ public class GameState {
         this.turn = 1;
         this.maxHealth = 3;
         this.currentHealth = 3;
-        checkTurn();
+        this.shield = 0;
+        //checkTurn();
     }
 
     public void setMoveLeft(int moveLeft) {
         this.moveLeft = moveLeft;
     }
 
-    private boolean isCleared(){
-        if(this.chessBoard.getEnemyPieces().isEmpty()) return true;
-        return false;
-    }
-    private void checkTurn(){
-        if(this.isCleared()){
-            this.chessBoard = MiniBoard.createStandardBoard(++this.floor, PieceType.BABARIAN);
-            this.deck = new Deck(this.chessBoard.getPlayerPiece());
-        } 
-        if(this.moveLeft == 0){
-            enemyTurn();
-        }
-        else playerTurn();
+    public void setShield(int shield) {
+        this.shield = shield;
     }
 
-    private void enemyTurn(){
-        if(this.turn > 1){
-            this.currentHealth -= this.chessBoard.calculateDamage();
-            if(this.currentHealth <= 0) return;
+    public int getShield() {
+        return shield;
+    }
+
+    private boolean isCleared() {
+        if (this.chessBoard.getEnemyPieces().isEmpty())
+            return true;
+        return false;
+    }
+
+    private void checkTurn() {
+        if (this.isCleared()) {
+            this.chessBoard = MiniBoard.createStandardBoard(++this.floor, PieceType.BABARIAN);
+            this.deck = new Deck(this.chessBoard.getPlayerPiece());
         }
-        while(this.chessBoard.notMoved(this.turn) != null){
+        if (this.moveLeft == 0) {
+            enemyTurn();
+        } else
+            playerTurn();
+    }
+
+    private void enemyTurn() {
+        if (this.turn > 1) {
+            this.shield -= this.chessBoard.calculateDamage();
+            if (this.shield < 0)
+                this.currentHealth += this.shield;
+            this.shield = 0;
+            if (this.currentHealth <= 0)
+                return;
+        }
+        while (this.chessBoard.notMoved(this.turn) != null) {
+            // try {
+            //     Thread.sleep(1000);
+            // } catch (InterruptedException e) {
+            //     e.printStackTrace();
+            // }
             EnemyPiece enemyPiece = this.chessBoard.notMoved(this.turn);
             this.chessBoard = enemyPiece.move(this.chessBoard);
         }
@@ -58,7 +79,7 @@ public class GameState {
         this.checkTurn();
     }
 
-    private void playerTurn(){
+    private void playerTurn() {
         // deck.fillHand(3);
         // while(this.moveLeft > 0){
 
