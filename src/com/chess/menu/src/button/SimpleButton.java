@@ -3,6 +3,7 @@ package com.chess.menu.src.button;
 import com.chess.menu.src.action.MenuActionInterface;
 
 import java.awt.*;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 public class SimpleButton extends ButtonAbstract {
 
@@ -20,6 +21,7 @@ public class SimpleButton extends ButtonAbstract {
     public SimpleButton(String text, MenuActionInterface action){
         this();
         this.setText(text);
+        this.add(title);
         setOnClick(action);
     }
 

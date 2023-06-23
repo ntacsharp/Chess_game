@@ -2,6 +2,7 @@ package com.chess.menu;
 
 
 import com.chess.engine.maingame.GUI.Table;
+import com.chess.engine.minigame.GUI.MiniTable;
 import com.chess.menu.src.button.ButtonAbstract;
 import com.chess.menu.src.button.SimpleButton;
 import com.chess.menu.src.component_list.LeveledGenericComponentList;
@@ -32,7 +33,8 @@ public class StartMenu{
 //        },new SimpleButton("Exit"));
 //        startMenu.setVisible(true);
         JFrame startMenu=new JFrame("A chess game: Start Menu");
-        startMenu.setSize(400,600);
+        startMenu.setSize(MiniTable.screenSize);
+        startMenu.setUndecorated(true);
         startMenu.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -41,7 +43,7 @@ public class StartMenu{
             }
         });
 
-        LeveledGenericComponentList<JComponent> startPanel= new LeveledGenericComponentList<JComponent>(2);
+        LeveledGenericComponentList<JComponent> startPanel= new LeveledGenericComponentList<JComponent>(2,true);
         startMenu.add(startPanel);
 
         LeveledGenericComponentList<JComponent> upperPanel= new LeveledGenericComponentList<JComponent>(2);
@@ -50,11 +52,12 @@ public class StartMenu{
         startPanel.add(upperPanel,0);
 
         LeveledGenericComponentList<ButtonAbstract> buttonPanel= new LeveledGenericComponentList<ButtonAbstract>(3);
-        buttonPanel.addComponentLeveled(new SimpleButton("Start Game",
+        ButtonAbstract startButton=new SimpleButton("Start Game",
                 (JFrame parent)->{
-                    new Table();
+                    new MiniTable();
                     parent.dispose();
-                }),0);
+                });
+        buttonPanel.addComponentLeveled(startButton,0);
         buttonPanel.addComponentLeveled(new SimpleButton("About",
                 (JFrame parent)->{
                     JOptionPane.showMessageDialog(parent,

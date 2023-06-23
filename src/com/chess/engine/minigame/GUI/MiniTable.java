@@ -46,7 +46,7 @@ public class MiniTable {
     private static final String ENEMY_ICON_PATH = "art/pieces/enemies/";
     private static final String PLAYER_ICON_PATH = "art/pieces/player/";
 
-    private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    public static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     private final JFrame gameFrame;
     private GameState gameState;
