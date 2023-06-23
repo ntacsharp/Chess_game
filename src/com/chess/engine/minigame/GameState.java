@@ -15,6 +15,7 @@ public class GameState {
     private int currentHealth;
     private int shield;
     private int floor;
+    private int gold;
 
     public GameState(PieceType playerPieceType) {
         this.chessBoard = MiniBoard.createStandardBoard(1, PieceType.BABARIAN);
@@ -25,7 +26,8 @@ public class GameState {
         this.maxHealth = 3;
         this.currentHealth = 3;
         this.shield = 0;
-        //checkTurn();
+        this.gold = 0;
+        checkTurn();
     }
 
     public void setMoveLeft(int moveLeft) {
@@ -38,6 +40,10 @@ public class GameState {
 
     public int getShield() {
         return shield;
+    }
+
+    public int getFloor() {
+        return floor;
     }
 
     private boolean isCleared() {

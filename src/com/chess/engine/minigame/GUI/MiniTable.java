@@ -3,33 +3,27 @@ package com.chess.engine.minigame.GUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
 
 import com.chess.engine.minigame.board.MiniMove;
 import com.chess.engine.minigame.board.MiniTile;
@@ -37,171 +31,81 @@ import com.chess.engine.minigame.GameState;
 import com.chess.engine.minigame.board.MiniBoard;
 import com.chess.engine.minigame.board.MiniBoardUtils;
 import com.chess.engine.minigame.cards.Card;
-import com.chess.engine.minigame.cards.Deck;
 import com.chess.engine.minigame.pieces.MiniPiece;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
 import com.chess.engine.minigame.pieces.player.PlayerPiece;
 import com.chess.engine.minigame.pieces.player.PlayerPiece.PieceType;
 
 public class MiniTable {
+    public static final Color lightTileColor = new Color(99, 105, 136);
+    public static final Color darkTileColor = new Color(56, 57, 97);
+    public static final Color lightHighlight = new Color(167, 170, 190);
+    public static final Color lightBorderColor = new Color(219, 233, 238);
+    public static final Color darkBorderColor = new Color(141, 153, 174);
+
+    private static final String ENEMY_ICON_PATH = "art/pieces/enemies/";
+    private static final String PLAYER_ICON_PATH = "art/pieces/player/";
+
+    private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
     private final JFrame gameFrame;
     private GameState gameState;
     private Card chosenCard = null;
     private BoardPanel boardPanel;
-    private HandPanel handPanel;
+    private SouthPanel southPanel;
     private MiniTile tileEntered = null;
-
-    private static final Dimension FRAME_DIMENSION = new Dimension(700, 600);
-    private static final Dimension BOARD_PANEL_DIMENSION = new Dimension(300, 250);
-    private static final Dimension HAND_PANEL_DIMENSION = new Dimension(100, 250);
-    private static final Dimension CARD_PANEL_DIMENSION = new Dimension(100, 100);
-    private static final Dimension TILE_PANEL_DIMENSION = new Dimension(50, 50);
-
-    private static final Color lightTileColor = new Color(99, 105, 136);
-    private static final Color darkTileColor = new Color(56, 57, 97);
-    private static final Color lightHighlight = new Color(167, 170, 190);
-    private static final Color darkHighlight = new Color(139, 140, 186);
-    private static final Color redHighlight = new Color(193, 164, 190);
-    private static final Color cardBackground = new Color(217, 231, 236);
-
-    private static final String PIECE_ICON_PATH = "art/pieces/";
-    private static final String POWER_ICON_PATH = "art/other/power/";
-    private static final String ENEMY_ICON_PATH = "art/pieces/enemies/";
-    private static final String PLAYER_ICON_PATH = "art/pieces/player/";
 
     public MiniTable() {
         this.gameFrame = new JFrame();
+        this.gameFrame.setSize(screenSize);
+        // this.gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.gameFrame.setUndecorated(true);
         setUpGamingRound();
+    }
+
+    public Card getChosenCard() {
+        return chosenCard;
+    }
+
+    public void setChosenCard(Card chosenCard) {
+        this.chosenCard = chosenCard;
+    }
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public void skip(){
+        System.out.println("adad");
     }
 
     private void setUpShoppingRound() {
         this.gameFrame.removeAll();
-
     }
 
     private void setUpGamingRound() {
         this.gameState = new GameState(PieceType.BABARIAN);
-        this.gameFrame.setSize(FRAME_DIMENSION);
+        // this.gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.gameFrame.setTitle("Pawnbarian Mode");
         this.gameFrame.setLayout(new BorderLayout());
         this.gameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.boardPanel = new BoardPanel();
-        this.handPanel = new HandPanel();
+        this.southPanel = new SouthPanel(this);
+        JPanel eastPanel = new JPanel();
+        eastPanel.setPreferredSize(new Dimension((int) screenSize.getWidth() / 3, (int)screenSize.getHeight()));
+        eastPanel.setBackground(darkTileColor);
+        JPanel westPanel = new JPanel();
+        westPanel.setPreferredSize(new Dimension((int) screenSize.getWidth() / 3, (int)screenSize.getHeight()));
+        westPanel.setBackground(darkTileColor);
+        JPanel northPanel = new JPanel();
+        northPanel.setPreferredSize(new Dimension((int) screenSize.getWidth(), (int)screenSize.getHeight() / 13));
+        northPanel.setBackground(darkTileColor);
         this.gameFrame.add(this.boardPanel, BorderLayout.CENTER);
-        this.gameFrame.add(this.handPanel, BorderLayout.SOUTH);
+        this.gameFrame.add(southPanel, BorderLayout.SOUTH);
+        this.gameFrame.add(northPanel, BorderLayout.NORTH);
+        this.gameFrame.add(eastPanel, BorderLayout.EAST);
+        this.gameFrame.add(westPanel, BorderLayout.WEST);
         this.gameFrame.setVisible(true);
-    }
-
-    private class HandPanel extends JPanel {
-        final List<CardPanel> handCards;
-
-        HandPanel() {
-            super(new FlowLayout());
-            this.handCards = new ArrayList<CardPanel>();
-            for (int i = 0; i < gameState.getDeck().getHand().size(); i++) {
-                final CardPanel cardPanel = new CardPanel(this, gameState.getDeck().getHand().get(i));
-                this.handCards.add(cardPanel);
-                add(cardPanel);
-            }
-            setPreferredSize(HAND_PANEL_DIMENSION);
-            validate();
-        }
-
-        public void drawHand(Deck deck) {
-            removeAll();
-            for (CardPanel cardPanel : handCards) {
-                cardPanel.drawCard(deck);
-                add(cardPanel);
-            }
-            validate();
-            repaint();
-        }
-    }
-
-    private class CardPanel extends JPanel {
-        private final Card card;
-
-        CardPanel(final HandPanel handPanel, final Card card) {
-            super(new BorderLayout());
-            this.card = card;
-            setBackground(cardBackground);
-            setPreferredSize(CARD_PANEL_DIMENSION);
-            decorateCard();
-            addMouseListener(new MouseListener() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (SwingUtilities.isLeftMouseButton(e)) {
-                        chosenCard = card;
-                    } else if (SwingUtilities.isRightMouseButton(e)) {
-                        chosenCard = null;
-                    }
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            handPanel.drawHand(gameState.getDeck());
-                        }
-                    });
-                }
-
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    // TODO Auto-generated method stub
-                }
-
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    // TODO Auto-generated method stub
-                }
-
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    // TODO Auto-generated method stub
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    // TODO Auto-generated method stub
-                }
-            });
-        }
-
-        private void decorateCard() {
-            this.removeAll();
-            try {
-                final BufferedImage mainImage = ImageIO.read(new File(PIECE_ICON_PATH
-                        + "W" + this.card.getCardType().toString() + ".png"));
-                add(new JLabel(new ImageIcon(mainImage)), BorderLayout.CENTER);
-                JLabel powerLabel = new JLabel();
-                powerLabel.setLayout(new FlowLayout());
-                powerLabel.setPreferredSize(new Dimension(20, 20));
-                powerLabel.setBackground(Color.CYAN);
-                for (int i = 0; i < 4; i++) {
-
-                    if (this.card.getHasPower(i)) {
-                        System.out.println(this.card.getPowerByID(i).toString());
-                        BufferedImage powerImage = ImageIO
-                                .read(new File(POWER_ICON_PATH + this.card.getPowerByID(i).toString() + ".png"));
-                        final ImageIcon icon = new ImageIcon(powerImage);
-                        powerLabel.add(new JLabel(
-                                new ImageIcon(icon.getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH))));
-                    }
-                }
-                add(powerLabel, BorderLayout.NORTH);
-            } catch (IOException exception) {
-                exception.printStackTrace();
-            }
-        }
-
-        private void highlightChosenCard(final Deck deck, final boolean clicked) {
-
-        }
-
-        public void drawCard(Deck deck) {
-            setBackground(cardBackground);
-            decorateCard();
-            validate();
-            repaint();
-        }
     }
 
     private class BoardPanel extends JPanel {
@@ -209,6 +113,9 @@ public class MiniTable {
 
         BoardPanel() {
             super(new GridLayout(5, 5));
+            CompoundBorder boardBorder = new CompoundBorder(new LineBorder(lightBorderColor, 4),
+                    new LineBorder(darkBorderColor, 4));
+            this.setBorder(boardBorder);
             this.boardTiles = new ArrayList<>();
             for (int r = 0; r < 5; r++) {
                 for (int c = 0; c < 5; c++) {
@@ -217,7 +124,6 @@ public class MiniTable {
                     add(tilePanel);
                 }
             }
-            setPreferredSize(BOARD_PANEL_DIMENSION);
             validate();
         }
 
@@ -242,7 +148,6 @@ public class MiniTable {
             this.col = col;
             this.isDangeous = false;
             tileEntered = null;
-            setPreferredSize(TILE_PANEL_DIMENSION);
             colorTile();
             placePieceIconOnTile(gameState.getChessBoard());
             addMouseListener(new MouseListener() {
@@ -297,6 +202,7 @@ public class MiniTable {
         }
 
         public void drawTile(MiniBoard board) {
+            removeAll();
             colorTile();
             legalMovesHighlighter(board);
             // dangerHighlighter(board);
@@ -317,8 +223,6 @@ public class MiniTable {
                         final ImageIcon icon = new ImageIcon(bufferedImage);
                         add(new JLabel(new ImageIcon(icon.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH))));
                     } catch (IOException exception) {
-                        System.out.println(PLAYER_ICON_PATH
-                                + board.getPlayerPiece().getPieceType().toString() + ".png");
                         exception.printStackTrace();
                     }
                 } else {
