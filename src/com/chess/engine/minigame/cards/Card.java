@@ -18,23 +18,17 @@ public abstract class Card {
             { -1, -1 }, { 1, -1 }, { -1, 1 }, { 1, 1 }
     };
 
-    protected final int cardID;
     protected final CardType cardType;
     private final List<Boolean> hasPower;
 
-    protected Card(final int cardID, final boolean crossAttack, final boolean diagonalAttack, final boolean shield,
+    protected Card(final boolean crossAttack, final boolean diagonalAttack, final boolean shield,
             final boolean catnip, final CardType cardType) {
-        this.cardID = cardID;
         this.hasPower = new ArrayList<Boolean>();
         this.hasPower.add(crossAttack);
         this.hasPower.add(diagonalAttack);
         this.hasPower.add(shield);
         this.hasPower.add(catnip);
         this.cardType = cardType;
-    }
-
-    public int getCardID() {
-        return cardID;
     }
 
     public Power getPowerByID(int id) {

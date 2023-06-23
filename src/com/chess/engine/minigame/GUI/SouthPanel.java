@@ -7,7 +7,6 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -28,13 +27,10 @@ import com.chess.engine.minigame.cards.Deck;
 
 public class SouthPanel extends JPanel {
     private static final Color cardBackground = new Color(217, 231, 236);
-    private static final Color chosenBackground = new Color(255, 181, 63);
 
     private static final String PIECE_ICON_PATH = "art/pieces/";
     private static final String POWER_ICON_PATH = "art/other/power/";
     private static final String OTHER_ICON_PATH = "art/other/";
-
-    private final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     private final MiniTable miniTable;
     private HandPanel handPanel;
@@ -44,12 +40,9 @@ public class SouthPanel extends JPanel {
     public SouthPanel(final MiniTable miniTable) {
         super(new BorderLayout());
         this.miniTable = miniTable;
-        this.setBackground(miniTable.darkTileColor);
-        this.setPreferredSize(new Dimension((int) screenSize.getWidth(), (int) screenSize.getHeight() / 3));
+        this.setBackground(MiniTable.darkTileColor);
+        this.setPreferredSize(new Dimension((int) MiniTable.screenSize.getWidth(), (int) MiniTable.screenSize.getHeight() / 3));
         JPanel stringPanel = new StringPanel();
-        // tmpPanel.setBackground(miniTable.darkTileColor);
-        // tmpPanel.setPreferredSize(new Dimension((int) screenSize.getWidth() / 3,
-        // (int) screenSize.getHeight() / 3));
         this.handPanel = new HandPanel();
         this.statusPanel = new StatusPanel();
         this.skipPanel = new SkipPanel();
@@ -57,6 +50,20 @@ public class SouthPanel extends JPanel {
         this.add(handPanel, BorderLayout.CENTER);
         this.add(stringPanel, BorderLayout.WEST);
         this.add(skipPanel, BorderLayout.EAST);
+        validate();
+    }
+
+    public void redraw(){
+        removeAll();
+        JPanel stringPanel = new StringPanel();
+        this.handPanel = new HandPanel();
+        this.statusPanel = new StatusPanel();
+        this.add(statusPanel, BorderLayout.NORTH);
+        this.add(handPanel, BorderLayout.CENTER);
+        this.add(stringPanel, BorderLayout.WEST);
+        this.add(skipPanel, BorderLayout.EAST);
+        validate();
+        repaint();
     }
 
     private class HandPanel extends JPanel {
@@ -70,8 +77,8 @@ public class SouthPanel extends JPanel {
                 this.handCards.add(cardPanel);
                 add(cardPanel);
             }
-            setBackground(miniTable.darkTileColor);
-            setPreferredSize(new Dimension((int) screenSize.getWidth() / 3, (int) screenSize.getHeight() / 3));
+            setBackground(MiniTable.darkTileColor);
+            setPreferredSize(new Dimension((int) MiniTable.screenSize.getWidth() / 3, (int) MiniTable.screenSize.getHeight() / 3));
             validate();
         }
 
@@ -93,21 +100,22 @@ public class SouthPanel extends JPanel {
             super(new BorderLayout());
             this.card = card;
             setBackground(cardBackground);
-            setPreferredSize(new Dimension((int) screenSize.getWidth() / 9, (int) screenSize.getHeight() / 4));
+            setPreferredSize(new Dimension((int) MiniTable.screenSize.getWidth() / 9, (int) MiniTable.screenSize.getHeight() / 4));
             decorateCard();
             highlightChosenCard();
             addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    if (SwingUtilities.isLeftMouseButton(e)) {
-                        miniTable.setChosenCard(card);
-                    } else if (SwingUtilities.isRightMouseButton(e)) {
+                    if (SwingUtilities.isRightMouseButton(e)) {
                         miniTable.setChosenCard(null);
+                    } else if (SwingUtilities.isLeftMouseButton(e)) {
+                        miniTable.setChosenCard(card);
                     }
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             handPanel.drawHand(miniTable.getGameState().getDeck());
+                            miniTable.drawBoard(miniTable.getGameState().getChessBoard());
                         }
                     });
                 }
@@ -141,12 +149,12 @@ public class SouthPanel extends JPanel {
                 final BufferedImage pieceImage = ImageIO.read(new File(PIECE_ICON_PATH
                         + "W" + this.card.getCardType().toString() + ".png"));
                 final ImageIcon pieceIcon = new ImageIcon(pieceImage);
-                add(new JLabel(new ImageIcon(pieceIcon.getImage().getScaledInstance((int) screenSize.getWidth() / 16,
-                        (int) screenSize.getHeight() / 8, Image.SCALE_SMOOTH))), BorderLayout.CENTER);
+                add(new JLabel(new ImageIcon(pieceIcon.getImage().getScaledInstance((int) MiniTable.screenSize.getWidth() / 16,
+                        (int) MiniTable.screenSize.getHeight() / 8, Image.SCALE_SMOOTH))), BorderLayout.CENTER);
                 JLabel powerLabel = new JLabel();
                 powerLabel.setLayout(new FlowLayout(FlowLayout.CENTER, 2, 0));
                 powerLabel.setPreferredSize(
-                        new Dimension((int) screenSize.getWidth() / 10, (int) screenSize.getHeight() / 20));
+                        new Dimension((int) MiniTable.screenSize.getWidth() / 10, (int) MiniTable.screenSize.getHeight() / 20));
                 powerLabel.setBackground(Color.CYAN);
                 for (int i = 0; i < 4; i++) {
                     if (this.card.getHasPower(i)) {
@@ -154,8 +162,8 @@ public class SouthPanel extends JPanel {
                                 .read(new File(POWER_ICON_PATH + this.card.getPowerByID(i).toString() + ".png"));
                         final ImageIcon icon = new ImageIcon(powerImage);
                         powerLabel.add(new JLabel(
-                                new ImageIcon(icon.getImage().getScaledInstance((int) screenSize.getWidth() / 41,
-                                        (int) screenSize.getHeight() / 21, Image.SCALE_SMOOTH))));
+                                new ImageIcon(icon.getImage().getScaledInstance((int) MiniTable.screenSize.getWidth() / 41,
+                                        (int) MiniTable.screenSize.getHeight() / 21, Image.SCALE_SMOOTH))));
                     }
                 }
                 add(powerLabel, BorderLayout.NORTH);
@@ -166,7 +174,7 @@ public class SouthPanel extends JPanel {
 
         private void highlightChosenCard() {
             if (miniTable.getChosenCard() != null && miniTable.getChosenCard().equals(card)) {
-                setBorder(new LineBorder(chosenBackground, 5));
+                setBorder(new LineBorder(MiniTable.chosenBackground, 5));
             } else {
                 setBorder(new LineBorder(Color.WHITE, 5));
             }
@@ -184,8 +192,8 @@ public class SouthPanel extends JPanel {
     private class StatusPanel extends JPanel {
         StatusPanel() {
             super(new FlowLayout());
-            setPreferredSize(new Dimension((int) screenSize.getWidth() / 3, (int) screenSize.getHeight() / 12));
-            setBackground(miniTable.darkTileColor);
+            setPreferredSize(new Dimension((int) MiniTable.screenSize.getWidth() / 3, (int) MiniTable.screenSize.getHeight() / 12));
+            setBackground(MiniTable.darkTileColor);
             add(new HeartPanel());
             add(new MovePanel());
             validate();
@@ -195,8 +203,8 @@ public class SouthPanel extends JPanel {
     private class MovePanel extends JPanel {
         MovePanel() {
             super(new FlowLayout(FlowLayout.RIGHT));
-            setBackground(miniTable.darkTileColor);
-            setPreferredSize(new Dimension((int) screenSize.getWidth() / 6, (int) screenSize.getHeight() / 12));
+            setBackground(MiniTable.darkTileColor);
+            setPreferredSize(new Dimension((int) MiniTable.screenSize.getWidth() / 6, (int) MiniTable.screenSize.getHeight() / 12));
             decorateMovePanel(miniTable.getGameState());
             validate();
         }
@@ -217,8 +225,8 @@ public class SouthPanel extends JPanel {
     private class HeartPanel extends JPanel {
         HeartPanel() {
             super(new FlowLayout(FlowLayout.LEFT));
-            setPreferredSize(new Dimension((int) screenSize.getWidth() / 6, (int) screenSize.getHeight() / 12));
-            setBackground(miniTable.darkTileColor);
+            setPreferredSize(new Dimension((int) MiniTable.screenSize.getWidth() / 6, (int) MiniTable.screenSize.getHeight() / 12));
+            setBackground(MiniTable.darkTileColor);
             decorateHeartPanel(miniTable.getGameState());
             validate();
         }
@@ -247,20 +255,13 @@ public class SouthPanel extends JPanel {
                 exception.printStackTrace();
             }
         }
-
-        public void drawHeart(final GameState gameState) {
-            removeAll();
-            decorateHeartPanel(gameState);
-            validate();
-            repaint();
-        }
     }
 
     private class SkipPanel extends JPanel {
         SkipPanel() {
-            super(new FlowLayout(FlowLayout.LEFT));
-            setBackground(miniTable.darkTileColor);
-            setPreferredSize(new Dimension((int) screenSize.getWidth() / 3, (int) screenSize.getHeight() / 3));
+            super(new FlowLayout(FlowLayout.LEFT, 20, 0));
+            setBackground(MiniTable.darkTileColor);
+            setPreferredSize(new Dimension((int) MiniTable.screenSize.getWidth() / 3, (int) MiniTable.screenSize.getHeight() / 3));
             try {
                 final ImageIcon skipIcon = new ImageIcon(ImageIO.read(new File(OTHER_ICON_PATH + "skip.png")));
                 final JLabel skip = new JLabel(
@@ -299,15 +300,15 @@ public class SouthPanel extends JPanel {
     private class StringPanel extends JPanel {
         StringPanel() {
             super(new GridBagLayout());
-            setBackground(miniTable.darkTileColor);
-            setPreferredSize(new Dimension((int) screenSize.getWidth() / 3, (int) screenSize.getHeight() / 3));
+            setBackground(MiniTable.darkTileColor);
+            setPreferredSize(new Dimension((int) MiniTable.screenSize.getWidth() / 3, (int) MiniTable.screenSize.getHeight() / 3));
             GridBagConstraints gbc = new GridBagConstraints();
-            gbc.fill = GridBagConstraints.HORIZONTAL;
             JLabel label = new JLabel("<html>Chess<br>Floor " + miniTable.getGameState().getFloor() + " of 7</html>");
             label.setForeground(Color.WHITE);
             label.setVerticalAlignment(JLabel.BOTTOM);
             label.setHorizontalAlignment(JLabel.LEFT);
-            label.setPreferredSize(new Dimension((int) screenSize.getWidth() / 3, (int) screenSize.getHeight() / 20));
+            label.setPreferredSize(new Dimension((int) MiniTable.screenSize.getWidth() / 3, (int) MiniTable.screenSize.getHeight() / 20));
+            gbc.fill = GridBagConstraints.HORIZONTAL;
             gbc.anchor = GridBagConstraints.SOUTH;
             gbc.weighty = 1;
             add(label, gbc);

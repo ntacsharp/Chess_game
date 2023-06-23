@@ -1,5 +1,7 @@
 package com.chess.engine.minigame.pieces.enemy;
 
+import java.util.List;
+
 import com.chess.engine.minigame.board.MiniBoard;
 import com.chess.engine.minigame.board.MiniMove;
 import com.chess.engine.minigame.board.MiniMove.NimbleMove;
@@ -107,6 +109,8 @@ public abstract class EnemyPiece extends MiniPiece {
     public abstract void triggerImmune(final MiniBoard board);
 
     public abstract int calculateDmg(final MiniBoard board);
+
+    public abstract List<Integer> getRange();
 
     @Override
     public String toString() {

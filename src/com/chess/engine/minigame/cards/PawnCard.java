@@ -15,13 +15,13 @@ import com.chess.engine.minigame.pieces.player.PlayerPiece;
 public class PawnCard extends Card {
 
     public static final int[][] ATTACKING_MOVE_SET = {
-            { 1, -1 }, { 1, 1 }
+            { -1, -1 }, { -1, 1 }
     };
-    public static final int[] NORMAL_MOVE = { 1, 0 };
+    public static final int[] NORMAL_MOVE = { -1, 0 };
 
-    public PawnCard(final int cardID, final boolean crossAttack, final boolean diagonalAttack, final boolean shield,
+    public PawnCard(final boolean crossAttack, final boolean diagonalAttack, final boolean shield,
             final boolean catnip) {
-        super(cardID, crossAttack, diagonalAttack, shield, catnip, CardType.PAWN);
+        super(crossAttack, diagonalAttack, shield, catnip, CardType.PAWN);
     }
 
     @Override

@@ -17,9 +17,9 @@ public class BishopCard extends Card {
             { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 }
     };
 
-    public BishopCard(final int cardID, final boolean crossAttack, final boolean diagonalAttack, final boolean shield,
+    public BishopCard(final boolean crossAttack, final boolean diagonalAttack, final boolean shield,
             final boolean catnip) {
-        super(cardID, crossAttack, diagonalAttack, shield, catnip, CardType.BISHOP);
+        super(crossAttack, diagonalAttack, shield, catnip, CardType.BISHOP);
     }
 
     @Override

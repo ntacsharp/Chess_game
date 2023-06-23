@@ -97,9 +97,20 @@ public class Swordman extends EnemyPiece {
 
     @Override
     public boolean canAttactk(final int r, final int c){
-        for (int[] range : this.RANGE) {
-            if(this.row + range[0] == r && this.col + range[1] == c) return true;
-        }
+        if(this.getRange().contains(r * 5 + c)) return true;
         return false;
+    }
+
+    @Override
+    public List<Integer> getRange(){
+        List<Integer> res = new ArrayList<>();
+        for (int[] range : this.RANGE) {
+            int r = this.row + range[0];
+            int c = this.col + range[1];
+            if(MiniBoardUtils.isCorValid(r, c)){
+                res.add(r * 5 + c);
+            }
+        }
+        return res;
     }
 }

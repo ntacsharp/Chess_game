@@ -17,9 +17,9 @@ public class QueenCard extends Card {
             { -1, 0 }, { 0, -1 }, { 0, 1 }, { 1, 0 }, { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 }
     };
 
-    public QueenCard(final int cardID, final boolean crossAttack, final boolean diagonalAttack, final boolean shield,
+    public QueenCard(final boolean crossAttack, final boolean diagonalAttack, final boolean shield,
             final boolean catnip) {
-        super(cardID, crossAttack, diagonalAttack, shield, catnip, CardType.QUEEN);
+        super(crossAttack, diagonalAttack, shield, catnip, CardType.QUEEN);
     }
 
     @Override

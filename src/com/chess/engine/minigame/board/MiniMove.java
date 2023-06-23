@@ -95,12 +95,12 @@ public abstract class MiniMove {
     }
 
     public static class PlayerMove extends MiniMove {
-        protected final List<EnemyPiece> attackedPieces = new ArrayList<EnemyPiece>();
+        protected final List<EnemyPiece> enemyPieces = new ArrayList<EnemyPiece>();
 
         public PlayerMove(MiniBoard board, MiniPiece movePiece, final int destinationRow,
-                final int destinationCol, final List<EnemyPiece> attackedPieces) {
+                final int destinationCol, final List<EnemyPiece> enemyPieces) {
             super(board, movePiece, destinationRow, destinationCol);
-            this.attackedPieces.addAll(attackedPieces);
+            this.enemyPieces.addAll(enemyPieces);
         }
 
         @Override
@@ -122,15 +122,16 @@ public abstract class MiniMove {
                         builder.setBlight(i * MiniBoardUtils.NUM_TILE_PER_ROW + j);
                 }
             }
-
-            for (EnemyPiece attackedPiece : attackedPieces) {
-                if (attackedPiece.isCurrentlyNimble()) {
-                    MiniBoard newBoard = attackedPiece.triggerNimble(this.board);
-                    for (MiniPiece piece : newBoard.getEnemyPieces()) {
-                        builder.setPiece(piece);
-                    }
-                    builder.setPiece(this.movePiece.movePiece(this));
-                } else if (attackedPiece instanceof Beast) {
+            builder.setPiece(this.movePiece.movePiece(this));
+            for (EnemyPiece enemyPiece : this.board.getEnemyPieces()) {
+                if (!enemyPieces.contains(enemyPiece)) {
+                    builder.setPiece(enemyPiece);
+                }
+            }
+            for (EnemyPiece enemyPiece : enemyPieces) {
+                if (enemyPiece.isCurrentlyNimble()) {
+                    builder.setPiece(enemyPiece.nimbledPiece(this));
+                } else if (enemyPiece instanceof Beast) {
                     Random rand = new Random();
                     int r = rand.nextInt(5);
                     int c = rand.nextInt(5);
@@ -139,37 +140,15 @@ public abstract class MiniMove {
                         r = rand.nextInt(5);
                         c = rand.nextInt(5);
                     }
-                    builder.setPiece(new Infected(r, c, attackedPiece.getTurn()));
-                    for (MiniPiece piece : this.board.getEnemyPieces()) {
-                        if (!attackedPiece.equals(piece))
-                            builder.setPiece(piece);
-                    }
-                    builder.setPiece(this.movePiece.movePiece(this));
-                } else if (attackedPiece instanceof Zombie) {
-                    Zombie spider = (Zombie) attackedPiece;
-                    spider.triggerEffect(builder);
-                    for (MiniPiece piece : this.board.getEnemyPieces()) {
-                        if (!attackedPiece.equals(piece))
-                            builder.setPiece(piece);
-                    }
-                    builder.setPiece(this.movePiece.movePiece(this));
-                } else if (attackedPiece instanceof Infected) {
-                    Infected infected = (Infected) attackedPiece;
+                    builder.setPiece(new Infected(r, c, enemyPiece.getTurn()));
+                }else if (enemyPiece instanceof Zombie) {
+                    Zombie zombie = (Zombie) enemyPiece;
+                    zombie.triggerEffect(builder);
+                }else if (enemyPiece instanceof Infected) {
+                    Infected infected = (Infected) enemyPiece;
                     infected.triggerEffect(builder);
-                    for (MiniPiece piece : this.board.getEnemyPieces()) {
-                        if (!attackedPiece.equals(piece))
-                            builder.setPiece(piece);
-                    }
-                    builder.setPiece(this.movePiece.movePiece(this));
-                } else {
-                    for (MiniPiece piece : this.board.getEnemyPieces()) {
-                        if (!attackedPiece.equals(piece))
-                            builder.setPiece(piece);
-                    }
-                    builder.setPiece(this.movePiece.movePiece(this));
                 }
             }
-
             return builder.build();
         }
     }
@@ -207,19 +186,20 @@ public abstract class MiniMove {
         }
     }
 
-    public static class MoveFactory {
-        private MoveFactory() {
-        }
+    // public static class MoveFactory {
+    // private MoveFactory() {
+    // }
 
-        public static MiniMove findMove(final MiniBoard board,
-                final Card chosenCard,
-                final int currentCor,
-                final int destinationCor) {
-            for (MiniMove move : chosenCard.legalMoves(board, board.getPlayerPiece())) {
-                if (move.getCurrentCor() == currentCor && move.getDestinationCor() == destinationCor)
-                    return move;
-            }
-            return null;
-        }
-    }
+    // public static MiniMove findMove(final MiniBoard board,
+    // final Card chosenCard,
+    // final int currentCor,
+    // final int destinationCor) {
+    // for (MiniMove move : chosenCard.legalMoves(board, board.getPlayerPiece())) {
+    // if (move.getCurrentCor() == currentCor && move.getDestinationCor() ==
+    // destinationCor)
+    // return move;
+    // }
+    // return null;
+    // }
+    // }
 }

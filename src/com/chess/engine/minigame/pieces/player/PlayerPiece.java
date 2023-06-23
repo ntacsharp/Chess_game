@@ -2,6 +2,7 @@ package com.chess.engine.minigame.pieces.player;
 
 import java.util.Collection;
 
+import com.chess.engine.minigame.board.MiniMove;
 import com.chess.engine.minigame.cards.Card;
 import com.chess.engine.minigame.pieces.MiniPiece;
 
@@ -23,6 +24,9 @@ public abstract class PlayerPiece extends MiniPiece{
     }
 
     public abstract Collection<Card> getDefaultDeck();
+
+    @Override
+    public abstract PlayerPiece movePiece(MiniMove move);
 
     public enum PieceType {
         BABARIAN ("BA"),

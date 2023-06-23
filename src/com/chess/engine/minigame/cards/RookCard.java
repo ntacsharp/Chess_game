@@ -17,9 +17,9 @@ public class RookCard extends Card {
             { -1, 0 }, { 0, -1 }, { 0, 1 }, { 1, 0 }
     };
 
-    public RookCard(final int cardID, final boolean crossAttack, final boolean diagonalAttack, final boolean shield,
+    public RookCard(final boolean crossAttack, final boolean diagonalAttack, final boolean shield,
             final boolean catnip) {
-        super(cardID, crossAttack, diagonalAttack, shield, catnip, CardType.ROOK);
+        super(crossAttack, diagonalAttack, shield, catnip, CardType.ROOK);
     }
 
     @Override

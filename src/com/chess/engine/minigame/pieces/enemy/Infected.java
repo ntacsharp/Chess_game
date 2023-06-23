@@ -71,4 +71,10 @@ public class Infected extends EnemyPiece {
     public boolean canAttactk(final int r, final int c) {
         return false;
     }
+
+    @Override
+    public List<Integer> getRange(){
+        List<Integer> res = new ArrayList<>();
+        return res;
+    }
 }
