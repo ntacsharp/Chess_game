@@ -25,8 +25,6 @@ public abstract class MiniTile {
 
     public abstract MiniPiece getPiece();
 
-    public abstract void setPiece(final MiniPiece piece);
-
     public boolean isBlighted() {
         return blighted;
     }
@@ -48,11 +46,6 @@ public abstract class MiniTile {
             super(row, col, blighted);
         }
 
-        @Override
-        public String toString() {
-            return ".";
-        }
-
         public boolean isOccupied() {
             return false;
         }
@@ -61,9 +54,6 @@ public abstract class MiniTile {
         public MiniPiece getPiece() {
             return null;
         }
-
-        @Override
-        public void setPiece(final MiniPiece piece){}
     }
 
     private static class OccupiedTile extends MiniTile {
@@ -74,23 +64,12 @@ public abstract class MiniTile {
             this.pieceOnTile = piece;
         }
 
-        @Override
-        public String toString() {
-            MiniPiece piece = getPiece();
-            return piece.toString();
-        }
-
         public boolean isOccupied() {
             return true;
         }
 
         public MiniPiece getPiece() {
             return pieceOnTile;
-        }
-
-        @Override
-        public void setPiece(final MiniPiece piece){
-            this.pieceOnTile = piece;
         }
     }
 }
