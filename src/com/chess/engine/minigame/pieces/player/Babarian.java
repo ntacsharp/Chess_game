@@ -31,6 +31,11 @@ public class Babarian extends PlayerPiece{
         defaultCards.add(new PawnCard(false, false, false, true));
         defaultCards.add(new PawnCard(false, false, false, true));
     }
+    @Override
+    public String getInformation(){
+        return "<html><i>Promote whenever you move into top row, start turn in the top row, or have 3 <b>Pawn</b> in hand.<i></html>";
+
+    }
 
     @Override
     public Collection<Card> getDefaultDeck() {

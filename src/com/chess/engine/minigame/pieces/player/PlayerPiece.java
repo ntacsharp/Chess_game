@@ -24,6 +24,8 @@ public abstract class PlayerPiece extends MiniPiece{
     }
 
     public abstract Collection<Card> getDefaultDeck();
+    
+    public abstract String getInformation();
 
     @Override
     public abstract PlayerPiece movePiece(MiniMove move);

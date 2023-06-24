@@ -21,7 +21,7 @@ public class Zombie extends EnemyPiece {
 
     public void triggerEffect(final Builder builder){
         builder.setBlight(this.row * MiniBoardUtils.NUM_TILE_PER_ROW + this.col);
-        for (int[] move : this.MOVE_SET) {
+        for (int[] move : this.RANGE) {
             int r = this.row + move[0];
             int c = this.col + move[1];
             if (MiniBoardUtils.isCorValid(r, c)){
@@ -106,6 +106,11 @@ public class Zombie extends EnemyPiece {
     public boolean canAttactk(final int r, final int c){
         if(this.getRange().contains(r * 5 + c)) return true;
         return false;
+    }
+
+    @Override
+    public String getInformation(){
+        return "<html><i>Limited range, blight adjacent tiles on death.</i></html>";
     }
 
     @Override

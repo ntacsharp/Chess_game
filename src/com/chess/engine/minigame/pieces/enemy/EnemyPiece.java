@@ -112,25 +112,29 @@ public abstract class EnemyPiece extends MiniPiece {
 
     public abstract List<Integer> getRange();
 
+    public abstract String getInformation();
+
     @Override
     public String toString() {
         return this.getPieceType().toString();
     }
 
     public enum PieceType {
-        INFECTED("IF", 0),
-        BEAST("BE", 1),
-        ZOMBIE("ZM", 2),
-        SWORDMAN("SW", 3),
-        ARCHER("AR", 3),
-        SHAMAN("SH", 5);
+        INFECTED("IF", 0, "Infected"),
+        BEAST("BE", 1, "Beast"),
+        ZOMBIE("ZM", 2, "Zombie"),
+        SWORDMAN("SW", 3, "Viking"),
+        ARCHER("AR", 3, "Archer"),
+        SHAMAN("SH", 5, "Demon");
 
         private String pieceName;
         private int pieceValue;
+        private String displayName;
 
-        PieceType(final String pieceName, final int pieceValue) {
+        PieceType(final String pieceName, final int pieceValue, final String displayName) {
             this.pieceName = pieceName;
             this.pieceValue = pieceValue;
+            this.displayName = displayName;
         }
 
         public int getPieceValue() {
@@ -140,6 +144,10 @@ public abstract class EnemyPiece extends MiniPiece {
         @Override
         public String toString() {
             return this.pieceName;
+        }
+
+        public String getName(){
+            return this.displayName;
         }
     }
 }

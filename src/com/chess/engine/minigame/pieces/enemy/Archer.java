@@ -103,6 +103,11 @@ public class Archer extends EnemyPiece {
     }
 
     @Override
+    public String getInformation(){
+        return "<html><i>Ranged unit, invulnerable if player is not on adjacent tile!</i></html>";
+    }
+
+    @Override
     public List<Integer> getRange(){
         List<Integer> res = new ArrayList<>();
         for (int[] range : this.RANGE) {
@@ -114,4 +119,6 @@ public class Archer extends EnemyPiece {
         }
         return res;
     }
+
+
 }

@@ -73,6 +73,11 @@ public class Infected extends EnemyPiece {
     }
 
     @Override
+    public String getInformation(){
+        return "<html><i>Weak, blight the tile on death</i></html>";
+    }
+
+    @Override
     public List<Integer> getRange(){
         List<Integer> res = new ArrayList<>();
         return res;

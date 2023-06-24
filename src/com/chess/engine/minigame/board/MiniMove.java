@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Random;
 
 import com.chess.engine.minigame.board.MiniBoard.Builder;
-import com.chess.engine.minigame.cards.Card;
 import com.chess.engine.minigame.pieces.MiniPiece;
 import com.chess.engine.minigame.pieces.enemy.Beast;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;

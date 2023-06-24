@@ -59,8 +59,12 @@ public class Deck {
         return this.hand.get(id);
     }
 
-    public Card getCardInTotalDeck(final int id) {
-        return this.totalDeck.get(id);
+    public List<Card> getCurrentDeck() {
+        return currentDeck;
+    }
+
+    public List<Card> getTotalDeck() {
+        return totalDeck;
     }
 
     public void handToString(){

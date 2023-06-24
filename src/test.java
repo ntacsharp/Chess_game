@@ -1,88 +1,46 @@
-import com.chess.menu.src.component_list.LeveledGenericComponentList;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JComponent;
+import java.awt.CardLayout;
+import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+ 
+import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import java.awt.Color;
-import java.awt.Component;
-
-public class test {
-
-   private static void createAndShowGUI() {
-      //Create and set up the window.
-      JFrame frame = new JFrame("Layout3");
-      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-      //Add the innards.
-      JPanel p = new JPanel();
-      p.setLayout(new BoxLayout(p, BoxLayout.PAGE_AXIS));
-      p.add(createComponent("Component 1"));
-      p.add(Box.createVerticalGlue());
-      p.add(createComponent("Component 2"));
-      p.add(createComponent("Component 3"));
-      p.add(createComponent("Component 4"));
-      p.add(Box.createVerticalGlue());
-      frame.setContentPane(p);
-
-      //Display the window.
-      frame.pack();
-      frame.setVisible(true);
-   }
-
-   private static JComponent createComponent(String s) {
-      JLabel l = new JLabel(s);
-      l.setBorder(BorderFactory.createMatteBorder(5, 5, 5, 5,
-              Color.DARK_GRAY));
-      l.setHorizontalAlignment(JLabel.CENTER);
-      l.setAlignmentX(Component.CENTER_ALIGNMENT); //use middle of row
-      return l;
-   }
-
-   public static void main(String[] args) {
-      //Schedule a job for the event-dispatching thread:
-      //creating and showing this application's GUI.
-      JFrame frame=new JFrame();
-//      LeveledGenericComponentList lvl=new LeveledGenericComponentList(1,true);
-      LeveledGenericComponentList lvl=new LeveledGenericComponentList(3,true);
-      lvl.add(createComponent("This is a Label"),0);
-      lvl.add(createComponent("1"),1);
-      lvl.add(createComponent("2"),2);
-      frame.add(lvl);
-      frame.setVisible(true);
-   }
+import javax.swing.WindowConstants;
+ 
+public class test extends JFrame implements ActionListener {
+    CardLayout card;
+    JButton b1, b2, b3;
+    Container c;
+ 
+    test() {
+        c = getContentPane();
+        // tao doi tuong CardLayout
+        // khong gian chieu ngang la 60 va chieu doc la 50
+        card = new CardLayout(60, 50);
+        c.setLayout(card);
+ 
+        b1 = new JButton("Apple");
+        b2 = new JButton("Mango");
+        b3 = new JButton("Orange");
+        b1.addActionListener(this);
+        b2.addActionListener(this);
+        b3.addActionListener(this);
+ 
+        c.add("a", b1);
+        c.add("b", b2);
+        c.add("c", b3);
+ 
+        this.setTitle("Ví dụ CardLayout trong Java Swing");
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
+ 
+    public void actionPerformed(ActionEvent e) {
+        card.next(c);
+    }
+ 
+    public static void main(String[] args) {
+        test cl = new test();
+        cl.setSize(400, 300);
+        cl.setVisible(true);
+    }
 }
-
-/*
- * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *
- *   - Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *
- *   - Neither the name of Oracle or the names of its
- *     contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
- * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */

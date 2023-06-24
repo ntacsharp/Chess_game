@@ -107,6 +107,11 @@ public class Shaman extends EnemyPiece {
     }
 
     @Override
+    public String getInformation(){
+        return "<html><i>Ranged unit, invulnerable while other enemies are alive!</i></html>";
+    }
+
+    @Override
     public List<Integer> getRange(){
         List<Integer> res = new ArrayList<>();
         for (int[] range : this.RANGE) {

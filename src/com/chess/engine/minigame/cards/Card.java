@@ -108,22 +108,27 @@ public abstract class Card {
     public abstract List<MiniMove> legalMoves(final MiniBoard board, final PlayerPiece piece);
 
     public enum CardType {
-        BISHOP("B"),
-        KING("K"),
-        KNIGHT("N"),
-        PAWN("P"),
-        QUEEN("Q"),
-        ROOK("R");
+        BISHOP("B", "Bishop"),
+        KING("K", "King"),
+        KNIGHT("N", "Knight"),
+        PAWN("P", "Pawn"),
+        QUEEN("Q", "Queen"),
+        ROOK("R", "Rook");
 
-        private String cardName;
+        private String cardName, displayName;
 
-        CardType(final String cardName) {
+        CardType(final String cardName, final String displayName) {
             this.cardName = cardName;
+            this.displayName = displayName;
         }
 
         @Override
         public String toString() {
             return this.cardName;
+        }
+
+        public String getName() {
+            return this.displayName;
         }
     }
 

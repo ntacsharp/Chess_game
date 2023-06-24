@@ -102,6 +102,11 @@ public class Swordman extends EnemyPiece {
     }
 
     @Override
+    public String getInformation(){
+        return "<html><i>Close-ranged, invulnerable if player is on cardinally adjacent tile!</i></html>";
+    }
+
+    @Override
     public List<Integer> getRange(){
         List<Integer> res = new ArrayList<>();
         for (int[] range : this.RANGE) {

@@ -28,9 +28,9 @@ import com.chess.engine.minigame.cards.Deck;
 public class SouthPanel extends JPanel {
     private static final Color cardBackground = new Color(217, 231, 236);
 
-    private static final String PIECE_ICON_PATH = "art/pieces/";
-    private static final String POWER_ICON_PATH = "art/other/power/";
-    private static final String OTHER_ICON_PATH = "art/other/";
+    private static final String PIECE_ICON_PATH = "art\\pieces\\";
+    private static final String POWER_ICON_PATH = "art\\other\\power\\";
+    private static final String OTHER_ICON_PATH = "art\\other\\";
 
     private final MiniTable miniTable;
     private HandPanel handPanel;
@@ -115,7 +115,7 @@ public class SouthPanel extends JPanel {
                         @Override
                         public void run() {
                             handPanel.drawHand(miniTable.getGameState().getDeck());
-                            miniTable.drawBoard(miniTable.getGameState().getChessBoard());
+                            miniTable.boardPanel.drawBoard(miniTable.getGameState().getChessBoard());
                         }
                     });
                 }
@@ -132,7 +132,7 @@ public class SouthPanel extends JPanel {
 
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    // TODO Auto-generated method stub
+                    miniTable.eastPanel.redraw(card);
                 }
 
                 @Override
@@ -155,7 +155,6 @@ public class SouthPanel extends JPanel {
                 powerLabel.setLayout(new FlowLayout(FlowLayout.CENTER, 2, 0));
                 powerLabel.setPreferredSize(
                         new Dimension((int) MiniTable.screenSize.getWidth() / 10, (int) MiniTable.screenSize.getHeight() / 20));
-                powerLabel.setBackground(Color.CYAN);
                 for (int i = 0; i < 4; i++) {
                     if (this.card.getHasPower(i)) {
                         BufferedImage powerImage = ImageIO
@@ -163,7 +162,7 @@ public class SouthPanel extends JPanel {
                         final ImageIcon icon = new ImageIcon(powerImage);
                         powerLabel.add(new JLabel(
                                 new ImageIcon(icon.getImage().getScaledInstance((int) MiniTable.screenSize.getWidth() / 41,
-                                        (int) MiniTable.screenSize.getHeight() / 21, Image.SCALE_SMOOTH))));
+                                        (int) MiniTable.screenSize.getHeight() / 23, Image.SCALE_SMOOTH))));
                     }
                 }
                 add(powerLabel, BorderLayout.NORTH);
@@ -214,7 +213,7 @@ public class SouthPanel extends JPanel {
                 final ImageIcon moveIcon = new ImageIcon(ImageIO.read(new File(POWER_ICON_PATH + "c.png")));
                 for (int i = 0; i < gameState.getMoveLeft(); i++) {
                     add(new JLabel(
-                            new ImageIcon(moveIcon.getImage().getScaledInstance(30, 40, Image.SCALE_SMOOTH))));
+                            new ImageIcon(moveIcon.getImage().getScaledInstance((int)MiniTable.screenSize.getWidth() / 38, (int)MiniTable.screenSize.getHeight() / 20, Image.SCALE_SMOOTH))));
                 }
             } catch (IOException exception) {
                 exception.printStackTrace();
@@ -240,16 +239,16 @@ public class SouthPanel extends JPanel {
                 for (int i = 1; i <= gameState.getMaxHealth(); i++) {
                     if (i <= gameState.getCurrentHealth()) {
                         add(new JLabel(
-                                new ImageIcon(heartIcon.getImage().getScaledInstance(35, 40, Image.SCALE_SMOOTH))));
+                                new ImageIcon(heartIcon.getImage().getScaledInstance((int)MiniTable.screenSize.getWidth() / 38, (int)MiniTable.screenSize.getHeight() / 20, Image.SCALE_SMOOTH))));
                     } else {
                         add(new JLabel(
                                 new ImageIcon(
-                                        brokenHeartIcon.getImage().getScaledInstance(35, 40, Image.SCALE_SMOOTH))));
+                                        brokenHeartIcon.getImage().getScaledInstance((int)MiniTable.screenSize.getWidth() / 38, (int)MiniTable.screenSize.getHeight() / 20, Image.SCALE_SMOOTH))));
                     }
                 }
                 for (int i = 0; i < gameState.getShield(); i++) {
                     add(new JLabel(
-                            new ImageIcon(shieldIcon.getImage().getScaledInstance(35, 40, Image.SCALE_SMOOTH))));
+                            new ImageIcon(shieldIcon.getImage().getScaledInstance((int)MiniTable.screenSize.getWidth() / 38, (int)MiniTable.screenSize.getHeight() / 20, Image.SCALE_SMOOTH))));
                 }
             } catch (IOException exception) {
                 exception.printStackTrace();

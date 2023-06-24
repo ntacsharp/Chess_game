@@ -42,4 +42,6 @@ public abstract class MiniPiece {
     public abstract String toString();
 
     public abstract MiniPiece movePiece(MiniMove move);
+
+    public abstract String getInformation();
 }

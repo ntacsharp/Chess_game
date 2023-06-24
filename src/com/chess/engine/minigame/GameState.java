@@ -1,7 +1,6 @@
 package com.chess.engine.minigame;
 
 import com.chess.engine.minigame.board.MiniBoard;
-import com.chess.engine.minigame.board.MiniMove;
 import com.chess.engine.minigame.cards.Deck;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
 import com.chess.engine.minigame.pieces.player.PlayerPiece.PieceType;

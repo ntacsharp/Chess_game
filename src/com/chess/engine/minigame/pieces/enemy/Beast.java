@@ -98,6 +98,11 @@ public class Beast extends EnemyPiece {
     }
 
     @Override
+    public String getInformation(){
+        return "<html><i>Close-ranged, spawn an infected unit on death.</i></html>";
+    }
+
+    @Override
     public List<Integer> getRange(){
         List<Integer> res = new ArrayList<>();
         for (int[] range : this.RANGE) {

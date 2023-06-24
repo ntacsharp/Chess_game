@@ -17,7 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class NorthPanel extends JPanel {
-    private static final String OTHER_ICON_PATH = "art/other/";
+    private static final String OTHER_ICON_PATH = "art\\other\\";
 
     private final MiniTable miniTable;
     private LeftPanel leftPanel;
