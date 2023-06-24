@@ -17,9 +17,9 @@ public class KnightCard extends Card {
             { 2, 1 }, { 2, -1 }, { 1, 2 }, { 1, -2 }, { -1, 2 }, { -1, -2 }, { -2, 1 }, { -2, -1 }
     };
 
-    public KnightCard(final int cardID, final boolean crossAttack, final boolean diagonalAttack, final boolean shield,
+    public KnightCard(final boolean crossAttack, final boolean diagonalAttack, final boolean shield,
             final boolean catnip) {
-        super(cardID, crossAttack, diagonalAttack, shield, catnip, CardType.KNIGHT);
+        super(crossAttack, diagonalAttack, shield, catnip, CardType.KNIGHT);
     }
 
     @Override

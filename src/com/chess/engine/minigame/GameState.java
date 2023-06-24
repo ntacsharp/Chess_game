@@ -53,6 +53,10 @@ public class GameState {
         return floor;
     }
 
+    public int getGold() {
+        return gold;
+    }
+
     private boolean isCleared() {
         if (this.chessBoard.getEnemyPieces().isEmpty())
             return true;

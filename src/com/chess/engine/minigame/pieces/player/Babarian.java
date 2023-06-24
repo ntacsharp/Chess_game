@@ -10,7 +10,6 @@ import com.chess.engine.minigame.cards.KingCard;
 import com.chess.engine.minigame.cards.KnightCard;
 import com.chess.engine.minigame.cards.PawnCard;
 import com.chess.engine.minigame.cards.RookCard;
-import com.chess.engine.minigame.pieces.MiniPiece;
 
 public class Babarian extends PlayerPiece{
     
@@ -19,18 +18,18 @@ public class Babarian extends PlayerPiece{
     public Babarian(final int row, final int col){
         super(row, col, PieceType.BABARIAN);
         this.defaultCards = new ArrayList<Card>();
-        defaultCards.add(new KingCard(0, false, false, false, false));
-        defaultCards.add(new RookCard(1, false, false, false, false));
-        defaultCards.add(new RookCard(2, false, false, false, false));
-        defaultCards.add(new BishopCard(3, false, false, false, false));
-        defaultCards.add(new BishopCard(4, false, false, false, false));
-        defaultCards.add(new KnightCard(5, false, false, false, false));
-        defaultCards.add(new KnightCard(6, false, false, false, false));
-        defaultCards.add(new PawnCard(7, false, false, true, false));
-        defaultCards.add(new PawnCard(8, false, true, true, false));
-        defaultCards.add(new PawnCard(9, true, false, false, false));
-        defaultCards.add(new PawnCard(10, false, false, false, true));
-        defaultCards.add(new PawnCard(11, false, false, false, true));
+        defaultCards.add(new KingCard(false, false, false, false));
+        defaultCards.add(new RookCard(false, false, false, false));
+        defaultCards.add(new RookCard(false, false, false, false));
+        defaultCards.add(new BishopCard(false, false, false, false));
+        defaultCards.add(new BishopCard(false, false, false, false));
+        defaultCards.add(new KnightCard(false, false, false, false));
+        defaultCards.add(new KnightCard(false, false, false, false));
+        defaultCards.add(new PawnCard(false, false, true, false));
+        defaultCards.add(new PawnCard(false, true, true, false));
+        defaultCards.add(new PawnCard(true, false, false, false));
+        defaultCards.add(new PawnCard(false, false, false, true));
+        defaultCards.add(new PawnCard(false, false, false, true));
     }
 
     @Override
@@ -39,7 +38,7 @@ public class Babarian extends PlayerPiece{
     }
 
     @Override
-    public MiniPiece movePiece(MiniMove move){
+    public Babarian movePiece(MiniMove move){
         return new Babarian(move.getDestinationRow(), move.getDestinationCol());
     }
 }

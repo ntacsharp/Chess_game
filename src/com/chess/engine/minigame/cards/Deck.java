@@ -55,6 +55,7 @@ public class Deck {
     }
 
     public Card getCardInHand(final int id) {
+        if(id == -1) return null;
         return this.hand.get(id);
     }
 

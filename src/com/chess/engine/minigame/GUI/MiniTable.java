@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -23,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import com.chess.engine.minigame.board.MiniMove;
@@ -39,9 +41,11 @@ import com.chess.engine.minigame.pieces.player.PlayerPiece.PieceType;
 public class MiniTable {
     public static final Color lightTileColor = new Color(99, 105, 136);
     public static final Color darkTileColor = new Color(56, 57, 97);
-    public static final Color lightHighlight = new Color(167, 170, 190);
     public static final Color lightBorderColor = new Color(219, 233, 238);
     public static final Color darkBorderColor = new Color(141, 153, 174);
+    public static final Color chosenBackground = new Color(255, 181, 63);
+    public static final Color darkRed = new Color(147, 62, 100);
+    public static final Color lightRed = new Color(169, 85, 119);
 
     private static final String ENEMY_ICON_PATH = "art/pieces/enemies/";
     private static final String PLAYER_ICON_PATH = "art/pieces/player/";
@@ -53,7 +57,7 @@ public class MiniTable {
     private Card chosenCard = null;
     private BoardPanel boardPanel;
     private SouthPanel southPanel;
-    private MiniTile tileEntered = null;
+    private NorthPanel northPanel;
 
     public MiniTable() {
         this.gameFrame = new JFrame();
@@ -75,8 +79,16 @@ public class MiniTable {
         return gameState;
     }
 
-    public void skip(){
+    public void skip() {
         System.out.println("adad");
+    }
+
+    public void setting(){
+        System.out.println("setting");
+    }
+
+    public void drawBoard(final MiniBoard board) {
+        boardPanel.drawBoard(board);
     }
 
     private void setUpShoppingRound() {
@@ -91,15 +103,13 @@ public class MiniTable {
         this.gameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.boardPanel = new BoardPanel();
         this.southPanel = new SouthPanel(this);
+        this.northPanel = new NorthPanel(this);
         JPanel eastPanel = new JPanel();
-        eastPanel.setPreferredSize(new Dimension((int) screenSize.getWidth() / 3, (int)screenSize.getHeight()));
+        eastPanel.setPreferredSize(new Dimension((int) screenSize.getWidth() / 3, (int) screenSize.getHeight()));
         eastPanel.setBackground(darkTileColor);
         JPanel westPanel = new JPanel();
-        westPanel.setPreferredSize(new Dimension((int) screenSize.getWidth() / 3, (int)screenSize.getHeight()));
+        westPanel.setPreferredSize(new Dimension((int) screenSize.getWidth() / 3, (int) screenSize.getHeight()));
         westPanel.setBackground(darkTileColor);
-        JPanel northPanel = new JPanel();
-        northPanel.setPreferredSize(new Dimension((int) screenSize.getWidth(), (int)screenSize.getHeight() / 13));
-        northPanel.setBackground(darkTileColor);
         this.gameFrame.add(this.boardPanel, BorderLayout.CENTER);
         this.gameFrame.add(southPanel, BorderLayout.SOUTH);
         this.gameFrame.add(northPanel, BorderLayout.NORTH);
@@ -110,6 +120,7 @@ public class MiniTable {
 
     private class BoardPanel extends JPanel {
         final List<TilePanel> boardTiles;
+        EnemyPiece enemyPiece;
 
         BoardPanel() {
             super(new GridLayout(5, 5));
@@ -136,29 +147,55 @@ public class MiniTable {
             validate();
             repaint();
         }
+
+        public void highlightDangerousTile(final int row, final int col, final boolean highlight) {
+            if (highlight) {
+                if (gameState.getChessBoard().getTile(row, col).isOccupied()) {
+                    MiniPiece piece = gameState.getChessBoard().getTile(row, col).getPiece();
+                    if (piece instanceof EnemyPiece) {
+                        enemyPiece = (EnemyPiece) piece;
+                        for (Integer cor : enemyPiece.getRange()) {
+                            boardTiles.get(cor).redHighLight();
+                        }
+                    }
+                }
+            } else {
+                if (enemyPiece != null) {
+                    for (Integer cor : enemyPiece.getRange()) {
+                        boardTiles.get(cor).colorTile();
+                    }
+                }
+                enemyPiece = null;
+            }
+        }
     }
 
     private class TilePanel extends JPanel {
         private final int row, col;
-        private boolean isDangeous;
 
         TilePanel(final BoardPanel boardPanel, final int row, final int col) {
             super(new GridBagLayout());
             this.row = row;
             this.col = col;
-            this.isDangeous = false;
-            tileEntered = null;
             colorTile();
             placePieceIconOnTile(gameState.getChessBoard());
+            legalMovesHighlighter(gameState.getChessBoard());
             addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (chosenCard != null) {
-                        final MiniMove move = MiniMove.MoveFactory.findMove(gameState.getChessBoard(), chosenCard,
-                                gameState.getChessBoard().getPlayerPiece().getCorID(),
-                                row * MiniBoardUtils.NUM_TILE_PER_ROW + col);
-                        if (move != null) {
-                            gameState.setChessBoard(move.execute());
+                        boolean isMoveLegal = false;
+                        MiniMove legalMove = null;
+                        for (MiniMove move : chosenCard.legalMoves(gameState.getChessBoard(),
+                                gameState.getChessBoard().getPlayerPiece())) {
+                            if (move.getDestinationRow() == row && move.getDestinationCol() == col) {
+                                isMoveLegal = true;
+                                legalMove = move;
+                                break;
+                            }
+                        }
+                        if (isMoveLegal) {
+                            gameState.setChessBoard(legalMove.execute());
                             gameState.getDeck().getHand().remove(chosenCard);
                             if (!chosenCard.getHasPower(3)) {
                                 gameState.setMoveLeft(gameState.getMoveLeft() - 1);
@@ -167,12 +204,14 @@ public class MiniTable {
                             }
                             if (chosenCard.getHasPower(2))
                                 gameState.setShield(gameState.getShield() + 1);
+                            chosenCard = null;
                         }
                     }
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             boardPanel.drawBoard(gameState.getChessBoard());
+                            southPanel.redraw();
                         }
                     });
                 }
@@ -189,12 +228,14 @@ public class MiniTable {
 
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    // tileEntered = gameState.getChessBoard().getTile(row, col);
+                    boardPanel.highlightDangerousTile(row, col, true);
+                    setBackground(lightBorderColor);
                 }
 
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    // tileEntered = null;
+                    boardPanel.highlightDangerousTile(row, col, false);
+                    colorTile();
                 }
 
             });
@@ -205,7 +246,6 @@ public class MiniTable {
             removeAll();
             colorTile();
             legalMovesHighlighter(board);
-            // dangerHighlighter(board);
             placePieceIconOnTile(board);
             validate();
             repaint();
@@ -216,8 +256,6 @@ public class MiniTable {
             if (board.getTile(this.row, this.col).isOccupied()) {
                 if (board.getTile(row, col).getPiece() instanceof PlayerPiece) {
                     try {
-                        // final BufferedImage bufferedImage = ImageIO.read(new
-                        // File("art/pieces/enemies/AR.png"));
                         final BufferedImage bufferedImage = ImageIO.read(new File(PLAYER_ICON_PATH
                                 + board.getPlayerPiece().getPieceType().toString() + ".png"));
                         final ImageIcon icon = new ImageIcon(bufferedImage);
@@ -228,8 +266,6 @@ public class MiniTable {
                 } else {
                     EnemyPiece enemyPiece = (EnemyPiece) board.getTile(row, col).getPiece();
                     String filePath = ENEMY_ICON_PATH;
-                    // if(this.isDangeous) filePath += "d";
-                    // else
                     if (enemyPiece.isImmune())
                         filePath += "i";
                     filePath += enemyPiece.getPieceType().toString() + ".png";
@@ -244,26 +280,26 @@ public class MiniTable {
             }
         }
 
-        private void dangerHighlighter(final MiniBoard board) {
-            if (board.getTile(row, col).isOccupied()) {
-                MiniPiece piece = board.getTile(row, col).getPiece();
-                if (piece instanceof EnemyPiece) {
-                    EnemyPiece enemyPiece = (EnemyPiece) piece;
-                    if (enemyPiece.canAttactk(tileEntered.getRow(), tileEntered.getCol()))
-                        this.isDangeous = true;
-                }
-            }
-        }
-
         private void colorTile() {
             setBackground(((this.row + this.col) % 2 == 0) ? lightTileColor : darkTileColor);
         }
 
+        public void redHighLight() {
+            setBackground(((this.row + this.col) % 2 == 0) ? lightRed : darkRed);
+        }
+
         private void legalMovesHighlighter(final MiniBoard board) {
-            for (MiniMove move : chosenCard.legalMoves(board, board.getPlayerPiece())) {
-                if (move.getDestinationRow() == this.row && move.getDestinationCol() == this.col) {
-                    setBackground(lightHighlight);
+            boolean highlight = false;
+            if (chosenCard != null) {
+                for (MiniMove move : chosenCard.legalMoves(board, board.getPlayerPiece())) {
+                    if (move.getDestinationRow() == this.row && move.getDestinationCol() == this.col) {
+                        highlight = true;
+                        setBorder(new LineBorder(chosenBackground, 4));
+                    }
                 }
+            }
+            if (!highlight) {
+                setBorder(BorderFactory.createEmptyBorder());
             }
         }
     }
