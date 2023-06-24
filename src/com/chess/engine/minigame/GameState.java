@@ -1,11 +1,13 @@
 package com.chess.engine.minigame;
 
+import javax.sound.sampled.Clip;
+
 import com.chess.engine.minigame.board.MiniBoard;
 import com.chess.engine.minigame.board.MiniMove;
 import com.chess.engine.minigame.cards.Deck;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
 import com.chess.engine.minigame.pieces.player.PlayerPiece.PieceType;
-
+import com.chess.sound.*;
 public class GameState {
     private MiniBoard chessBoard;
     private Deck deck;
@@ -16,6 +18,7 @@ public class GameState {
     private int shield;
     private int floor;
     private int gold;
+    private BackgroundMusic backgroundMusic;
 
     public GameState(PieceType playerPieceType) {
         this.chessBoard = MiniBoard.createStandardBoard(1, PieceType.BABARIAN);
@@ -27,9 +30,13 @@ public class GameState {
         this.currentHealth = 3;
         this.shield = 0;
         this.gold = 0;
+        this.backgroundMusic = new BackgroundMusic("Chess_game\\src\\com\\chess\\sound\\background.wav");
         checkTurn();
     }
 
+    public void start() {
+        backgroundMusic.play();
+    }
     public void setMoveLeft(int moveLeft) {
         this.moveLeft = moveLeft;
     }
