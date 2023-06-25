@@ -39,8 +39,9 @@ public class test extends JFrame implements ActionListener {
     }
  
     public static void main(String[] args) {
-        test cl = new test();
-        cl.setSize(400, 300);
-        cl.setVisible(true);
+        // test cl = new test();
+        // cl.setSize(400, 300);
+        // cl.setVisible(true);
+        System.out.println(Math.round(1.6));
     }
 }

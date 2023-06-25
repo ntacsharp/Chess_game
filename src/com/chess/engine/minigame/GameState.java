@@ -1,11 +1,21 @@
 package com.chess.engine.minigame;
 
 import com.chess.engine.minigame.board.MiniBoard;
+import com.chess.engine.minigame.board.MiniBoardUtils;
+import com.chess.engine.minigame.board.MiniMove;
+import com.chess.engine.minigame.cards.Card;
 import com.chess.engine.minigame.cards.Deck;
+import com.chess.engine.minigame.pieces.MiniPiece;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
 import com.chess.engine.minigame.pieces.player.PlayerPiece.PieceType;
 
 public class GameState {
+    private static final int[][] CROSS = {
+            { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 }
+    };
+    private static final int[][] DIAGONAL = {
+            { -1, -1 }, { 1, -1 }, { -1, 1 }, { 1, 1 }
+    };
     private MiniBoard chessBoard;
     private Deck deck;
     private int moveLeft;
@@ -22,11 +32,14 @@ public class GameState {
         this.floor = 1;
         this.moveLeft = 0;
         this.turn = 1;
-        this.maxHealth = 3;
-        this.currentHealth = 3;
+        this.maxHealth = 4;
+        this.currentHealth = 4;
         this.shield = 0;
         this.gold = 0;
-        checkTurn();
+    }
+
+    public void setTurn(final int turn) {
+        this.turn = turn;
     }
 
     public void setMoveLeft(int moveLeft) {
@@ -55,44 +68,55 @@ public class GameState {
         return false;
     }
 
-    private void checkTurn() {
-        if (this.isCleared()) {
-            this.chessBoard = MiniBoard.createStandardBoard(++this.floor, PieceType.BABARIAN);
-            this.deck = new Deck(this.chessBoard.getPlayerPiece());
+    public void doDamage() {
+        this.shield -= this.chessBoard.calculateDamage();
+        if (this.shield < 0)
+            this.currentHealth += this.shield;
+        this.shield = 0;
+        System.out.println(currentHealth);
+        if (this.currentHealth <= 0) {
+            return;
         }
-        if (this.moveLeft == 0) {
-            enemyTurn();
-        } else
-            playerTurn();
+
     }
 
-    private void enemyTurn() {
-        if (this.turn > 1) {
-            this.shield -= this.chessBoard.calculateDamage();
-            if (this.shield < 0)
-                this.currentHealth += this.shield;
-            this.shield = 0;
-            if (this.currentHealth <= 0)
-                return;
-        }
-        while (this.chessBoard.notMoved(this.turn) != null) {
-            // try {
-            //     Thread.sleep(1000);
-            // } catch (InterruptedException e) {
-            //     e.printStackTrace();
-            // }
-            EnemyPiece enemyPiece = this.chessBoard.notMoved(this.turn);
-            this.chessBoard = enemyPiece.move(this.chessBoard);
-        }
-        this.setMoveLeft(2);
-        this.checkTurn();
+    public void doMove(final EnemyPiece enemyPiece) {
+        this.chessBoard = enemyPiece.move(this.chessBoard);
     }
 
-    private void playerTurn() {
-        // deck.fillHand(3);
-        // while(this.moveLeft > 0){
+    public void doMove(final Card card, final int r, final int c) {
+        for (MiniMove move : card.legalMoves(chessBoard, chessBoard.getPlayerPiece())) {
+            if (move.getDestinationRow() == r && move.getDestinationCol() == c) {
+                this.chessBoard = move.execute();
+                this.moveLeft--;
+            }
+        }
+    }
 
-        // }
+    public void crossAttack() {
+        for (int[] cor : CROSS) {
+            int r = cor[0] + chessBoard.getPlayerPiece().getRow();
+            int c = cor[1] + chessBoard.getPlayerPiece().getCol();
+            if (MiniBoardUtils.isCorValid(r, c)) {
+                MiniMove move = new MiniMove.PlayerMove(this.chessBoard, this.chessBoard.getPlayerPiece(),
+                        this.chessBoard.getPlayerPiece().getRow(), this.chessBoard.getPlayerPiece().getCol(),
+                        (EnemyPiece) this.chessBoard.getTile(r, c).getPiece());
+                this.chessBoard = move.execute();
+            }
+        }
+    }
+
+    public void diagonalAttack() {
+        for (int[] cor : DIAGONAL) {
+            int r = cor[0] + chessBoard.getPlayerPiece().getRow();
+            int c = cor[1] + chessBoard.getPlayerPiece().getCol();
+            if (MiniBoardUtils.isCorValid(r, c)) {
+                MiniMove move = new MiniMove.PlayerMove(this.chessBoard, this.chessBoard.getPlayerPiece(),
+                        this.chessBoard.getPlayerPiece().getRow(), this.chessBoard.getPlayerPiece().getCol(),
+                        (EnemyPiece) this.chessBoard.getTile(r, c).getPiece());
+                this.chessBoard = move.execute();
+            }
+        }
     }
 
     public MiniBoard getChessBoard() {

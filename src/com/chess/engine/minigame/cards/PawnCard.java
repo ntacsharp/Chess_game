@@ -31,11 +31,9 @@ public class PawnCard extends Card {
         r = playerPiece.getRow() + NORMAL_MOVE[0];
         c = playerPiece.getCol() + NORMAL_MOVE[1];
         if (MiniBoardUtils.isCorValid(r, c)) {
-            List<EnemyPiece> attackedPieces = new ArrayList<>();
             final MiniTile destinationTile = board.getTile(r, c);
             if (!destinationTile.isOccupied()){
-                attackedPieces.addAll(this.getAffectedPieces(board, r, c));
-                legalMovesList.add(new PlayerMove(board, playerPiece, r, c, attackedPieces));
+                legalMovesList.add(new PlayerMove(board, playerPiece, r, c, null));
             }
         }
 
@@ -47,12 +45,9 @@ public class PawnCard extends Card {
                 if (destinationTile.isOccupied()) {
                     final MiniPiece pieceAtDestination = destinationTile.getPiece();
                     if (pieceAtDestination instanceof EnemyPiece) {
-                        List<EnemyPiece> attackedPieces = new ArrayList<>();
-                        final EnemyPiece enemyPiece = (EnemyPiece) pieceAtDestination;
-                        if (!enemyPiece.isImmune()){
-                            attackedPieces.add(enemyPiece);
-                            attackedPieces.addAll(this.getAffectedPieces(board, r, c));
-                            legalMovesList.add(new PlayerMove(board, playerPiece, r, c, attackedPieces));
+                        final EnemyPiece attackedPiece = (EnemyPiece) pieceAtDestination;
+                        if (!attackedPiece.isImmune()){
+                            legalMovesList.add(new PlayerMove(board, playerPiece, r, c, attackedPiece));
                         }
                     }
                 }

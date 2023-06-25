@@ -1,7 +1,11 @@
 package com.chess.engine.minigame.cards;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import com.chess.engine.minigame.board.MiniBoard;
 import com.chess.engine.minigame.board.MiniBoardUtils;
@@ -31,7 +35,7 @@ public abstract class Card {
         this.cardType = cardType;
     }
 
-    public Power getPowerByID(int id) {
+    public static Power getPowerByID(int id) {
         for (Power power : Power.values()) {
             if (power.getID() == id)
                 return power;
@@ -107,6 +111,31 @@ public abstract class Card {
 
     public abstract List<MiniMove> legalMoves(final MiniBoard board, final PlayerPiece piece);
 
+    public boolean canAttack(final int r, final int c, final MiniBoard board) {
+        for (MiniMove move : this.legalMoves(board, board.getPlayerPiece())) {
+            if (move.getDestinationRow() == r && move.getDestinationCol() == c)
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null)
+            return false;
+        if (this == obj)
+            return true;
+        // if (!(obj instanceof Card))
+        //     return false;
+        // Card objCard = (Card) obj;
+        // if (this.cardType == objCard.getCardType() && this.getHasPower(0) == objCard.getHasPower(0)
+        //         && this.getHasPower(1) == objCard.getHasPower(1) && this.getHasPower(2) == objCard.getHasPower(2)
+        //         && this.getHasPower(3) == objCard.getHasPower(3)) {
+        //             return true;
+        // }
+        return false;
+    }
+
     public enum CardType {
         BISHOP("B", "Bishop"),
         KING("K", "King"),
@@ -133,17 +162,19 @@ public abstract class Card {
     }
 
     public enum Power {
-        CROSS(0, "+"),
-        DIAGONAL(1, "x"),
-        SHIELD(2, "s"),
-        CATNIP(3, "c");
+        CROSS(0, "+", "Perform a cross attack after moving."),
+        DIAGONAL(1, "x", "Perform a diagonal attack after moving."),
+        SHIELD(2, "s", "Gain a shield blocking 1 damage."),
+        CATNIP(3, "c", "Gain a move and draw a card.");
 
         private int powerID;
         private String powerName;
+        private String description;
 
-        Power(int powerID, String powerName) {
+        Power(int powerID, String powerName, String description) {
             this.powerID = powerID;
             this.powerName = powerName;
+            this.description = description;
         }
 
         public int getID() {
@@ -153,6 +184,10 @@ public abstract class Card {
         @Override
         public String toString() {
             return this.powerName;
+        }
+
+        public String getDescription() {
+            return description;
         }
     }
 }

@@ -83,11 +83,16 @@ public class Beast extends EnemyPiece {
 
     @Override
     public Beast movePiece(MiniMove move) {
-        return new Beast(move.getDestinationRow(), move.getDestinationCol(), this.getTurn() + 1);
+        this.row = move.getDestinationRow();
+        this.col = move.getDestinationCol();
+        this.isCurrentlyNimble = this.isNimble();
+        this.turn++;
+        return this;
+        // return new Beast(move.getDestinationRow(), move.getDestinationCol(), this.getTurn() + 1);
     }
 
     @Override
-    public Beast nimbledPiece(MiniMove move) {
+    public Beast nimbledPiece(final int row, final int col) {
         return null;
     }
 
@@ -98,8 +103,10 @@ public class Beast extends EnemyPiece {
     }
 
     @Override
-    public String getInformation(){
-        return "<html><i>Close-ranged, spawn an infected unit on death.</i></html>";
+    public List<String> getInformation(){
+        List<String> res = new ArrayList<>();
+        res.add("Close-ranged, spawn an infected unit on death.");
+        return res;
     }
 
     @Override

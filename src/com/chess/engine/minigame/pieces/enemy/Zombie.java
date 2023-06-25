@@ -94,11 +94,16 @@ public class Zombie extends EnemyPiece {
 
     @Override
     public Zombie movePiece(final MiniMove move) {
-        return new Zombie(move.getDestinationRow(), move.getDestinationCol(), this.getTurn() + 1);
+        this.row = move.getDestinationRow();
+        this.col = move.getDestinationCol();
+        this.isCurrentlyNimble = this.isNimble();
+        this.turn++;
+        return this;
+        // return new Zombie(move.getDestinationRow(), move.getDestinationCol(), this.getTurn() + 1);
     }
 
     @Override
-    public Zombie nimbledPiece(final MiniMove move) {
+    public Zombie nimbledPiece(final int row, final int col) {
         return null;
     }
 
@@ -109,8 +114,10 @@ public class Zombie extends EnemyPiece {
     }
 
     @Override
-    public String getInformation(){
-        return "<html><i>Limited range, blight adjacent tiles on death.</i></html>";
+    public List<String> getInformation(){
+        List<String> res = new ArrayList<>();
+        res.add("Limited range, blight adjacent tiles on death.");
+        return res;
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.chess.engine.minigame.pieces.MiniPiece;
 import com.chess.engine.minigame.pieces.enemy.Archer;
 import com.chess.engine.minigame.pieces.enemy.Beast;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
+import com.chess.engine.minigame.pieces.enemy.Infected;
 import com.chess.engine.minigame.pieces.enemy.Shaman;
 import com.chess.engine.minigame.pieces.enemy.Zombie;
 import com.chess.engine.minigame.pieces.enemy.Swordman;
@@ -92,10 +93,10 @@ public class MiniBoard {
         Random rand = new Random();
         while (difficulty > 0) {
             int x = rand.nextInt(1, Math.min(7, difficulty + 1));
-            int r = rand.nextInt(4);
+            int r = rand.nextInt(3);
             int c = rand.nextInt(5);
             while (builder.boardConfig.get(r * 5 + c) != null) {
-                r = rand.nextInt(4);
+                r = rand.nextInt(3);
                 c = rand.nextInt(5);
             }
             if (difficulty - x >= 0) {
@@ -140,7 +141,7 @@ public class MiniBoard {
         }
     }
 
-    public EnemyPiece notMoved(final int turn) {
+    public EnemyPiece getNotMovedPiece(final int turn) {
         for (EnemyPiece enemyPiece : this.enemyPieces) {
             if (enemyPiece.getTurn() < turn)
                 return enemyPiece;
@@ -182,6 +183,7 @@ public class MiniBoard {
         }
         if (this.getTile(this.getPlayerPiece().getRow(), this.getPlayerPiece().getCol()).isBlighted())
             res++;
+        System.out.println(res);
         return res;
     }
 

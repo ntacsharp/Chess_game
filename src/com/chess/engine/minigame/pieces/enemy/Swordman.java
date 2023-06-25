@@ -85,14 +85,22 @@ public class Swordman extends EnemyPiece {
 
     @Override
     public Swordman movePiece(MiniMove move) {
-        return new Swordman(move.getDestinationRow(), move.getDestinationCol(), this.isNimble(), this.isNimble(),
-                this.getTurn() + 1);
+        this.row = move.getDestinationRow();
+        this.col = move.getDestinationCol();
+        this.isCurrentlyNimble = this.isNimble();
+        this.turn++;
+        return this;
+        // return new Swordman(move.getDestinationRow(), move.getDestinationCol(), this.isNimble(), this.isNimble(),
+        //         this.getTurn() + 1);
     }
 
     @Override
-    public Swordman nimbledPiece(MiniMove move) {
-        return new Swordman(move.getDestinationRow(), move.getDestinationCol(), this.isNimble(), false,
-                this.getTurn());
+    public Swordman nimbledPiece(final int row, final int col) {
+        this.row = row;
+        this.col = col;
+        this.isCurrentlyNimble = false;
+        return this;
+        // return new Swordman(row, col, this.isNimble(), false, this.getTurn());
     }
 
     @Override
@@ -102,8 +110,10 @@ public class Swordman extends EnemyPiece {
     }
 
     @Override
-    public String getInformation(){
-        return "<html><i>Close-ranged, invulnerable if player is on cardinally adjacent tile!</i></html>";
+    public List<String> getInformation(){
+        List<String> res = new ArrayList<>();
+        res.add("Close-ranged, invulnerable if player is on cardinally adjacent tile!");
+        return res;
     }
 
     @Override

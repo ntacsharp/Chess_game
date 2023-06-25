@@ -2,6 +2,7 @@ package com.chess.engine.minigame.pieces.player;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.chess.engine.minigame.board.MiniMove;
 import com.chess.engine.minigame.cards.BishopCard;
@@ -32,9 +33,11 @@ public class Babarian extends PlayerPiece{
         defaultCards.add(new PawnCard(false, false, false, true));
     }
     @Override
-    public String getInformation(){
-        return "<html><i>Promote whenever you move into top row, start turn in the top row, or have 3 <b>Pawn</b> in hand.<i></html>";
-
+    public List<String> getInformation(){
+        List<String> res = new ArrayList<>();
+        res.add("Promote whenever you move into top row,");
+        res.add("start turn in the top row, or have 3 Pawn in hand.");
+        return res;
     }
 
     @Override
@@ -44,6 +47,9 @@ public class Babarian extends PlayerPiece{
 
     @Override
     public Babarian movePiece(MiniMove move){
-        return new Babarian(move.getDestinationRow(), move.getDestinationCol());
+        this.row = move.getDestinationRow();
+        this.col = move.getDestinationCol();
+        return this;
+        //return new Babarian(move.getDestinationRow(), move.getDestinationCol());
     }
 }

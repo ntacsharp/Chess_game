@@ -50,12 +50,11 @@ public class Shaman extends EnemyPiece {
                 c = this.col + move[1];
                 if (MiniBoardUtils.isCorValid(r, c)) {
                     if (!board.getTile(r, c).isOccupied()) {
-                        if(board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c < tmp){
+                        if (board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c < tmp) {
                             possibleMove.clear();
                             possibleMove.add(move);
                             tmp = board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c;
-                        }
-                        else if(board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c == tmp){
+                        } else if (board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c == tmp) {
                             possibleMove.add(move);
                         }
                     }
@@ -90,34 +89,46 @@ public class Shaman extends EnemyPiece {
 
     @Override
     public Shaman movePiece(final MiniMove move) {
-        return new Shaman(move.getDestinationRow(), move.getDestinationCol(), this.isNimble(), this.isNimble(),
-                this.getTurn() + 1);
+        this.row = move.getDestinationRow();
+        this.col = move.getDestinationCol();
+        this.isCurrentlyNimble = this.isNimble();
+        this.turn++;
+        return this;
+        // return new Shaman(move.getDestinationRow(), move.getDestinationCol(),
+        // this.isNimble(), this.isNimble(),
+        // this.getTurn() + 1);
     }
 
     @Override
-    public Shaman nimbledPiece(final MiniMove move) {
-        return new Shaman(move.getDestinationRow(), move.getDestinationCol(), this.isNimble(), false,
-                this.getTurn());
+    public Shaman nimbledPiece(final int row, final int col) {
+        this.row = row;
+        this.col = col;
+        this.isCurrentlyNimble = false;
+        return this;
+        // return new Shaman(row, col, this.isNimble(), false, this.getTurn());
     }
 
     @Override
-    public boolean canAttactk(final int r, final int c){
-        if(this.getRange().contains(r * 5 + c)) return true;
+    public boolean canAttactk(final int r, final int c) {
+        if (this.getRange().contains(r * 5 + c))
+            return true;
         return false;
     }
 
     @Override
-    public String getInformation(){
-        return "<html><i>Ranged unit, invulnerable while other enemies are alive!</i></html>";
+    public List<String> getInformation() {
+        List<String> res = new ArrayList<>();
+        res.add("Ranged unit, invulnerable while other enemies are alive!");
+        return res;
     }
 
     @Override
-    public List<Integer> getRange(){
+    public List<Integer> getRange() {
         List<Integer> res = new ArrayList<>();
         for (int[] range : this.RANGE) {
             int r = this.row + range[0];
             int c = this.col + range[1];
-            if(MiniBoardUtils.isCorValid(r, c)){
+            if (MiniBoardUtils.isCorValid(r, c)) {
                 res.add(r * 5 + c);
             }
         }

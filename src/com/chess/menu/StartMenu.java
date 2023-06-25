@@ -1,12 +1,9 @@
 package com.chess.menu;
 
-
-import com.chess.engine.maingame.GUI.Table;
-import com.chess.engine.minigame.GUI.MiniTable;
+import com.chess.Game;
 import com.chess.menu.src.button.ButtonAbstract;
 import com.chess.menu.src.button.SimpleButton;
 import com.chess.menu.src.component_list.LeveledGenericComponentList;
-import com.chess.menu.src.menuframe.SimpleMultilevelMenuFrame;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -33,7 +30,7 @@ public class StartMenu{
 //        },new SimpleButton("Exit"));
 //        startMenu.setVisible(true);
         JFrame startMenu=new JFrame("A chess game: Start Menu");
-        startMenu.setSize(MiniTable.screenSize);
+        startMenu.setSize(Game.screenSize);
         startMenu.setUndecorated(true);
         startMenu.addWindowListener(new WindowAdapter() {
             @Override
@@ -54,7 +51,7 @@ public class StartMenu{
         LeveledGenericComponentList<ButtonAbstract> buttonPanel= new LeveledGenericComponentList<ButtonAbstract>(3);
         ButtonAbstract startButton=new SimpleButton("Start Game",
                 (JFrame parent)->{
-                    new MiniTable();
+                    //new MiniTable();
                     parent.dispose();
                 });
         buttonPanel.addComponentLeveled(startButton,0);

@@ -8,6 +8,7 @@ import com.chess.engine.minigame.board.MiniBoardUtils;
 import com.chess.engine.minigame.board.MiniMove;
 import com.chess.engine.minigame.board.MiniTile;
 import com.chess.engine.minigame.board.MiniMove.PlayerMove;
+import com.chess.engine.minigame.pieces.MiniPiece;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
 import com.chess.engine.minigame.pieces.player.PlayerPiece;
 
@@ -32,21 +33,15 @@ public class KnightCard extends Card {
 
             if (MiniBoardUtils.isCorValid(r, c)) {
                 final MiniTile destinationTile = board.getTile(r, c);
-                List<EnemyPiece> attackedPieces = new ArrayList<>();
-                if (destinationTile.isOccupied() && destinationTile.getPiece() instanceof PlayerPiece) {
-                    throw new RuntimeException("Buged :(");
+                if (destinationTile.isOccupied()) {
+                    MiniPiece piece = board.getTile(r, c).getPiece();
+                    if (piece instanceof PlayerPiece)
+                        throw new RuntimeException("Buged :(");
+                    EnemyPiece attackedPiece = (EnemyPiece) piece;
+                    if (!attackedPiece.isImmune())
+                        legalMovesList.add(new PlayerMove(board, playerPiece, r, c, attackedPiece));
                 } else {
-                    if (destinationTile.isOccupied()) {
-                        final EnemyPiece enemyPiece = (EnemyPiece) destinationTile.getPiece();
-                        if (!enemyPiece.isImmune()) {
-                            attackedPieces.add(enemyPiece);
-                            attackedPieces.addAll(this.getAffectedPieces(board, r, c));
-                            legalMovesList.add(new PlayerMove(board, playerPiece, r, c, attackedPieces));
-                        }
-                    } else {
-                        attackedPieces.addAll(this.getAffectedPieces(board, r, c));
-                        legalMovesList.add(new PlayerMove(board, playerPiece, r, c, attackedPieces));
-                    }
+                    legalMovesList.add(new PlayerMove(board, playerPiece, r, c, null));
                 }
             }
         }

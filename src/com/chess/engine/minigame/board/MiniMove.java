@@ -94,12 +94,12 @@ public abstract class MiniMove {
     }
 
     public static class PlayerMove extends MiniMove {
-        protected final List<EnemyPiece> enemyPieces = new ArrayList<EnemyPiece>();
+        protected final EnemyPiece attackedPiece;
 
         public PlayerMove(MiniBoard board, MiniPiece movePiece, final int destinationRow,
-                final int destinationCol, final List<EnemyPiece> enemyPieces) {
+                final int destinationCol, final EnemyPiece attackedPiece) {
             super(board, movePiece, destinationRow, destinationCol);
-            this.enemyPieces.addAll(enemyPieces);
+            this.attackedPiece = attackedPiece;
         }
 
         @Override
@@ -121,67 +121,225 @@ public abstract class MiniMove {
                         builder.setBlight(i * MiniBoardUtils.NUM_TILE_PER_ROW + j);
                 }
             }
-            builder.setPiece(this.movePiece.movePiece(this));
-            for (EnemyPiece enemyPiece : this.board.getEnemyPieces()) {
-                if (!enemyPieces.contains(enemyPiece)) {
-                    builder.setPiece(enemyPiece);
+            if (attackedPiece != null) {
+                for (EnemyPiece enemyPiece : this.board.getEnemyPieces()) {
+                    if (!enemyPiece.equals(attackedPiece)) {
+                        builder.setPiece(enemyPiece);
+                    }
                 }
-            }
-            for (EnemyPiece enemyPiece : enemyPieces) {
-                if (enemyPiece.isCurrentlyNimble()) {
-                    builder.setPiece(enemyPiece.nimbledPiece(this));
-                } else if (enemyPiece instanceof Beast) {
+                if (attackedPiece.isCurrentlyNimble()) {
+                    if (this.movePiece.getRow() == this.attackedPiece.getRow()) {
+                        if (this.movePiece.getCol() == this.attackedPiece.getCol()) {
+                            throw new RuntimeException("Bugged!");
+                        } else if (this.movePiece.getCol() > this.attackedPiece.getCol()) {
+                            if (MiniBoardUtils.isCorValid(attackedPiece.getRow(), attackedPiece.getCol() - 1)
+                                    && !this.board.getTile(attackedPiece.getRow(), attackedPiece.getCol() - 1)
+                                            .isOccupied()) {
+                                builder.setPiece(
+                                        attackedPiece.nimbledPiece(attackedPiece.getRow(), attackedPiece.getCol() - 1));
+                            } else {
+                                List<Integer> newR = new ArrayList<>();
+                                List<Integer> newC = new ArrayList<>();
+                                for (int[] move : attackedPiece.MOVE_SET) {
+                                    int r = attackedPiece.getRow() + move[0];
+                                    int c = attackedPiece.getCol() + move[1];
+                                    if (MiniBoardUtils.isCorValid(r, c) && !this.board.getTile(r, c).isOccupied()) {
+                                        newR.add(r);
+                                        newC.add(c);
+                                    }
+                                }
+                                if (!newR.isEmpty()) {
+                                    Random rand = new Random();
+                                    int tmp = rand.nextInt(newR.size());
+                                    builder.setPiece(attackedPiece.nimbledPiece(newR.get(tmp), newC.get(tmp)));
+                                }
+                            }
+                        } else {
+                            if (MiniBoardUtils.isCorValid(attackedPiece.getRow(), attackedPiece.getCol() + 1)
+                                    && !this.board.getTile(attackedPiece.getRow(), attackedPiece.getCol() + 1)
+                                            .isOccupied()) {
+                                builder.setPiece(
+                                        attackedPiece.nimbledPiece(attackedPiece.getRow(), attackedPiece.getCol() + 1));
+                            } else {
+                                List<Integer> newR = new ArrayList<>();
+                                List<Integer> newC = new ArrayList<>();
+                                for (int[] move : attackedPiece.MOVE_SET) {
+                                    int r = attackedPiece.getRow() + move[0];
+                                    int c = attackedPiece.getCol() + move[1];
+                                    if (MiniBoardUtils.isCorValid(r, c) && !this.board.getTile(r, c).isOccupied()) {
+                                        newR.add(r);
+                                        newC.add(c);
+                                    }
+                                }
+                                if (!newR.isEmpty()) {
+                                    Random rand = new Random();
+                                    int tmp = rand.nextInt(newR.size());
+                                    builder.setPiece(attackedPiece.nimbledPiece(newR.get(tmp), newC.get(tmp)));
+                                }
+                            }
+                        }
+                    } else if (this.movePiece.getRow() > this.attackedPiece.getRow()) {
+                        if (this.movePiece.getCol() == this.attackedPiece.getCol()) {
+                            if (MiniBoardUtils.isCorValid(attackedPiece.getRow() - 1, attackedPiece.getCol() )
+                                    && !this.board.getTile(attackedPiece.getRow() - 1, attackedPiece.getCol())
+                                            .isOccupied()) {
+                                builder.setPiece(
+                                        attackedPiece.nimbledPiece(attackedPiece.getRow() - 1, attackedPiece.getCol()));
+                            } else {
+                                List<Integer> newR = new ArrayList<>();
+                                List<Integer> newC = new ArrayList<>();
+                                for (int[] move : attackedPiece.MOVE_SET) {
+                                    int r = attackedPiece.getRow() + move[0];
+                                    int c = attackedPiece.getCol() + move[1];
+                                    if (MiniBoardUtils.isCorValid(r, c) && !this.board.getTile(r, c).isOccupied()) {
+                                        newR.add(r);
+                                        newC.add(c);
+                                    }
+                                }
+                                if (!newR.isEmpty()) {
+                                    Random rand = new Random();
+                                    int tmp = rand.nextInt(newR.size());
+                                    builder.setPiece(attackedPiece.nimbledPiece(newR.get(tmp), newC.get(tmp)));
+                                }
+                            }
+                        } else if (this.movePiece.getCol() > this.attackedPiece.getCol()) {
+                            if (MiniBoardUtils.isCorValid(attackedPiece.getRow() - 1, attackedPiece.getCol() - 1)
+                                    && !this.board.getTile(attackedPiece.getRow() - 1, attackedPiece.getCol() - 1)
+                                            .isOccupied()) {
+                                builder.setPiece(
+                                        attackedPiece.nimbledPiece(attackedPiece.getRow() - 1, attackedPiece.getCol() - 1));
+                            } else {
+                                List<Integer> newR = new ArrayList<>();
+                                List<Integer> newC = new ArrayList<>();
+                                for (int[] move : attackedPiece.MOVE_SET) {
+                                    int r = attackedPiece.getRow() + move[0];
+                                    int c = attackedPiece.getCol() + move[1];
+                                    if (MiniBoardUtils.isCorValid(r, c) && !this.board.getTile(r, c).isOccupied()) {
+                                        newR.add(r);
+                                        newC.add(c);
+                                    }
+                                }
+                                if (!newR.isEmpty()) {
+                                    Random rand = new Random();
+                                    int tmp = rand.nextInt(newR.size());
+                                    builder.setPiece(attackedPiece.nimbledPiece(newR.get(tmp), newC.get(tmp)));
+                                }
+                            }
+                        } else {
+                            if (MiniBoardUtils.isCorValid(attackedPiece.getRow() - 1, attackedPiece.getCol() + 1)
+                                    && !this.board.getTile(attackedPiece.getRow() - 1, attackedPiece.getCol() + 1)
+                                            .isOccupied()) {
+                                builder.setPiece(
+                                        attackedPiece.nimbledPiece(attackedPiece.getRow() - 1, attackedPiece.getCol() + 1));
+                            } else {
+                                List<Integer> newR = new ArrayList<>();
+                                List<Integer> newC = new ArrayList<>();
+                                for (int[] move : attackedPiece.MOVE_SET) {
+                                    int r = attackedPiece.getRow() + move[0];
+                                    int c = attackedPiece.getCol() + move[1];
+                                    if (MiniBoardUtils.isCorValid(r, c) && !this.board.getTile(r, c).isOccupied()) {
+                                        newR.add(r);
+                                        newC.add(c);
+                                    }
+                                }
+                                if (!newR.isEmpty()) {
+                                    Random rand = new Random();
+                                    int tmp = rand.nextInt(newR.size());
+                                    builder.setPiece(attackedPiece.nimbledPiece(newR.get(tmp), newC.get(tmp)));
+                                }
+                            }
+                        }
+                    } else {
+                        if (this.movePiece.getCol() == this.attackedPiece.getCol()) {
+                            if (MiniBoardUtils.isCorValid(attackedPiece.getRow() + 1, attackedPiece.getCol() )
+                                    && !this.board.getTile(attackedPiece.getRow() + 1, attackedPiece.getCol())
+                                            .isOccupied()) {
+                                builder.setPiece(
+                                        attackedPiece.nimbledPiece(attackedPiece.getRow() + 1, attackedPiece.getCol()));
+                            } else {
+                                List<Integer> newR = new ArrayList<>();
+                                List<Integer> newC = new ArrayList<>();
+                                for (int[] move : attackedPiece.MOVE_SET) {
+                                    int r = attackedPiece.getRow() + move[0];
+                                    int c = attackedPiece.getCol() + move[1];
+                                    if (MiniBoardUtils.isCorValid(r, c) && !this.board.getTile(r, c).isOccupied()) {
+                                        newR.add(r);
+                                        newC.add(c);
+                                    }
+                                }
+                                if (!newR.isEmpty()) {
+                                    Random rand = new Random();
+                                    int tmp = rand.nextInt(newR.size());
+                                    builder.setPiece(attackedPiece.nimbledPiece(newR.get(tmp), newC.get(tmp)));
+                                }
+                            }
+                        } else if (this.movePiece.getCol() > this.attackedPiece.getCol()) {
+                            if (MiniBoardUtils.isCorValid(attackedPiece.getRow() + 1, attackedPiece.getCol() - 1)
+                                    && !this.board.getTile(attackedPiece.getRow() + 1, attackedPiece.getCol() - 1)
+                                            .isOccupied()) {
+                                builder.setPiece(
+                                        attackedPiece.nimbledPiece(attackedPiece.getRow() + 1, attackedPiece.getCol() - 1));
+                            } else {
+                                List<Integer> newR = new ArrayList<>();
+                                List<Integer> newC = new ArrayList<>();
+                                for (int[] move : attackedPiece.MOVE_SET) {
+                                    int r = attackedPiece.getRow() + move[0];
+                                    int c = attackedPiece.getCol() + move[1];
+                                    if (MiniBoardUtils.isCorValid(r, c) && !this.board.getTile(r, c).isOccupied()) {
+                                        newR.add(r);
+                                        newC.add(c);
+                                    }
+                                }
+                                if (!newR.isEmpty()) {
+                                    Random rand = new Random();
+                                    int tmp = rand.nextInt(newR.size());
+                                    builder.setPiece(attackedPiece.nimbledPiece(newR.get(tmp), newC.get(tmp)));
+                                }
+                            }
+                        } else {
+                            if (MiniBoardUtils.isCorValid(attackedPiece.getRow() + 1, attackedPiece.getCol() + 1)
+                                    && !this.board.getTile(attackedPiece.getRow() + 1, attackedPiece.getCol() + 1)
+                                            .isOccupied()) {
+                                builder.setPiece(
+                                        attackedPiece.nimbledPiece(attackedPiece.getRow() + 1, attackedPiece.getCol() + 1));
+                            } else {
+                                List<Integer> newR = new ArrayList<>();
+                                List<Integer> newC = new ArrayList<>();
+                                for (int[] move : attackedPiece.MOVE_SET) {
+                                    int r = attackedPiece.getRow() + move[0];
+                                    int c = attackedPiece.getCol() + move[1];
+                                    if (MiniBoardUtils.isCorValid(r, c) && !this.board.getTile(r, c).isOccupied()) {
+                                        newR.add(r);
+                                        newC.add(c);
+                                    }
+                                }
+                                if (!newR.isEmpty()) {
+                                    Random rand = new Random();
+                                    int tmp = rand.nextInt(newR.size());
+                                    builder.setPiece(attackedPiece.nimbledPiece(newR.get(tmp), newC.get(tmp)));
+                                }
+                            }
+                        }
+                    }
+                } else if (attackedPiece instanceof Beast) {
                     Random rand = new Random();
                     int r = rand.nextInt(5);
                     int c = rand.nextInt(5);
-                    while ((r == this.destinationRow && c == this.destinationCol)
-                            || (this.board.getTile(r, c).isOccupied())) {
+                    while (this.board.getTile(r, c).isOccupied()) {
                         r = rand.nextInt(5);
                         c = rand.nextInt(5);
                     }
-                    builder.setPiece(new Infected(r, c, enemyPiece.getTurn()));
-                }else if (enemyPiece instanceof Zombie) {
-                    Zombie zombie = (Zombie) enemyPiece;
-                    zombie.triggerEffect(builder);
-                }else if (enemyPiece instanceof Infected) {
-                    Infected infected = (Infected) enemyPiece;
-                    infected.triggerEffect(builder);
+                    builder.setPiece(new Infected(r, c, attackedPiece.getTurn()));
                 }
-            }
-            return builder.build();
-        }
-    }
-
-    public static class NimbleMove extends EnemyMove {
-        public NimbleMove(MiniBoard board, MiniPiece movePiece, int destinationRow, int destinationCol) {
-            super(board, movePiece, destinationRow, destinationCol);
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            return this == obj || obj instanceof NimbleMove && super.equals(obj);
-        }
-
-        @Override
-        public MiniBoard execute() {
-
-            final Builder builder = new Builder();
-            for (int i = 0; i < MiniBoardUtils.NUM_TILE_PER_COL; i++) {
-                for (int j = 0; j < MiniBoardUtils.NUM_TILE_PER_ROW; j++) {
-                    if (this.board.getTile(i, j).isBlighted())
-                        builder.setBlight(i * MiniBoardUtils.NUM_TILE_PER_ROW + j);
+                builder.setPiece(this.movePiece.movePiece(this));
+                return builder.build();
+            } else {
+                for (EnemyPiece enemyPiece : this.board.getEnemyPieces()) {
+                    builder.setPiece(enemyPiece);
                 }
+                builder.setPiece(this.movePiece.movePiece(this));
+                return builder.build();
             }
-            builder.setPiece(this.board.getPlayerPiece());
-            for (MiniPiece piece : this.board.getEnemyPieces()) {
-                if (!this.movePiece.equals(piece)) {
-                    builder.setPiece(piece);
-                }
-            }
-            EnemyPiece piece = (EnemyPiece) this.movePiece;
-            builder.setPiece(piece.nimbledPiece(this));
-
-            return builder.build();
         }
     }
 

@@ -17,7 +17,6 @@ public class Deck {
         this.hand = new ArrayList<Card>();
         this.totalDeck.addAll(playerPiece.getDefaultDeck());
         refillCurrentDeck();
-        fillHand(3);
     }
 
     public void refillCurrentDeck() {
@@ -32,18 +31,18 @@ public class Deck {
 
     public void fillHand(final int cardCount) {
         for (int i = 0; i < cardCount; i++) {
-            if (this.currentDeck.isEmpty())
-                refillCurrentDeck();
             draw();
         }
     }
 
     // public void returnHand(){
-    //     this.currentDeck.addAll(this.hand);
-    //     this.hand.clear();
+    // this.currentDeck.addAll(this.hand);
+    // this.hand.clear();
     // }
 
     public void draw() {
+        if (this.currentDeck.isEmpty())
+            refillCurrentDeck();
         Random rand = new Random();
         int tmp = rand.nextInt(this.currentDeck.size());
         this.hand.add(this.currentDeck.get(tmp));
@@ -54,9 +53,8 @@ public class Deck {
         return hand;
     }
 
-    public Card getCardInHand(final int id) {
-        if(id == -1) return null;
-        return this.hand.get(id);
+    public void emptyHand() {
+        this.hand.clear();
     }
 
     public List<Card> getCurrentDeck() {
@@ -67,26 +65,26 @@ public class Deck {
         return totalDeck;
     }
 
-    public void handToString(){
+    public void handToString() {
         for (Card card : hand) {
             System.out.println(card.toString());
         }
     }
 
-    public void generateShoppingRound(){
+    public void generateShoppingRound() {
         Random rand = new Random();
         List<Card> shoppingList = new ArrayList<Card>();
         List<Integer> powerList = new ArrayList<Integer>();
-        for(int i = 0; i < 5; i++){
+        for (int i = 0; i < 5; i++) {
             int tmp = rand.nextInt(totalDeck.size());
             Card card = totalDeck.get(tmp);
-            while(shoppingList.contains(card) || card.isFullPower()){
+            while (shoppingList.contains(card) || card.isFullPower()) {
                 tmp = rand.nextInt(totalDeck.size());
                 card = totalDeck.get(tmp);
             }
             shoppingList.add(card);
             tmp = rand.nextInt(4);
-            while(card.getHasPower(tmp)){
+            while (card.getHasPower(tmp)) {
                 tmp = rand.nextInt(4);
             }
             powerList.add(tmp);

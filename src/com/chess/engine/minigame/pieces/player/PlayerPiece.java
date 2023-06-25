@@ -1,6 +1,7 @@
 package com.chess.engine.minigame.pieces.player;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.chess.engine.minigame.board.MiniMove;
 import com.chess.engine.minigame.cards.Card;
@@ -25,7 +26,7 @@ public abstract class PlayerPiece extends MiniPiece{
 
     public abstract Collection<Card> getDefaultDeck();
     
-    public abstract String getInformation();
+    public abstract List<String> getInformation();
 
     @Override
     public abstract PlayerPiece movePiece(MiniMove move);

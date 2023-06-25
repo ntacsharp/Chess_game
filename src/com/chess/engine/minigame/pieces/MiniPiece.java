@@ -1,13 +1,15 @@
 package com.chess.engine.minigame.pieces;
 
+import java.util.List;
+
 import com.chess.engine.minigame.board.MiniBoardUtils;
 import com.chess.engine.minigame.board.MiniMove;
 
 public abstract class MiniPiece {
-    protected final int row;
-    protected final int col;
+    protected int row;
+    protected int col;
 
-    public MiniPiece(final int row, final int col){
+    public MiniPiece(final int row, final int col) {
         this.row = row;
         this.col = col;
     }
@@ -33,8 +35,9 @@ public abstract class MiniPiece {
         if (!(obj instanceof MiniPiece))
             return false;
         MiniPiece objPiece = (MiniPiece) obj;
-        if (this.getCorID() != objPiece.getCorID())
+        if (this.getCorID() != objPiece.getCorID()) {
             return false;
+        }
         return true;
     }
 
@@ -43,5 +46,5 @@ public abstract class MiniPiece {
 
     public abstract MiniPiece movePiece(MiniMove move);
 
-    public abstract String getInformation();
+    public abstract List<String> getInformation();
 }

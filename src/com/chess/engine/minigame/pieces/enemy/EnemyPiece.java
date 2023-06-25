@@ -1,23 +1,23 @@
 package com.chess.engine.minigame.pieces.enemy;
 
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 import com.chess.engine.minigame.board.MiniBoard;
 import com.chess.engine.minigame.board.MiniMove;
-import com.chess.engine.minigame.board.MiniMove.NimbleMove;
 import com.chess.engine.minigame.pieces.MiniPiece;
 import com.chess.engine.minigame.pieces.player.PlayerPiece;
 
 public abstract class EnemyPiece extends MiniPiece {
-    protected final int[][] MOVE_SET = {
+    public final int[][] MOVE_SET = {
             { -1, -1 }, { -1, 0 }, { -1, 1 }, { 0, -1 }, { 0, 1 }, { 1, -1 }, { 1, 0 }, { 1, 1 }
     };
 
     protected boolean immune;
     private final PieceType pieceType;
-    private final int turn;
-    private final boolean nimble;
-    private boolean isCurrentlyNimble;
+    protected int turn;
+    protected final boolean nimble;
+    protected boolean isCurrentlyNimble;
 
     public EnemyPiece(final int row, final int col, final PieceType pieceType, final boolean nimble,
             final boolean isCurrentlyNimble, final int turn) {
@@ -53,34 +53,6 @@ public abstract class EnemyPiece extends MiniPiece {
         return nimble;
     }
 
-    public MiniBoard triggerNimble(final MiniBoard board) {
-        PlayerPiece playerPiece = board.getPlayerPiece();
-        int rDif = this.getRow() - playerPiece.getRow();
-        int cDif = this.getCol() - playerPiece.getCol();
-        if (rDif != 0)
-            rDif /= Math.abs(rDif);
-        if (cDif != 0)
-            cDif /= Math.abs(cDif);
-        if (!board.getTile(this.getRow() + rDif, this.getCol() + cDif).isOccupied()) {
-            MiniMove move = new NimbleMove(board, this, this.getRow() + rDif, this.getCol() + cDif);
-            return move.execute();
-        } else {
-            for (int[] move : MOVE_SET) {
-                int r = this.getRow() + move[0];
-                int c = this.getRow() + move[1];
-                int tmp = 0;
-                if (!board.getTile(r, c).isOccupied()) {
-                    if (Math.abs(r - playerPiece.getRow()) + Math.abs(c - playerPiece.getCol()) > tmp) {
-                        rDif = r;
-                        cDif = c;
-                    }
-                }
-            }
-            MiniMove move = new NimbleMove(board, this, rDif, cDif);
-            return move.execute();
-        }
-    }
-
     @Override
     public boolean equals(final Object obj) {
         if (obj == null)
@@ -104,7 +76,7 @@ public abstract class EnemyPiece extends MiniPiece {
     @Override
     public abstract EnemyPiece movePiece(MiniMove move);
 
-    public abstract EnemyPiece nimbledPiece(MiniMove move);
+    public abstract EnemyPiece nimbledPiece(final int row, final int col);
 
     public abstract void triggerImmune(final MiniBoard board);
 
@@ -112,7 +84,7 @@ public abstract class EnemyPiece extends MiniPiece {
 
     public abstract List<Integer> getRange();
 
-    public abstract String getInformation();
+    public abstract List<String> getInformation();
 
     @Override
     public String toString() {
