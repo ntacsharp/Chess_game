@@ -69,9 +69,12 @@ public class GameState {
     }
 
     public void doDamage() {
-        this.shield -= this.chessBoard.calculateDamage();
-        if (this.shield < 0)
+        this.shield -= this.chessBoard.calculateDamage(chessBoard.getPlayerPiece().getRow(),
+                chessBoard.getPlayerPiece().getCol());
+        if (this.shield < 0) {
             this.currentHealth += this.shield;
+        }
+
         this.shield = 0;
         System.out.println(currentHealth);
         if (this.currentHealth <= 0) {

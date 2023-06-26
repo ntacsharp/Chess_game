@@ -80,7 +80,7 @@ public abstract class EnemyPiece extends MiniPiece {
 
     public abstract void triggerImmune(final MiniBoard board);
 
-    public abstract int calculateDmg(final MiniBoard board);
+    public abstract int calculateDmg(final MiniBoard board, final int row, final int col);
 
     public abstract List<Integer> getRange();
 

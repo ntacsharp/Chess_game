@@ -83,7 +83,8 @@ public class EastPanel extends JPanel {
                 }
                 if (tile.isBlighted()) {
                     g2.drawImage(Game.imageList.getBlightImage(), (int) Game.screenSize.getWidth() * 2 / 3 + 20,
-                            (int) Game.screenSize.getHeight() / 12 + 150, 20, 20, null);
+                            (int) Game.screenSize.getHeight() / 12 + 130, 20, 20, null);
+                    g2.setFont(new Font("Arial", Font.PLAIN, 18));
                     g2.drawString("This tile can deal 1 damage to player stand on it.",
                             (int) Game.screenSize.getWidth() * 2 / 3 + 50,
                             (int) Game.screenSize.getHeight() / 12 + 150);

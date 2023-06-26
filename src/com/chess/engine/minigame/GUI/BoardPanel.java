@@ -81,7 +81,7 @@ public class BoardPanel extends JPanel {
         for (PiecePanel enemyPanel : enemyPanels) {
             enemyPanel.draw(g2);
         }
-        
+
     }
 
     public void update() {
@@ -181,6 +181,7 @@ public class BoardPanel extends JPanel {
                     if (isMovable && gp.getGameState().getMoveLeft() > 0) {
                         // bp.playerPanel.setNewRC(r, c);
                         gp.getGameState().doMove(gp.getChosenCard(), r, c);
+                        gp.getGameState().getDeck().getUsedCard().add(gp.getChosenCard());
                         gp.getGameState().getDeck().getHand().remove(gp.getChosenCard());
                         if (gp.getChosenCard().getHasPower(0)) {
                             gp.getGameState().crossAttack();
@@ -196,6 +197,7 @@ public class BoardPanel extends JPanel {
                             gp.getGameState().getDeck().draw();
                         }
                         if (gp.getGameState().getMoveLeft() == 0) {
+                            gp.getGameState().doDamage();
                             endTurn();
                         }
 
@@ -269,12 +271,15 @@ public class BoardPanel extends JPanel {
             x = (int) Game.screenSize.getWidth() / 3 + 15 + c * ((int) Game.screenSize.getWidth() / 15 - 4);
             y = (int) Game.screenSize.getHeight() / 12 + 15 + r * ((int) Game.screenSize.getWidth() / 15 - 4);
             g2.fillRect(x, y, (int) Game.screenSize.getWidth() / 15 - 14, (int) Game.screenSize.getWidth() / 15 - 14);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+            g2.setColor(Color.white);
+            g2.drawString(Integer.toString(gp.getGameState().getChessBoard().calculateDamage(r, c)), x, y + ((int) Game.screenSize.getWidth() / 15 -15));
             if (gp.getGameState().getChessBoard().getTile(r, c).isBlighted()) {
-                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-                g2.drawImage(Game.imageList.getBlightImage(), x, y, (int) Game.screenSize.getWidth() / 15 - 4,
+                g2.drawImage(Game.imageList.getBlightImage(), x - 4, y - 6, (int) Game.screenSize.getWidth() / 15 - 4,
                         (int) Game.screenSize.getWidth() / 15 - 4, null);
-                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+
             }
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
 
         private void setInRange(final boolean isInRange) {
@@ -347,7 +352,7 @@ public class BoardPanel extends JPanel {
                     }
                 }
                 if (this.oldC < this.newC) {
-                    int SpeedX = (this.newX - this.oldX) / 30;
+                    int SpeedX = (this.newX - this.oldX) / 20;
                     this.x += SpeedX;
                     if (this.x >= this.newX) {
                         this.x = this.newX;
@@ -355,7 +360,7 @@ public class BoardPanel extends JPanel {
                         this.oldC = this.newC;
                     }
                 } else if (this.oldC > this.newC) {
-                    int SpeedX = (this.newX - this.oldX) / 30;
+                    int SpeedX = (this.newX - this.oldX) / 20;
                     this.x += SpeedX;
                     if (this.x <= this.newX) {
                         this.x = this.newX;

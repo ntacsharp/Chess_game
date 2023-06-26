@@ -76,12 +76,12 @@ public class Shaman extends EnemyPiece {
             this.immune = true;
     }
 
-    @Override
-    public int calculateDmg(final MiniBoard board) {
+        @Override
+    public int calculateDmg(final MiniBoard board, final int row, final int col) {
         for (int[] range : this.RANGE) {
             int r = this.row + range[0];
             int c = this.col + range[1];
-            if (board.getPlayerPiece().getRow() == r && board.getPlayerPiece().getCol() == c)
+            if (row == r && col == c)
                 return 1;
         }
         return 0;

@@ -176,14 +176,13 @@ public class MiniBoard {
         return null;
     }
 
-    public int calculateDamage() {
+    public int calculateDamage(final int row, final int col) {
         int res = 0;
         for (EnemyPiece enemyPiece : enemyPieces) {
-            res += enemyPiece.calculateDmg(this);
+            res += enemyPiece.calculateDmg(this, row, col);
         }
-        if (this.getTile(this.getPlayerPiece().getRow(), this.getPlayerPiece().getCol()).isBlighted())
+        if (this.getTile(row, col).isBlighted())
             res++;
-        System.out.println(res);
         return res;
     }
 

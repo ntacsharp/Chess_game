@@ -10,11 +10,13 @@ public class Deck {
     private List<Card> totalDeck;
     private List<Card> currentDeck;
     private List<Card> hand;
+    private List<Card> usedCard;
 
     public Deck(final PlayerPiece playerPiece) {
         this.totalDeck = new ArrayList<Card>();
         this.currentDeck = new ArrayList<Card>();
         this.hand = new ArrayList<Card>();
+        this.usedCard = new ArrayList<Card>();
         this.totalDeck.addAll(playerPiece.getDefaultDeck());
         refillCurrentDeck();
     }
@@ -41,8 +43,10 @@ public class Deck {
     // }
 
     public void draw() {
-        if (this.currentDeck.isEmpty())
+        if (this.currentDeck.isEmpty()){
             refillCurrentDeck();
+            usedCard.clear();
+        }
         Random rand = new Random();
         int tmp = rand.nextInt(this.currentDeck.size());
         this.hand.add(this.currentDeck.get(tmp));
@@ -89,5 +93,9 @@ public class Deck {
             }
             powerList.add(tmp);
         }
+    }
+
+    public List<Card> getUsedCard() {
+        return usedCard;
     }
 }

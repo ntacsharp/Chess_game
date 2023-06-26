@@ -19,12 +19,12 @@ public class Zombie extends EnemyPiece {
         super(row, col, PieceType.ZOMBIE, false, false, turn);
     }
 
-    public void triggerEffect(final Builder builder){
+    public void triggerEffect(final Builder builder) {
         builder.setBlight(this.row * MiniBoardUtils.NUM_TILE_PER_ROW + this.col);
         for (int[] move : this.RANGE) {
             int r = this.row + move[0];
             int c = this.col + move[1];
-            if (MiniBoardUtils.isCorValid(r, c)){
+            if (MiniBoardUtils.isCorValid(r, c)) {
                 builder.setBlight(r * MiniBoardUtils.NUM_TILE_PER_ROW + c);
             }
         }
@@ -58,12 +58,11 @@ public class Zombie extends EnemyPiece {
                 c = this.col + move[1];
                 if (MiniBoardUtils.isCorValid(r, c)) {
                     if (!board.getTile(r, c).isOccupied()) {
-                        if(board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c < tmp){
+                        if (board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c < tmp) {
                             possibleMove.clear();
                             possibleMove.add(move);
                             tmp = board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c;
-                        }
-                        else if(board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c == tmp){
+                        } else if (board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c == tmp) {
                             possibleMove.add(move);
                         }
                     }
@@ -78,16 +77,17 @@ public class Zombie extends EnemyPiece {
     }
 
     @Override
-    public void triggerImmune(final MiniBoard board){
+    public void triggerImmune(final MiniBoard board) {
         this.immune = false;
     }
 
     @Override
-    public int calculateDmg(final MiniBoard board){
+    public int calculateDmg(final MiniBoard board, final int row, final int col) {
         for (int[] range : this.RANGE) {
             int r = this.row + range[0];
             int c = this.col + range[1];
-            if(board.getPlayerPiece().getRow() == r && board.getPlayerPiece().getCol() == c) return 1;
+            if (row == r && col == c)
+                return 1;
         }
         return 0;
     }
@@ -99,7 +99,8 @@ public class Zombie extends EnemyPiece {
         this.isCurrentlyNimble = this.isNimble();
         this.turn++;
         return this;
-        // return new Zombie(move.getDestinationRow(), move.getDestinationCol(), this.getTurn() + 1);
+        // return new Zombie(move.getDestinationRow(), move.getDestinationCol(),
+        // this.getTurn() + 1);
     }
 
     @Override
@@ -108,25 +109,26 @@ public class Zombie extends EnemyPiece {
     }
 
     @Override
-    public boolean canAttactk(final int r, final int c){
-        if(this.getRange().contains(r * 5 + c)) return true;
+    public boolean canAttactk(final int r, final int c) {
+        if (this.getRange().contains(r * 5 + c))
+            return true;
         return false;
     }
 
     @Override
-    public List<String> getInformation(){
+    public List<String> getInformation() {
         List<String> res = new ArrayList<>();
         res.add("Limited range, blight adjacent tiles on death.");
         return res;
     }
 
     @Override
-    public List<Integer> getRange(){
+    public List<Integer> getRange() {
         List<Integer> res = new ArrayList<>();
         for (int[] range : this.RANGE) {
             int r = this.row + range[0];
             int c = this.col + range[1];
-            if(MiniBoardUtils.isCorValid(r, c)){
+            if (MiniBoardUtils.isCorValid(r, c)) {
                 res.add(r * 5 + c);
             }
         }

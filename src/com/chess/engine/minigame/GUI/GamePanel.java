@@ -144,6 +144,7 @@ public class GamePanel extends JPanel implements Runnable {
         northPanel.draw(g2);
         southPanel.draw(g2);
         eastPanel.draw(g2);
+        westPanel.draw(g2);
         g2.dispose();
         // BufferedImage image;
         // try {

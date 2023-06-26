@@ -180,7 +180,7 @@ public abstract class MiniMove {
                         }
                     } else if (this.movePiece.getRow() > this.attackedPiece.getRow()) {
                         if (this.movePiece.getCol() == this.attackedPiece.getCol()) {
-                            if (MiniBoardUtils.isCorValid(attackedPiece.getRow() - 1, attackedPiece.getCol() )
+                            if (MiniBoardUtils.isCorValid(attackedPiece.getRow() - 1, attackedPiece.getCol())
                                     && !this.board.getTile(attackedPiece.getRow() - 1, attackedPiece.getCol())
                                             .isOccupied()) {
                                 builder.setPiece(
@@ -207,7 +207,8 @@ public abstract class MiniMove {
                                     && !this.board.getTile(attackedPiece.getRow() - 1, attackedPiece.getCol() - 1)
                                             .isOccupied()) {
                                 builder.setPiece(
-                                        attackedPiece.nimbledPiece(attackedPiece.getRow() - 1, attackedPiece.getCol() - 1));
+                                        attackedPiece.nimbledPiece(attackedPiece.getRow() - 1,
+                                                attackedPiece.getCol() - 1));
                             } else {
                                 List<Integer> newR = new ArrayList<>();
                                 List<Integer> newC = new ArrayList<>();
@@ -230,7 +231,8 @@ public abstract class MiniMove {
                                     && !this.board.getTile(attackedPiece.getRow() - 1, attackedPiece.getCol() + 1)
                                             .isOccupied()) {
                                 builder.setPiece(
-                                        attackedPiece.nimbledPiece(attackedPiece.getRow() - 1, attackedPiece.getCol() + 1));
+                                        attackedPiece.nimbledPiece(attackedPiece.getRow() - 1,
+                                                attackedPiece.getCol() + 1));
                             } else {
                                 List<Integer> newR = new ArrayList<>();
                                 List<Integer> newC = new ArrayList<>();
@@ -251,7 +253,7 @@ public abstract class MiniMove {
                         }
                     } else {
                         if (this.movePiece.getCol() == this.attackedPiece.getCol()) {
-                            if (MiniBoardUtils.isCorValid(attackedPiece.getRow() + 1, attackedPiece.getCol() )
+                            if (MiniBoardUtils.isCorValid(attackedPiece.getRow() + 1, attackedPiece.getCol())
                                     && !this.board.getTile(attackedPiece.getRow() + 1, attackedPiece.getCol())
                                             .isOccupied()) {
                                 builder.setPiece(
@@ -278,7 +280,8 @@ public abstract class MiniMove {
                                     && !this.board.getTile(attackedPiece.getRow() + 1, attackedPiece.getCol() - 1)
                                             .isOccupied()) {
                                 builder.setPiece(
-                                        attackedPiece.nimbledPiece(attackedPiece.getRow() + 1, attackedPiece.getCol() - 1));
+                                        attackedPiece.nimbledPiece(attackedPiece.getRow() + 1,
+                                                attackedPiece.getCol() - 1));
                             } else {
                                 List<Integer> newR = new ArrayList<>();
                                 List<Integer> newC = new ArrayList<>();
@@ -301,7 +304,8 @@ public abstract class MiniMove {
                                     && !this.board.getTile(attackedPiece.getRow() + 1, attackedPiece.getCol() + 1)
                                             .isOccupied()) {
                                 builder.setPiece(
-                                        attackedPiece.nimbledPiece(attackedPiece.getRow() + 1, attackedPiece.getCol() + 1));
+                                        attackedPiece.nimbledPiece(attackedPiece.getRow() + 1,
+                                                attackedPiece.getCol() + 1));
                             } else {
                                 List<Integer> newR = new ArrayList<>();
                                 List<Integer> newC = new ArrayList<>();
@@ -330,6 +334,22 @@ public abstract class MiniMove {
                         c = rand.nextInt(5);
                     }
                     builder.setPiece(new Infected(r, c, attackedPiece.getTurn()));
+                } else if (attackedPiece instanceof Infected) {
+                    int r = attackedPiece.getRow();
+                    int c = attackedPiece.getCol();
+                    builder.setBlight(r * 5 + c);
+                } else if (attackedPiece instanceof Zombie) {
+                    int r = attackedPiece.getRow();
+                    int c = attackedPiece.getCol();
+                    builder.setBlight(r * 5 + c);
+                    if (MiniBoardUtils.isCorValid(r - 1, c))
+                        builder.setBlight((r - 1) * 5 + c);
+                    if (MiniBoardUtils.isCorValid(r + 1, c))
+                        builder.setBlight((r + 1) * 5 + c);
+                    if (MiniBoardUtils.isCorValid(r, c - 1))
+                        builder.setBlight(r * 5 + c - 1);
+                    if (MiniBoardUtils.isCorValid(r, c + 1))
+                        builder.setBlight(r * 5 + c + 1);
                 }
                 builder.setPiece(this.movePiece.movePiece(this));
                 return builder.build();

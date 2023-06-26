@@ -53,7 +53,7 @@ public class Infected extends EnemyPiece {
     }
 
     @Override
-    public int calculateDmg(final MiniBoard board) {
+    public int calculateDmg(final MiniBoard board, final int row, final int col) {
         return 0;
     }
 
