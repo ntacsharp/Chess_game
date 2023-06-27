@@ -1,6 +1,5 @@
 package com.chess.engine.minigame.GUI.Shopping;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;

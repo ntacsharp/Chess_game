@@ -5,7 +5,6 @@ import com.chess.engine.minigame.board.MiniBoardUtils;
 import com.chess.engine.minigame.board.MiniMove;
 import com.chess.engine.minigame.cards.Card;
 import com.chess.engine.minigame.cards.Deck;
-import com.chess.engine.minigame.pieces.MiniPiece;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
 import com.chess.engine.minigame.pieces.player.PlayerPiece.PieceType;
 
@@ -39,7 +38,11 @@ public class GameState {
     }
 
     public void createNewFloor() {
+        this.deck.emptyHand();
         this.deck.emptyCurrentDeck();
+        this.deck.refillCurrentDeck();
+        this.turn = 0;
+        this.shield = 0;
         this.floor++;
         this.moveLeft = 0;
         this.chessBoard = MiniBoard.createStandardBoard(this.floor, PieceType.BABARIAN);
@@ -90,7 +93,7 @@ public class GameState {
         if (this.shield < 0) {
             this.currentHealth += this.shield;
         }
-
+        if(this.currentHealth < 0) this.currentHealth = 0;
         this.shield = 0;
     }
 

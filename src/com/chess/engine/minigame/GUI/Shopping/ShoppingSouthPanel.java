@@ -8,21 +8,11 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-import org.w3c.dom.events.MouseEvent;
 
 import com.chess.Game;
-import com.chess.engine.minigame.GUI.ColorList;
 import com.chess.engine.minigame.GUI.GamePanel;
-import com.chess.engine.minigame.cards.Card;
-import com.chess.engine.minigame.cards.KnightCard;
-import com.chess.engine.minigame.cards.QueenCard;
 
 public class ShoppingSouthPanel extends JPanel {
     private final GamePanel gp;

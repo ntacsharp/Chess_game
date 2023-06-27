@@ -8,8 +8,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import com.chess.engine.minigame.pieces.enemy.EnemyPiece.PieceType;
-
 public class ImageList {
     private static final String OTHER_ICON_PATH = "art\\other\\";
     private static final String POWER_ICON_PATH = "art\\other\\power\\";
@@ -32,6 +30,8 @@ public class ImageList {
     private final BufferedImage moveImage;
     private final BufferedImage shieldImage;
     private final BufferedImage nimbleImage;
+    private final BufferedImage dmgImage;
+    private final BufferedImage overImage;
 
     public ImageList() throws IOException {
         playerImage = ImageIO.read(new File(PLAYER_ICON_PATH + "BA.png"));
@@ -65,6 +65,8 @@ public class ImageList {
         nimbleImage = ImageIO.read(new File(OTHER_ICON_PATH + "nimble.png"));
         moveImage = ImageIO.read(new File(POWER_ICON_PATH + "c.png"));
         shieldImage = ImageIO.read(new File(POWER_ICON_PATH + "s.png"));
+        dmgImage = ImageIO.read(new File(OTHER_ICON_PATH + "dmg.png"));
+        overImage = ImageIO.read(new File(OTHER_ICON_PATH + "over.png"));
     }
 
     public BufferedImage getEnemyImage(final String name) {
@@ -127,8 +129,16 @@ public class ImageList {
         return playerImage;
     }
 
+    public BufferedImage getDmgImage() {
+        return dmgImage;
+    }
+
     public BufferedImage getBagImage() {
         return bagImage;
+    }
+
+    public BufferedImage getOverImage() {
+        return overImage;
     }
 
     public BufferedImage getCoinImage() {

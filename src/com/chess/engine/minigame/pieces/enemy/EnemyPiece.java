@@ -1,12 +1,10 @@
 package com.chess.engine.minigame.pieces.enemy;
 
-import java.awt.image.BufferedImage;
 import java.util.List;
 
 import com.chess.engine.minigame.board.MiniBoard;
 import com.chess.engine.minigame.board.MiniMove;
 import com.chess.engine.minigame.pieces.MiniPiece;
-import com.chess.engine.minigame.pieces.player.PlayerPiece;
 
 public abstract class EnemyPiece extends MiniPiece {
     public final int[][] MOVE_SET = {
@@ -92,12 +90,12 @@ public abstract class EnemyPiece extends MiniPiece {
     }
 
     public enum PieceType {
-        INFECTED("IF", 0, "Infected"),
-        BEAST("BE", 1, "Beast"),
-        ZOMBIE("ZM", 2, "Zombie"),
-        SWORDMAN("SW", 3, "Viking"),
-        ARCHER("AR", 3, "Archer"),
-        SHAMAN("SH", 5, "Demon");
+        INFECTED("IF", 1, "Infected"),
+        BEAST("BE", 2, "Beast"),
+        ZOMBIE("ZM", 3, "Zombie"),
+        SWORDMAN("SW", 4, "Viking"),
+        ARCHER("AR", 4, "Archer"),
+        SHAMAN("SH", 6, "Shaman");
 
         private String pieceName;
         private int pieceValue;

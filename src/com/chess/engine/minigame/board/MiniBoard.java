@@ -92,7 +92,7 @@ public class MiniBoard {
         int difficulty = 2 + 2 * floor;
         Random rand = new Random();
         while (difficulty > 0) {
-            int x = rand.nextInt(1, Math.min(7, difficulty + 1));
+            int x = rand.nextInt(1, Math.min(8, difficulty + 1));
             int r = rand.nextInt(3);
             int c = rand.nextInt(5);
             while (builder.boardConfig.get(r * 5 + c) != null) {
@@ -101,39 +101,42 @@ public class MiniBoard {
             }
             if (difficulty - x >= 0) {
                 if (x == 1) {
-                    builder.setPiece(new Beast(r, c, 0));
+                    builder.setPiece(new Infected(r, c, 0));
                     difficulty -= 1;
                 } else if (x == 2) {
-                    builder.setPiece(new Zombie(r, c, 0));
+                    builder.setPiece(new Beast(r, c, 0));
                     difficulty -= 2;
                 } else if (x == 3) {
-                    int tmp = rand.nextInt(2);
-                    if (tmp == 0) {
-                        builder.setPiece(new Swordman(r, c, false, false, 0));
-                        difficulty -= 3;
-                    } else if (tmp == 1) {
-                        builder.setPiece(new Archer(r, c, false, false, 0));
-                        difficulty -= 3;
-                    }
+                    builder.setPiece(new Zombie(r, c, 0));
+                    difficulty -= 3;
                 } else if (x == 4) {
                     int tmp = rand.nextInt(2);
                     if (tmp == 0) {
-                        builder.setPiece(new Swordman(r, c, true, true, 0));
+                        builder.setPiece(new Swordman(r, c, false, false, 0));
                         difficulty -= 4;
                     } else if (tmp == 1) {
-                        builder.setPiece(new Archer(r, c, true, true, 0));
+                        builder.setPiece(new Archer(r, c, false, false, 0));
                         difficulty -= 4;
                     }
                 } else if (x == 5) {
-                    if (shCount == 0) {
-                        builder.setPiece(new Shaman(r, c, false, false, 0));
+                    int tmp = rand.nextInt(2);
+                    if (tmp == 0) {
+                        builder.setPiece(new Swordman(r, c, true, true, 0));
                         difficulty -= 5;
-                        shCount++;
+                    } else if (tmp == 1) {
+                        builder.setPiece(new Archer(r, c, true, true, 0));
+                        difficulty -= 5;
                     }
                 } else if (x == 6) {
                     if (shCount == 0) {
-                        builder.setPiece(new Shaman(r, c, true, true, 0));
+                        builder.setPiece(new Shaman(r, c, false, false, 0));
                         difficulty -= 6;
+                        shCount++;
+                    }
+                } else if (x == 7) {
+                    if (shCount == 0) {
+                        builder.setPiece(new Shaman(r, c, true, true, 0));
+                        difficulty -= 7;
                         shCount++;
                     }
                 }

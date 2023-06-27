@@ -16,11 +16,13 @@ import com.chess.engine.minigame.GUI.ColorList;
 import com.chess.engine.minigame.GUI.GamePanel;
 import com.chess.engine.minigame.GUI.ImageList;
 import com.chess.engine.minigame.GUI.SettingPanel;
+import com.chess.engine.minigame.GUI.Sound;
 import com.chess.menu.StartMenu;
 
 public class Game {
     public static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); // 1366_768
     public static ImageList imageList;
+    public static Sound sound = new Sound();
 
     private static JFrame gameFrame;
 

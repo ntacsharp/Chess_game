@@ -1,38 +1,23 @@
 package com.chess.engine.minigame.GUI.Playing;
 
 import java.awt.AlphaComposite;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 
 import com.chess.Game;
 import com.chess.engine.minigame.GUI.ColorList;
 import com.chess.engine.minigame.GUI.GamePanel;
-import com.chess.engine.minigame.board.MiniBoard;
-import com.chess.engine.minigame.board.MiniMove;
 import com.chess.engine.minigame.board.MiniTile;
-import com.chess.engine.minigame.cards.Card;
 import com.chess.engine.minigame.pieces.MiniPiece;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
 import com.chess.engine.minigame.pieces.player.PlayerPiece;
@@ -42,9 +27,13 @@ public class BoardPanel extends JPanel {
     private final List<TilePanel> tileList = new ArrayList<>();
     private PiecePanel playerPanel;
     private List<PiecePanel> enemyPanels = new ArrayList<>();
+    private List<DeadPanel> deadEnemies = new ArrayList<>();
+    private List<DamagePanel> damages = new ArrayList<>();
+    private AttackPanel attackPanel = null;
     private MiniTile tileEntered = null;
     private PiecePanel isMoving = null;
     private int turn = 1, oldR = 4;
+    private boolean isDmging = false, calculatedDmg = true;
 
     public BoardPanel(final GamePanel gp) {
         super(new GridLayout(5, 5, 0, 0));
@@ -77,14 +66,25 @@ public class BoardPanel extends JPanel {
             tilePanel.draw(g2);
         }
         playerPanel.draw(g2);
+        if (attackPanel != null)
+            attackPanel.draw(g2);
         for (PiecePanel enemyPanel : enemyPanels) {
             enemyPanel.draw(g2);
         }
-
+        for (DeadPanel deadPanel : deadEnemies) {
+            deadPanel.draw(g2);
+        }
+        for (DamagePanel damagePanel : damages) {
+            damagePanel.draw(g2);
+        }
     }
 
     public void update() {
-        if (gp.getGameState().getMoveLeft() == 0) {
+        if(damages.isEmpty()) isDmging = false;
+        if (gp.getGameState().getMoveLeft() == 0 && !isDmging && isMoving == null) {
+            if (!calculatedDmg)
+                gp.getGameState().doDamage();
+            calculatedDmg = true;
             EnemyPiece enemyPiece = gp.getGameState().getChessBoard().getNotMovedPiece(turn);
             if (enemyPiece != null) {
                 for (PiecePanel piecePanel : enemyPanels) {
@@ -94,20 +94,12 @@ public class BoardPanel extends JPanel {
                     }
                 }
             } else {
-                if (isMoving == null) {
-                    gp.getGameState().getDeck().fillHand(3);
-                    if (gp.getGameState().getChessBoard().getPlayerPiece().getRow() == 0)
-                        gp.getGameState().getDeck().promote();
-                    gp.getGameState().setMoveLeft(2);
-                }
+                gp.getGameState().getDeck().fillHand(3);
+                if (gp.getGameState().getChessBoard().getPlayerPiece().getRow() == 0)
+                    gp.getGameState().getDeck().promote();
+                gp.getGameState().setMoveLeft(2);
             }
         }
-
-        // if (oldR != 0 && gp.getGameState().getChessBoard().getPlayerPiece().getRow()
-        // == 0) {
-        // oldR = 0;
-        // gp.getGameState().getDeck().promote();
-        // }
 
         for (TilePanel tilePanel : this.tileList) {
             tilePanel.update();
@@ -115,6 +107,7 @@ public class BoardPanel extends JPanel {
 
         for (int i = 0; i < enemyPanels.size(); i++) {
             if (!gp.getGameState().getChessBoard().getEnemyPieces().contains(enemyPanels.get(i).getPiece())) {
+                deadEnemies.add(new DeadPanel(enemyPanels.get(i).getPiece()));
                 enemyPanels.remove(i);
                 gp.getGameState().setGold(gp.getGameState().getGold() + 1);
                 i--;
@@ -135,10 +128,17 @@ public class BoardPanel extends JPanel {
             }
         }
         this.playerPanel.update();
+        if (attackPanel != null)
+            attackPanel.update();
         for (PiecePanel enemyPanel : enemyPanels) {
             enemyPanel.update();
         }
-
+        for (int i = 0; i < deadEnemies.size(); i++) {
+            deadEnemies.get(i).update();
+        }
+        for (int i = 0; i < damages.size(); i++) {
+            damages.get(i).update();
+        }
     }
 
     private void setTileEntered(final int r, final int c) {
@@ -151,12 +151,24 @@ public class BoardPanel extends JPanel {
                     tileList.get(cor).setInRange(true);
                 }
             }
+        } else {
+            tileEntered = null;
         }
     }
 
     public void endTurn() {
+        isDmging = true;
+        for (PiecePanel piecePanel : enemyPanels) {
+            EnemyPiece enemyPiece = (EnemyPiece) piecePanel.getPiece();
+            if (enemyPiece.canAttactk(gp.getGameState().getChessBoard().getPlayerPiece().getRow(),
+                    gp.getGameState().getChessBoard().getPlayerPiece().getCol())) {
+                damages.add(new DamagePanel(gp.getGameState().getChessBoard().getPlayerPiece().getRow(),
+                        gp.getGameState().getChessBoard().getPlayerPiece().getCol(), enemyPiece.getRow(),
+                        enemyPiece.getCol()));
+            }
+        }
         gp.getGameState().setMoveLeft(0);
-        gp.getGameState().doDamage();
+        calculatedDmg = false;
         gp.setChosenCard(null);
         gp.getGameState().getDeck().emptyHand();
         gp.getGameState().setTurn(++turn);
@@ -181,6 +193,7 @@ public class BoardPanel extends JPanel {
                 public void mouseClicked(MouseEvent e) {
                     if (isMovable && gp.getGameState().getMoveLeft() > 0) {
                         // bp.playerPanel.setNewRC(r, c);
+                        Game.sound.playSE("sound\\move.wav");
                         oldR = gp.getGameState().getChessBoard().getPlayerPiece().getRow();
                         gp.getGameState().doMove(gp.getChosenCard(), r, c);
                         gp.getGameState().getDeck().getHand().remove(gp.getChosenCard());
@@ -198,19 +211,20 @@ public class BoardPanel extends JPanel {
                             gp.getGameState().setMoveLeft(gp.getGameState().getMoveLeft() + 1);
                             gp.getGameState().getDeck().draw();
                         }
+                        attackPanel = new AttackPanel(r, c, gp.getChosenCard().getHasPower(0),
+                                gp.getChosenCard().getHasPower(1));
                         tileEntered = null;
                         gp.setChosenCard(null);
                         if (oldR != 0 && r == 0)
                             gp.getGameState().getDeck().promote();
                         if (gp.getGameState().isCleared()) {
-                            gp.getGameState().getDeck().emptyHand();
-                            gp.setState(1);
                             gp.getGameState().setGold(gp.getGameState().getGold() + (13 - gp.getGameState().getTurn()));
                             if (gp.getGameState().getTurn() < 14)
                                 gp.getGameState().setCurrentHealth(Math.min(gp.getGameState().getCurrentHealth() + 1,
                                         gp.getGameState().getMaxHealth()));
-                            gp.setTimeToChangeState(System.nanoTime() + 1500000000);
-                        } else if (gp.getGameState().getMoveLeft() == 0) {
+                            gp.setState(1);
+                            gp.setTimeToChangeState(System.nanoTime() + 1000000000);
+                        } else if (gp.getGameState().getMoveLeft() <= 0) {
                             endTurn();
                         }
                     }
@@ -288,7 +302,6 @@ public class BoardPanel extends JPanel {
             if (gp.getGameState().getChessBoard().getTile(r, c).isBlighted()) {
                 g2.drawImage(Game.imageList.getBlightImage(), x - 4, y - 6, (int) Game.screenSize.getWidth() / 15 - 4,
                         (int) Game.screenSize.getWidth() / 15 - 4, null);
-
             }
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
@@ -321,15 +334,6 @@ public class BoardPanel extends JPanel {
                     + piece.getRow() * ((int) Game.screenSize.getWidth() / 15 - 4);
         }
 
-        // public void setNewRC(final int newR, final int newC) {
-        // this.newR = newR;
-        // this.newC = newC;
-        // this.newX = (int) Game.screenSize.getWidth() / 3 + 10
-        // + newC * ((int) Game.screenSize.getWidth() / 15 - 4);
-        // this.newY = (int) Game.screenSize.getHeight() / 12 + 10
-        // + newR * ((int) Game.screenSize.getWidth() / 15 - 4);
-        // }
-
         public MiniPiece getPiece() {
             return piece;
         }
@@ -345,17 +349,17 @@ public class BoardPanel extends JPanel {
                 isMoving = this;
             }
             if (isMoving == this) {
+                int SpeedY = (this.newY - this.oldY) / 20;
+                int SpeedX = (this.newX - this.oldX) / 20;
+                this.y += SpeedY;
+                this.x += SpeedX;
                 if (this.oldR < this.newR) {
-                    int SpeedY = (this.newY - this.oldY) / 20;
-                    this.y += SpeedY;
                     if (this.y >= this.newY) {
                         this.y = this.newY;
                         this.oldY = this.newY;
                         this.oldR = this.newR;
                     }
                 } else if (this.oldR > this.newR) {
-                    int SpeedY = (this.newY - this.oldY) / 20;
-                    this.y += SpeedY;
                     if (this.y <= this.newY) {
                         this.y = this.newY;
                         this.oldY = this.newY;
@@ -363,16 +367,12 @@ public class BoardPanel extends JPanel {
                     }
                 }
                 if (this.oldC < this.newC) {
-                    int SpeedX = (this.newX - this.oldX) / 20;
-                    this.x += SpeedX;
                     if (this.x >= this.newX) {
                         this.x = this.newX;
                         this.oldX = this.newX;
                         this.oldC = this.newC;
                     }
                 } else if (this.oldC > this.newC) {
-                    int SpeedX = (this.newX - this.oldX) / 20;
-                    this.x += SpeedX;
                     if (this.x <= this.newX) {
                         this.x = this.newX;
                         this.oldX = this.newX;
@@ -410,270 +410,117 @@ public class BoardPanel extends JPanel {
             }
         }
     }
-    // private static final String ENEMY_ICON_PATH = "art\\pieces\\enemies\\";
-    // private static final String PLAYER_ICON_PATH = "art\\pieces\\player\\";
 
-    // private final List<TilePanel> boardTiles;
-    // private EnemyPiece enemyPiece;
-    // private final MiniTable miniTable;
-    // private Card chosenCard = null;
+    private class DeadPanel extends JPanel {
+        private int x, y;
+        private final int maxY;
+        private final MiniPiece piece;
+        private boolean isNew = true;
+        private float alpha = 0.7f;
 
-    // public Card getChosenCard() {
-    // return chosenCard;
-    // }
+        DeadPanel(final MiniPiece piece) {
+            super();
+            this.piece = piece;
+            this.x = (int) Game.screenSize.getWidth() / 3 + 10
+                    + piece.getCol() * ((int) Game.screenSize.getWidth() / 15 - 4);
+            this.y = (int) Game.screenSize.getHeight() / 12 + 10
+                    + piece.getRow() * ((int) Game.screenSize.getWidth() / 15 - 4);
+            this.maxY = this.y - 100;
+        }
 
-    // public void setChosenCard(Card chosenCard) {
-    // this.chosenCard = chosenCard;
-    // }
+        private void update() {
+            if (this.isNew) {
+                Game.sound.playSE("sound\\kill.wav");
+                isNew = false;
+            }
+            if (this.y > this.maxY) {
+                this.y -= 5;
+                alpha -= 0.01;
+            } else {
+                deadEnemies.remove(this);
+            }
+        }
 
-    // BoardPanel(final MiniTable miniTable) {
-    // super(new GridLayout(5, 5));
-    // this.miniTable = miniTable;
-    // setDoubleBuffered(true);
-    // CompoundBorder boardBorder = new CompoundBorder(new
-    // LineBorder(MiniTable.lightBorderColor, 4),
-    // new LineBorder(MiniTable.darkBorderColor, 4));
-    // this.setBackground(MiniTable.darkBorderColor);
-    // this.setBorder(boardBorder);
-    // this.boardTiles = new ArrayList<>();
-    // for (int r = 0; r < 5; r++) {
-    // for (int c = 0; c < 5; c++) {
-    // final TilePanel tilePanel = new TilePanel(this, r, c);
-    // this.boardTiles.add(tilePanel);
-    // add(tilePanel);
-    // }
-    // }
-    // validate();
-    // }
+        private void draw(Graphics2D g2) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+            g2.drawImage(Game.imageList.getEnemyImage(piece.toString()), this.x, this.y,
+                    (int) Game.screenSize.getWidth() / 15 - 4,
+                    (int) Game.screenSize.getWidth() / 15 - 4, null);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+        }
+    }
 
-    // public void drawBoard(MiniBoard board) {
-    // removeAll();
-    // for (TilePanel tilePanel : boardTiles) {
-    // tilePanel.drawTile(board);
-    // add(tilePanel);
-    // }
-    // validate();
-    // repaint();
-    // }
+    private class AttackPanel extends JPanel {
+        private final int row, col;
+        private final boolean cross, diagonal;
+        private int size;
+        private final int maxSize = (int) Game.screenSize.getWidth() / 5;
+        private final int minSize = (int) Game.screenSize.getWidth() / 25;
+        private final int spd = (maxSize - minSize) / 12;
+        private final int x, y;
 
-    // public void highlightDangerousTile(final int row, final int col, final
-    // boolean highlight) {
-    // if (highlight) {
-    // if (miniTable.getGameState().getChessBoard().getTile(row, col).isOccupied())
-    // {
-    // MiniPiece piece = miniTable.getGameState().getChessBoard().getTile(row,
-    // col).getPiece();
-    // if (piece instanceof EnemyPiece) {
-    // enemyPiece = (EnemyPiece) piece;
-    // for (Integer cor : enemyPiece.getRange()) {
-    // boardTiles.get(cor).redHighLight();
-    // }
-    // }
-    // }
-    // } else {
-    // if (enemyPiece != null) {
-    // for (Integer cor : enemyPiece.getRange()) {
-    // boardTiles.get(cor).colorTile(miniTable.getGameState().getChessBoard());
-    // }
-    // }
-    // enemyPiece = null;
-    // }
-    // }
+        AttackPanel(final int row, final int col, final boolean cross, final boolean diagonal) {
+            super();
+            this.row = row;
+            this.col = col;
+            this.cross = cross;
+            this.diagonal = diagonal;
+            this.size = minSize;
+            this.x = (int) Game.screenSize.getWidth() / 3 + 55
+                    + col * ((int) Game.screenSize.getWidth() / 15 - 4);
+            this.y = (int) Game.screenSize.getHeight() / 12 + 55
+                    + row * ((int) Game.screenSize.getWidth() / 15 - 4);
+        }
 
-    // public void skip() {
-    // miniTable.getGameState().setMoveLeft(0);
-    // miniTable.getGameState().getDeck().emptyHand();
-    // miniTable.getGameState().doDamage();
-    // miniTable.southPanel.redrawStatus();
-    // miniTable.getGameState().addTurn();
-    // if (miniTable.getGameState().getCurrentHealth() > 0)
-    // enemyTurn();
-    // }
+        private void update() {
+            if (size < maxSize) {
+                size += spd;
+            } else {
+                attackPanel = null;
+            }
+        }
 
-    // private void enemyTurn() {
+        private void draw(Graphics2D g2) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
+            if (this.cross)
+                g2.drawImage(Game.imageList.getPowerImage(0), this.x - size / 2, this.y - size / 2, size, size, null);
+            if (this.diagonal)
+                g2.drawImage(Game.imageList.getPowerImage(1), this.x - size / 2, this.y - size / 2, size, size, null);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+        }
+    }
 
-    // EnemyPiece enemyNotMoved = miniTable.getGameState().getChessBoard()
-    // .getNotMovedPiece(miniTable.getGameState().getTurn());
-    // if (enemyNotMoved != null) {
-    // miniTable.getGameState().doMove(enemyNotMoved);
-    // drawBoard(miniTable.getGameState().getChessBoard());
-    // enemyNotMoved = miniTable.getGameState().getChessBoard()
-    // .getNotMovedPiece(miniTable.getGameState().getTurn());
-    // enemyTurn();
-    // }
-    // else{
-    // playerTurn();
-    // }
-    // }
+    private class DamagePanel extends JPanel {
+        private final int desX, desY;
+        private int x, y;
+        private final int spdX, spdY;
 
-    // public void playerTurn() {
-    // miniTable.getGameState().getDeck().fillHand(3);
-    // miniTable.getGameState().setMoveLeft(3);
-    // miniTable.southPanel.redrawStatus();
-    // miniTable.westPanel.redraw();
-    // miniTable.southPanel.redraw();
-    // }
+        DamagePanel(final int desR, final int desC, final int stR, final int stC) {
+            super();
+            this.desX = (int) Game.screenSize.getWidth() / 3 + 45
+                    + desC * ((int) Game.screenSize.getWidth() / 15 - 4);
+            this.desY = (int) Game.screenSize.getHeight() / 12 + 45
+                    + desR * ((int) Game.screenSize.getWidth() / 15 - 4);
+            this.x = (int) Game.screenSize.getWidth() / 3 + 45
+                    + stC * ((int) Game.screenSize.getWidth() / 15 - 4);
+            this.y = (int) Game.screenSize.getHeight() / 12 + 45
+                    + stR * ((int) Game.screenSize.getWidth() / 15 - 4);
+            this.spdX = (desX - x) / 60;
+            this.spdY = (desY - y) / 60;
+        }
 
-    // private class TilePanel extends JPanel {
-    // private final int row, col;
+        private void update() {
+            if ((this.desX - this.x) * this.spdX <= 0 && (this.desY - this.y) * this.spdY <= 0) {
+                damages.remove(this);
 
-    // TilePanel(final BoardPanel boardPanel, final int row, final int col) {
-    // super(new BorderLayout(0, 0));
-    // this.row = row;
-    // this.col = col;
-    // colorTile(miniTable.getGameState().getChessBoard());
-    // placePieceIconOnTile(miniTable.getGameState().getChessBoard());
-    // legalMovesHighlighter(miniTable.getGameState().getChessBoard());
-    // addMouseListener(new MouseListener() {
-    // @Override
-    // public void mouseClicked(MouseEvent e) {
-    // if (chosenCard != null) {
-    // boolean isMoveLegal = false;
-    // MiniMove legalMove = null;
-    // for (MiniMove move :
-    // chosenCard.legalMoves(miniTable.getGameState().getChessBoard(),
-    // miniTable.getGameState().getChessBoard().getPlayerPiece())) {
-    // if (move.getDestinationRow() == row && move.getDestinationCol() == col) {
-    // isMoveLegal = true;
-    // legalMove = move;
-    // break;
-    // }
-    // }
-    // if (isMoveLegal) {
-    // miniTable.getGameState().setChessBoard(legalMove.execute());
-    // miniTable.getGameState().getDeck().getHand().remove(chosenCard);
-    // if (!chosenCard.getHasPower(3)) {
-    // miniTable.getGameState().setMoveLeft(miniTable.getGameState().getMoveLeft() -
-    // 1);
-    // if (miniTable.getGameState().getMoveLeft() <= 0) {
-    // miniTable.getGameState().getDeck().emptyHand();
-    // miniTable.getGameState().doDamage();
-    // miniTable.southPanel.redrawStatus();
-    // miniTable.getGameState().addTurn();
-    // if (miniTable.getGameState().getCurrentHealth() > 0)
-    // enemyTurn();
-    // }
-    // } else {
-    // miniTable.getGameState().getDeck().draw();
-    // }
-    // if (chosenCard.getHasPower(2))
-    // miniTable.getGameState().setShield(miniTable.getGameState().getShield() + 1);
-    // chosenCard = null;
-    // }
-    // }
-    // SwingUtilities.invokeLater(new Runnable() {
-    // @Override
-    // public void run() {
-    // boardPanel.drawBoard(miniTable.getGameState().getChessBoard());
-    // miniTable.southPanel.redrawStatus();
-    // miniTable.southPanel.redraw();
-    // miniTable.westPanel.redraw();
-    // }
-    // });
-    // }
+            } else {
+                this.x += this.spdX;
+                this.y += this.spdY;
+            }
+        }
 
-    // @Override
-    // public void mousePressed(MouseEvent e) {
-    // // TODO Auto-generated method stub
-    // }
-
-    // @Override
-    // public void mouseReleased(MouseEvent e) {
-    // // TODO Auto-generated method stub
-    // }
-
-    // @Override
-    // public void mouseEntered(MouseEvent e) {
-    // boardPanel.highlightDangerousTile(row, col, true);
-    // miniTable.eastPanel.redraw(miniTable.getGameState().getChessBoard().getTile(row,
-    // col));
-    // setBackground(MiniTable.lightBorderColor);
-    // }
-
-    // @Override
-    // public void mouseExited(MouseEvent e) {
-    // boardPanel.highlightDangerousTile(row, col, false);
-    // colorTile(miniTable.getGameState().getChessBoard());
-    // }
-
-    // });
-    // validate();
-    // }
-
-    // public void drawTile(MiniBoard board) {
-    // removeAll();
-    // colorTile(board);
-    // legalMovesHighlighter(board);
-    // placePieceIconOnTile(board);
-    // validate();
-    // repaint();
-    // }
-
-    // private void placePieceIconOnTile(final MiniBoard board) {
-    // this.removeAll();
-    // if (board.getTile(this.row, this.col).isOccupied()) {
-    // if (board.getTile(row, col).getPiece() instanceof PlayerPiece) {
-    // try {
-    // final BufferedImage playerImage = ImageIO.read(new File(PLAYER_ICON_PATH
-    // + board.getPlayerPiece().getPieceType().toString() + ".png"));
-    // final ImageIcon icon = new ImageIcon(playerImage);
-    // add(new JLabel(
-    // new ImageIcon(
-    // icon.getImage().getScaledInstance((int) MiniTable.screenSize.getWidth() / 19,
-    // (int) MiniTable.screenSize.getHeight() / 11, Image.SCALE_SMOOTH))),
-    // BorderLayout.CENTER);
-    // } catch (IOException exception) {
-    // exception.printStackTrace();
-    // }
-    // } else {
-    // EnemyPiece enemyPiece = (EnemyPiece) board.getTile(row, col).getPiece();
-    // String filePath = ENEMY_ICON_PATH;
-    // if (enemyPiece.isImmune())
-    // filePath += "i";
-    // filePath += enemyPiece.getPieceType().toString() + ".png";
-    // try {
-    // final BufferedImage enemyImage = ImageIO.read(new File(filePath));
-    // final ImageIcon icon = new ImageIcon(enemyImage);
-    // add(new JLabel(new ImageIcon(
-    // icon.getImage().getScaledInstance((int) MiniTable.screenSize.getWidth() / 21,
-    // (int) MiniTable.screenSize.getHeight() / 13, Image.SCALE_SMOOTH))),
-    // BorderLayout.CENTER);
-    // } catch (IOException exception) {
-    // exception.printStackTrace();
-    // }
-    // }
-    // }
-
-    // }
-
-    // private void colorTile(final MiniBoard board) {
-    // if (board.getTile(row, col).isBlighted())
-    // setBackground(((this.row + this.col) % 2 == 0) ? MiniTable.lightGreen :
-    // MiniTable.darkGreen);
-    // else
-    // setBackground(((this.row + this.col) % 2 == 0) ? MiniTable.lightTileColor :
-    // MiniTable.darkTileColor);
-    // }
-
-    // public void redHighLight() {
-    // setBackground(((this.row + this.col) % 2 == 0) ? MiniTable.lightRed :
-    // MiniTable.darkRed);
-    // }
-
-    // private void legalMovesHighlighter(final MiniBoard board) {
-    // boolean highlight = false;
-    // if (chosenCard != null) {
-    // for (MiniMove move : chosenCard.legalMoves(board, board.getPlayerPiece())) {
-    // if (move.getDestinationRow() == this.row && move.getDestinationCol() ==
-    // this.col) {
-    // highlight = true;
-    // setBorder(new LineBorder(MiniTable.chosenBackground, 4));
-    // }
-    // }
-    // }
-    // if (!highlight) {
-    // setBorder(BorderFactory.createEmptyBorder());
-    // }
-    // }
-    // }
+        private void draw(Graphics2D g2) {
+            g2.drawImage(Game.imageList.getDmgImage(), this.x, this.y, 15, 15, null);
+        }
+    }
 }

@@ -6,7 +6,6 @@ import java.util.Random;
 
 import com.chess.engine.minigame.board.MiniBoard.Builder;
 import com.chess.engine.minigame.pieces.MiniPiece;
-import com.chess.engine.minigame.pieces.enemy.Beast;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
 import com.chess.engine.minigame.pieces.enemy.Infected;
 import com.chess.engine.minigame.pieces.enemy.Zombie;
@@ -325,16 +324,8 @@ public abstract class MiniMove {
                             }
                         }
                     }
-                } else if (attackedPiece instanceof Beast) {
-                    Random rand = new Random();
-                    int r = rand.nextInt(5);
-                    int c = rand.nextInt(5);
-                    while (this.board.getTile(r, c).isOccupied()) {
-                        r = rand.nextInt(5);
-                        c = rand.nextInt(5);
-                    }
-                    builder.setPiece(new Infected(r, c, attackedPiece.getTurn()));
-                } else if (attackedPiece instanceof Infected) {
+                } 
+                else if (attackedPiece instanceof Infected) {
                     int r = attackedPiece.getRow();
                     int c = attackedPiece.getCol();
                     builder.setBlight(r * 5 + c);

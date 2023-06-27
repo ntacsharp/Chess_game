@@ -24,7 +24,7 @@ public class Deck {
         refillCurrentDeck();
     }
 
-    private void refillCurrentDeck() {
+    public void refillCurrentDeck() {
         this.currentDeck.clear();
         this.currentDeck.addAll(this.totalDeck);
     }
@@ -37,9 +37,7 @@ public class Deck {
     // }
 
     public void fillHand(final int cardCount) {
-        for (int i = 0; i < cardCount; i++) {
-            draw();
-        }
+        while(hand.size() < cardCount) draw();
     }
 
     public void promote() {

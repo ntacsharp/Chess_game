@@ -1,11 +1,7 @@
 package com.chess.engine.minigame.cards;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import com.chess.engine.minigame.board.MiniBoard;
 import com.chess.engine.minigame.board.MiniBoardUtils;

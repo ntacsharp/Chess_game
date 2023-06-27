@@ -1,28 +1,15 @@
 package com.chess.engine.minigame.GUI;
 
+import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.WindowConstants;
 
 import com.chess.engine.minigame.GameState;
 import com.chess.engine.minigame.GUI.Playing.BoardPanel;
@@ -43,8 +30,6 @@ public class GamePanel extends JPanel implements Runnable {
 
     private int FPS = 60;
 
-    // private final JPanel gamePanel;
-    // private final JPanel settingPanel;
     private GameState gameState;
     private Card chosenCard;
 
@@ -64,60 +49,25 @@ public class GamePanel extends JPanel implements Runnable {
 
     private double timeToChangeState;
     private int state = 0;
+    private float alpha = 0.0f;
+    private int dir = 1;
+    private boolean playedSound = false;
     // 0 - playing
-    // 1 - displaying "victor-e"
+    // 1 - displaying "victory"
     // 2 - shopping
     // 3 - display floor
+    // 4 - Defeated
+    // 5 - Win
 
     public GamePanel() {
         this.gameState = new GameState(PieceType.BABARIAN);
         this.setPreferredSize(Game.screenSize);
         this.setLayout(new BorderLayout());
-        //this.setBackground(ColorList.darkTileColor);
         this.setDoubleBuffered(true);
         this.setFocusable(true);
+        Game.sound.playBG();
         validate();
         setUpPlay();
-        // setUpShopping();
-        // this.addMouseListener(new MouseListener() {
-        // @Override
-        // public void mouseClicked(MouseEvent e) {
-        // }
-        // @Override
-        // public void mousePressed(MouseEvent e) {
-        // }
-        // @Override
-        // public void mouseReleased(MouseEvent e) {
-        // }
-        // @Override
-        // public void mouseEntered(MouseEvent e) {
-        // }
-        // @Override
-        // public void mouseExited(MouseEvent e) {
-        // }
-        // });
-        // this.addKeyListener(new KeyListener() {
-
-        // @Override
-        // public void keyTyped(KeyEvent e) {
-        // }
-
-        // @Override
-        // public void keyPressed(KeyEvent e) {
-        // }
-
-        // @Override
-        // public void keyReleased(KeyEvent e) {
-        // if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-        // setting();
-        // }
-        // }
-
-        // });
-        // this.gamePanel = new JPanel(new BorderLayout());
-        // this.settingPanel = new SettingPanel();
-        // setUpGamePanel();
-        // this.add(settingPanel);
     }
 
     private void setUpPlay() {
@@ -157,26 +107,51 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        if (gameState.getCurrentHealth() <= 0) {
-            this.state = 4;
-            timeToChangeState = System.nanoTime() + 1500000000;
-        }
         if (System.nanoTime() >= timeToChangeState) {
+            if (gameState.getCurrentHealth() <= 0) {
+                this.state = 4;
+            }
             if (this.state == 1) {
                 if (this.gameState.getFloor() < 7) {
                     this.state = 2;
                     setUpShopping();
                 } else {
-                    gameThread = null;
-                    Game.exitToMenu();
+                    this.state = 5;
                 }
             } else if (this.state == 3) {
                 this.state = 0;
                 gameState.createNewFloor();
                 setUpPlay();
-            } else if (this.state == 4) {
-                gameThread = null;
-                Game.exitToMenu();
+            } else if (this.state == 4 || this.state == 5) {
+                alpha += dir * 0.01f;
+                if (alpha <= 0.1f)
+                    dir = 1;
+                else if (alpha >= 0.9f)
+                    dir = -1;
+                this.addMouseListener(new MouseListener() {
+
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        Game.exitToMenu();
+                    }
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                    }
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                    }
+
+                });
             }
         }
         if (state == 0 || state == 1) {
@@ -190,8 +165,11 @@ public class GamePanel extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        g2.setColor(ColorList.darkTileColor);
-        g2.fillRect(0, 0, (int)Game.screenSize.getWidth(), (int)Game.screenSize.getHeight());
+        if (state < 4)
+            g2.setColor(ColorList.darkTileColor);
+        else
+            g2.setColor(Color.BLACK);
+        g2.fillRect(0, 0, (int) Game.screenSize.getWidth(), (int) Game.screenSize.getHeight());
         if (state == 0 || state == 1) {
             boardPanel.draw(g2);
             northPanel.draw(g2);
@@ -209,6 +187,37 @@ public class GamePanel extends JPanel implements Runnable {
             g2.setFont(new Font("Arial", Font.BOLD, 80));
             g2.drawString("Floor " + (gameState.getFloor() + 1) + " on 7", (int) Game.screenSize.getWidth() / 3,
                     (int) Game.screenSize.getHeight() / 2);
+        } else if (state == 4) {
+            if (!playedSound) {
+                Game.sound.stop();
+                Game.sound.playSE("sound\\over.wav");
+                playedSound = true;
+            }
+            g2.setFont(new Font("Monospaced", Font.PLAIN, 100));
+            g2.setColor(ColorList.RedColor);
+            g2.drawString("You died", (int) Game.screenSize.getWidth() / 3, (int) Game.screenSize.getHeight() / 2);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+            g2.setFont(new Font("Arial", Font.PLAIN, 20));
+            g2.setColor(Color.WHITE);
+            g2.drawString("Click to return...", (int) Game.screenSize.getWidth() / 2 - 60,
+                    (int) Game.screenSize.getHeight() * 7 / 8);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+
+        } else if (state == 5) {
+            if (!playedSound) {
+                Game.sound.stop();
+                Game.sound.playSE("sound\\win.wav");
+                playedSound = true;
+            }
+            g2.setFont(new Font("Monospaced", Font.PLAIN, 100));
+            g2.setColor(ColorList.chosenBackground);
+            g2.drawString("Congratulation!", (int) Game.screenSize.getWidth() / 5,
+                    (int) Game.screenSize.getHeight() / 2);
+            g2.setFont(new Font("Arial", Font.PLAIN, 20));
+            g2.setColor(Color.WHITE);
+            g2.drawString("Click to return...", (int) Game.screenSize.getWidth() / 2 - 60,
+                    (int) Game.screenSize.getHeight() * 7 / 8);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
         g2.dispose();
     }
@@ -257,147 +266,5 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
-
-    // public void setting() {
-    // CardLayout cardLayout = (CardLayout) frame.getContentPane().getLayout();
-    // cardLayout.next(frame.getContentPane());
-    // }
-
-    // private void setUpGamePanel() {
-    // this.gamePanel.removeAll();
-    // this.gamePanel.setSize(screenSize);
-    // this.gameState = new GameState(PieceType.BABARIAN);
-    // this.boardPanel = new BoardPanel(this);
-    // this.southPanel = new SouthPanel(this);
-    // this.northPanel = new NorthPanel(this);
-    // this.westPanel = new WestPanel(this);
-    // this.eastPanel = new EastPanel();
-    // this.gamePanel.add(boardPanel, BorderLayout.CENTER);
-    // this.gamePanel.add(southPanel, BorderLayout.SOUTH);
-    // this.gamePanel.add(northPanel, BorderLayout.NORTH);
-    // this.gamePanel.add(eastPanel, BorderLayout.EAST);
-    // this.gamePanel.add(westPanel, BorderLayout.WEST);
-    // frame.add(gamePanel);
-    // boardPanel.playerTurn();
-    // }
-
-    // public class SettingPanel extends JPanel {
-    // SettingPanel() {
-    // super(new GridLayout(7, 1, 0, 0));
-    // setBackground(transparentBg);
-    // setSize(screenSize);
-    // setDoubleBuffered(true);
-    // JPanel masterPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 40));
-    // masterPanel.setBackground(transparentBg);
-    // add(masterPanel);
-    // JPanel musicPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 40));
-    // musicPanel.setBackground(transparentBg);
-    // add(musicPanel);
-    // JPanel soundPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 40));
-    // soundPanel.setBackground(transparentBg);
-    // add(soundPanel);
-    // JPanel keyPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 40));
-    // keyPanel.setBackground(transparentBg);
-    // add(keyPanel);
-    // JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 40));
-    // mainPanel.setBackground(transparentBg);
-    // JLabel mainLabel = new JLabel("Exit to Mainmenu");
-    // mainLabel.setHorizontalAlignment(JLabel.CENTER);
-    // mainLabel.setFont(new Font("Arial", Font.BOLD, 36));
-    // mainLabel.setForeground(chosenBackground);
-    // mainLabel.setBackground(transparentBg);
-    // mainLabel.addMouseListener(new MouseListener() {
-    // @Override
-    // public void mouseClicked(MouseEvent e) {
-    // StartMenu.main(null);
-    // frame.dispose();
-    // }
-
-    // @Override
-    // public void mousePressed(MouseEvent e) {
-    // }
-
-    // @Override
-    // public void mouseReleased(MouseEvent e) {
-    // }
-
-    // @Override
-    // public void mouseEntered(MouseEvent e) {
-    // }
-
-    // @Override
-    // public void mouseExited(MouseEvent e) {
-    // }
-
-    // });
-    // mainPanel.add(mainLabel);
-    // add(mainPanel);
-    // JPanel abandonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 40));
-    // abandonPanel.setBackground(transparentBg);
-    // JLabel abandonLabel = new JLabel("Abandon run");
-    // abandonLabel.setHorizontalAlignment(JLabel.CENTER);
-    // abandonLabel.setFont(new Font("Arial", Font.BOLD, 36));
-    // abandonLabel.setForeground(chosenBackground);
-    // abandonLabel.setBackground(transparentBg);
-    // abandonLabel.addMouseListener(new MouseListener() {
-    // @Override
-    // public void mouseClicked(MouseEvent e) {
-    // System.out.println("Abandon");
-    // }
-
-    // @Override
-    // public void mousePressed(MouseEvent e) {
-    // }
-
-    // @Override
-    // public void mouseReleased(MouseEvent e) {
-    // }
-
-    // @Override
-    // public void mouseEntered(MouseEvent e) {
-    // }
-
-    // @Override
-    // public void mouseExited(MouseEvent e) {
-    // }
-
-    // });
-    // abandonPanel.add(abandonLabel);
-    // add(abandonPanel);
-    // JPanel backPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 40));
-    // backPanel.setBackground(transparentBg);
-    // JLabel backLabel = new JLabel("Back");
-    // backLabel.setHorizontalAlignment(JLabel.CENTER);
-    // backLabel.setFont(new Font("Arial", Font.BOLD, 36));
-    // backLabel.setForeground(chosenBackground);
-    // backLabel.setBackground(transparentBg);
-    // backLabel.addMouseListener(new MouseListener() {
-    // @Override
-    // public void mouseClicked(MouseEvent e) {
-    // setting();
-    // }
-
-    // @Override
-    // public void mousePressed(MouseEvent e) {
-    // }
-
-    // @Override
-    // public void mouseReleased(MouseEvent e) {
-    // }
-
-    // @Override
-    // public void mouseEntered(MouseEvent e) {
-    // }
-
-    // @Override
-    // public void mouseExited(MouseEvent e) {
-    // }
-
-    // });
-    // backPanel.add(backLabel);
-    // add(backPanel);
-    // validate();
-    // }
-    // }
 
 }

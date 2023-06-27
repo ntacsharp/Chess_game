@@ -52,6 +52,7 @@ public class StartMenu{
         ButtonAbstract startButton=new SimpleButton("Start Game",
                 (JFrame parent)->{
                     //new MiniTable();
+                    Game.main(null);
                     parent.dispose();
                 });
         buttonPanel.addComponentLeveled(startButton,0);
