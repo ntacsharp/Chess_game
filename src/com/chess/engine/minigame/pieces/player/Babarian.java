@@ -36,7 +36,7 @@ public class Babarian extends PlayerPiece{
     public List<String> getInformation(){
         List<String> res = new ArrayList<>();
         res.add("Promote whenever you move into top row,");
-        res.add("start turn in the top row, or have 3 Pawn in hand.");
+        res.add("or have 3 Pawn in hand.");
         return res;
     }
 

@@ -22,25 +22,26 @@ public class Infected extends EnemyPiece {
     @Override
     public MiniBoard move(final MiniBoard board) {
         Random rand = new Random();
-        int r, c;
+        int r, c, pR = board.getPlayerPiece().getRow(), pC = board.getPlayerPiece().getCol();
         List<int[]> possibleMove = new ArrayList<int[]>();
-        int tmp = Integer.MAX_VALUE;
+        double tmpMax = 1000000000;
         for (int[] move : this.MOVE_SET) {
             r = this.row + move[0];
             c = this.col + move[1];
             if (MiniBoardUtils.isCorValid(r, c)) {
                 if (!board.getTile(r, c).isOccupied()) {
-                    if (board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c < tmp) {
+                    double dist = Math.sqrt((r - pR) * (r - pR) + (c - pC) * (c - pC));
+                    if (dist < tmpMax) {
                         possibleMove.clear();
                         possibleMove.add(move);
-                        tmp = board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c;
-                    } else if (board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c == tmp) {
+                        tmpMax = dist;
+                    } else if (dist == tmpMax) {
                         possibleMove.add(move);
                     }
                 }
             }
         }
-        tmp = rand.nextInt(possibleMove.size());
+        int tmp = rand.nextInt(possibleMove.size());
         r = this.row + possibleMove.get(tmp)[0];
         c = this.col + possibleMove.get(tmp)[1];
         MiniMove move = new EnemyMove(board, this, r, c);
@@ -64,7 +65,8 @@ public class Infected extends EnemyPiece {
         this.isCurrentlyNimble = this.isNimble();
         this.turn++;
         return this;
-        // return new Infected(move.getDestinationRow(), move.getDestinationCol(), this.getTurn() + 1);
+        // return new Infected(move.getDestinationRow(), move.getDestinationCol(),
+        // this.getTurn() + 1);
     }
 
     @Override
@@ -78,14 +80,14 @@ public class Infected extends EnemyPiece {
     }
 
     @Override
-    public List<String> getInformation(){
+    public List<String> getInformation() {
         List<String> res = new ArrayList<>();
         res.add("Weak, blight the tile on death.");
         return res;
     }
 
     @Override
-    public List<Integer> getRange(){
+    public List<Integer> getRange() {
         List<Integer> res = new ArrayList<>();
         return res;
     }

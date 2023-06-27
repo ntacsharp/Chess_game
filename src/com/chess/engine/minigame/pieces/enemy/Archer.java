@@ -22,7 +22,7 @@ public class Archer extends EnemyPiece {
     @Override
     public MiniBoard move(final MiniBoard board) {
         Random rand = new Random();
-        int r, c;
+        int r, c ,pR = board.getPlayerPiece().getRow(), pC = board.getPlayerPiece().getCol();
         List<int[]> possibleMove = new ArrayList<int[]>();
         for (int[] move : this.MOVE_SET) {
             r = this.row + move[0];
@@ -33,32 +33,33 @@ public class Archer extends EnemyPiece {
                     for (int[] des : this.RANGE) {
                         r1 = r + des[0];
                         c1 = c + des[1];
-                        if (r1 == board.getPlayerPiece().getRow() && c1 == board.getPlayerPiece().getCol()) {
+                        if (r1 == pR && c1 == pC) {
                             possibleMove.add(move);
                         }
                     }
                 }
             }
         }
-        int tmp = Integer.MAX_VALUE;
+        double tmpMax = 1000000000;
         if (possibleMove.isEmpty()) {
             for (int[] move : this.MOVE_SET) {
                 r = this.row + move[0];
                 c = this.col + move[1];
                 if (MiniBoardUtils.isCorValid(r, c)) {
                     if (!board.getTile(r, c).isOccupied()) {
-                        if (board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c < tmp) {
+                        double dist = Math.sqrt((r - pR) * (r - pR) + (c - pC) * (c - pC));
+                        if(dist < tmpMax){
                             possibleMove.clear();
                             possibleMove.add(move);
-                            tmp = board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c;
-                        } else if (board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c == tmp) {
+                            tmpMax = dist;
+                        } else if(dist == tmpMax){
                             possibleMove.add(move);
                         }
                     }
                 }
             }
         }
-        tmp = rand.nextInt(possibleMove.size());
+        int tmp = rand.nextInt(possibleMove.size());
         r = this.row + possibleMove.get(tmp)[0];
         c = this.col + possibleMove.get(tmp)[1];
         MiniMove move = new EnemyMove(board, this, r, c);

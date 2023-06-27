@@ -35,11 +35,11 @@ public class KnightCard extends Card {
                 final MiniTile destinationTile = board.getTile(r, c);
                 if (destinationTile.isOccupied()) {
                     MiniPiece piece = board.getTile(r, c).getPiece();
-                    if (piece instanceof PlayerPiece)
-                        throw new RuntimeException("Buged :(");
-                    EnemyPiece attackedPiece = (EnemyPiece) piece;
-                    if (!attackedPiece.isImmune())
-                        legalMovesList.add(new PlayerMove(board, playerPiece, r, c, attackedPiece));
+                    if (piece instanceof EnemyPiece) {
+                        EnemyPiece attackedPiece = (EnemyPiece) piece;
+                        if (!attackedPiece.isImmune())
+                            legalMovesList.add(new PlayerMove(board, playerPiece, r, c, attackedPiece));
+                    }
                 } else {
                     legalMovesList.add(new PlayerMove(board, playerPiece, r, c, null));
                 }

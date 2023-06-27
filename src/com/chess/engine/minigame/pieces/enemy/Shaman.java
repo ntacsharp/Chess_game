@@ -25,7 +25,7 @@ public class Shaman extends EnemyPiece {
     @Override
     public MiniBoard move(MiniBoard board) {
         Random rand = new Random();
-        int r, c;
+        int r, c, pR = board.getPlayerPiece().getRow(), pC = board.getPlayerPiece().getCol();
         List<int[]> possibleMove = new ArrayList<int[]>();
         for (int[] move : this.MOVE_SET) {
             r = this.row + move[0];
@@ -43,29 +43,31 @@ public class Shaman extends EnemyPiece {
                 }
             }
         }
-        int tmp = Integer.MAX_VALUE;
+        double tmpMax = 1000000000;
         if (possibleMove.isEmpty()) {
             for (int[] move : this.MOVE_SET) {
                 r = this.row + move[0];
                 c = this.col + move[1];
                 if (MiniBoardUtils.isCorValid(r, c)) {
                     if (!board.getTile(r, c).isOccupied()) {
-                        if (board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c < tmp) {
+                        double dist = Math.sqrt((r - pR) * (r - pR) + (c - pC) * (c - pC));
+                        if (dist < tmpMax) {
                             possibleMove.clear();
                             possibleMove.add(move);
-                            tmp = board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c;
-                        } else if (board.getPlayerPiece().getRow() - r + board.getPlayerPiece().getCol() - c == tmp) {
+                            tmpMax = dist;
+                        } else if (dist == tmpMax) {
                             possibleMove.add(move);
                         }
                     }
                 }
             }
         }
-        tmp = rand.nextInt(possibleMove.size());
+        int tmp = rand.nextInt(possibleMove.size());
         r = this.row + possibleMove.get(tmp)[0];
         c = this.col + possibleMove.get(tmp)[1];
         MiniMove move = new EnemyMove(board, this, r, c);
         return move.execute();
+
     }
 
     @Override
@@ -76,7 +78,7 @@ public class Shaman extends EnemyPiece {
             this.immune = true;
     }
 
-        @Override
+    @Override
     public int calculateDmg(final MiniBoard board, final int row, final int col) {
         for (int[] range : this.RANGE) {
             int r = this.row + range[0];

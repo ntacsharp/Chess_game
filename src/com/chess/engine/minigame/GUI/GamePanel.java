@@ -25,9 +25,18 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import com.chess.engine.minigame.GameState;
+import com.chess.engine.minigame.GUI.Playing.BoardPanel;
+import com.chess.engine.minigame.GUI.Playing.EastPanel;
+import com.chess.engine.minigame.GUI.Playing.NorthPanel;
+import com.chess.engine.minigame.GUI.Playing.SouthPanel;
+import com.chess.engine.minigame.GUI.Playing.WestPanel;
+import com.chess.engine.minigame.GUI.Shopping.ShoppingBoardPanel;
+import com.chess.engine.minigame.GUI.Shopping.ShoppingEastPanel;
+import com.chess.engine.minigame.GUI.Shopping.ShoppingNorthPanel;
+import com.chess.engine.minigame.GUI.Shopping.ShoppingSouthPanel;
+import com.chess.engine.minigame.GUI.Shopping.ShoppingWestPanel;
 import com.chess.engine.minigame.cards.Card;
 import com.chess.engine.minigame.pieces.player.PlayerPiece.PieceType;
-import com.chess.menu.StartMenu;
 import com.chess.Game;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -44,27 +53,32 @@ public class GamePanel extends JPanel implements Runnable {
     public NorthPanel northPanel;
     public WestPanel westPanel;
     public EastPanel eastPanel;
-    
+
+    public ShoppingBoardPanel shoppingBoardPanel;
+    public ShoppingEastPanel shoppingEastPanel;
+    public ShoppingNorthPanel shoppingNorthPanel;
+    public ShoppingSouthPanel shoppingSouthPanel;
+    public ShoppingWestPanel shoppingWestPanel;
+
     private Thread gameThread;
+
+    private double timeToChangeState;
+    private int state = 0;
+    // 0 - playing
+    // 1 - displaying "victor-e"
+    // 2 - shopping
+    // 3 - display floor
 
     public GamePanel() {
         this.gameState = new GameState(PieceType.BABARIAN);
         this.setPreferredSize(Game.screenSize);
         this.setLayout(new BorderLayout());
-        this.setBackground(ColorList.darkTileColor);
+        //this.setBackground(ColorList.darkTileColor);
         this.setDoubleBuffered(true);
         this.setFocusable(true);
-        this.boardPanel = new BoardPanel(this);
-        this.northPanel = new NorthPanel(this);
-        this.southPanel = new SouthPanel(this);
-        this.eastPanel = new EastPanel(this);
-        this.westPanel = new WestPanel(this);
-        this.add(northPanel, BorderLayout.NORTH);
-        this.add(westPanel, BorderLayout.WEST);
-        this.add(southPanel, BorderLayout.SOUTH);
-        this.add(eastPanel, BorderLayout.EAST);
-        this.add(boardPanel, BorderLayout.CENTER);
         validate();
+        setUpPlay();
+        // setUpShopping();
         // this.addMouseListener(new MouseListener() {
         // @Override
         // public void mouseClicked(MouseEvent e) {
@@ -106,9 +120,121 @@ public class GamePanel extends JPanel implements Runnable {
         // this.add(settingPanel);
     }
 
+    private void setUpPlay() {
+        this.removeAll();
+        this.boardPanel = new BoardPanel(this);
+        this.northPanel = new NorthPanel(this);
+        this.southPanel = new SouthPanel(this);
+        this.eastPanel = new EastPanel(this);
+        this.westPanel = new WestPanel(this);
+        this.add(northPanel, BorderLayout.NORTH);
+        this.add(westPanel, BorderLayout.WEST);
+        this.add(southPanel, BorderLayout.SOUTH);
+        this.add(eastPanel, BorderLayout.EAST);
+        this.add(boardPanel, BorderLayout.CENTER);
+        revalidate();
+    }
+
+    private void setUpShopping() {
+        this.removeAll();
+        gameState.getDeck().generateShoppingRound();
+        this.shoppingBoardPanel = new ShoppingBoardPanel(this);
+        this.shoppingEastPanel = new ShoppingEastPanel(this);
+        this.shoppingNorthPanel = new ShoppingNorthPanel(this);
+        this.shoppingSouthPanel = new ShoppingSouthPanel(this);
+        this.shoppingWestPanel = new ShoppingWestPanel(this);
+        this.add(shoppingNorthPanel, BorderLayout.NORTH);
+        this.add(shoppingWestPanel, BorderLayout.WEST);
+        this.add(shoppingSouthPanel, BorderLayout.SOUTH);
+        this.add(shoppingEastPanel, BorderLayout.EAST);
+        this.add(shoppingBoardPanel, BorderLayout.CENTER);
+        revalidate();
+    }
+
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start();
+    }
+
+    public void update() {
+        if (gameState.getCurrentHealth() <= 0) {
+            this.state = 4;
+            timeToChangeState = System.nanoTime() + 1500000000;
+        }
+        if (System.nanoTime() >= timeToChangeState) {
+            if (this.state == 1) {
+                if (this.gameState.getFloor() < 7) {
+                    this.state = 2;
+                    setUpShopping();
+                } else {
+                    gameThread = null;
+                    Game.exitToMenu();
+                }
+            } else if (this.state == 3) {
+                this.state = 0;
+                gameState.createNewFloor();
+                setUpPlay();
+            } else if (this.state == 4) {
+                gameThread = null;
+                Game.exitToMenu();
+            }
+        }
+        if (state == 0 || state == 1) {
+            this.boardPanel.update();
+            this.southPanel.update();
+        } else if (state == 2) {
+            this.shoppingBoardPanel.update();
+        }
+    }
+
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setColor(ColorList.darkTileColor);
+        g2.fillRect(0, 0, (int)Game.screenSize.getWidth(), (int)Game.screenSize.getHeight());
+        if (state == 0 || state == 1) {
+            boardPanel.draw(g2);
+            northPanel.draw(g2);
+            southPanel.draw(g2);
+            eastPanel.draw(g2);
+            westPanel.draw(g2);
+        } else if (state == 2) {
+            shoppingBoardPanel.draw(g2);
+            shoppingNorthPanel.draw(g2);
+            shoppingSouthPanel.draw(g2);
+            shoppingEastPanel.draw(g2);
+            shoppingWestPanel.draw(g2);
+        } else if (state == 3) {
+            g2.setColor(ColorList.chosenBackground);
+            g2.setFont(new Font("Arial", Font.BOLD, 80));
+            g2.drawString("Floor " + (gameState.getFloor() + 1) + " on 7", (int) Game.screenSize.getWidth() / 3,
+                    (int) Game.screenSize.getHeight() / 2);
+        }
+        g2.dispose();
+    }
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public Card getChosenCard() {
+        return this.chosenCard;
+    }
+
+    public void setChosenCard(Card chosenCard) {
+        this.chosenCard = chosenCard;
+    }
+
+    public int getState() {
+        return this.state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
+    public void setTimeToChangeState(double timeToChangeState) {
+        this.timeToChangeState = timeToChangeState;
     }
 
     @Override
@@ -131,48 +257,6 @@ public class GamePanel extends JPanel implements Runnable {
             }
         }
     }
-
-    public void update() {
-        this.boardPanel.update();
-        this.southPanel.update();
-    }
-
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        boardPanel.draw(g2);
-        northPanel.draw(g2);
-        southPanel.draw(g2);
-        eastPanel.draw(g2);
-        westPanel.draw(g2);
-        g2.dispose();
-        // BufferedImage image;
-        // try {
-        // image = ImageIO.read(new File("art/pieces/WP.png"));
-        //
-        // g2.setColor(ColorList.lightGreen);
-        // g2.drawImage(image, 100, 100, 100, 100, null);
-        // g2.dispose();
-        // } catch (IOException e) {
-        // // TODO Auto-generated catch block
-        // e.printStackTrace();
-        // }
-
-    }
-
-    public GameState getGameState() {
-        return gameState;
-    }
-
-    public Card getChosenCard(){
-        return this.chosenCard;
-    }
-
-    public void setChosenCard(Card chosenCard) {
-        this.chosenCard = chosenCard;
-    }
-
-    
 
     // public void setting() {
     // CardLayout cardLayout = (CardLayout) frame.getContentPane().getLayout();

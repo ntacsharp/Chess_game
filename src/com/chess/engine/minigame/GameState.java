@@ -38,6 +38,14 @@ public class GameState {
         this.gold = 0;
     }
 
+    public void createNewFloor() {
+        this.deck.emptyCurrentDeck();
+        this.floor++;
+        this.moveLeft = 0;
+        this.chessBoard = MiniBoard.createStandardBoard(this.floor, PieceType.BABARIAN);
+        //this.deck.fillHand(3);
+    }
+
     public void setTurn(final int turn) {
         this.turn = turn;
     }
@@ -48,6 +56,10 @@ public class GameState {
 
     public void setShield(int shield) {
         this.shield = shield;
+    }
+
+    public void setFloor(int floor) {
+        this.floor = floor;
     }
 
     public int getShield() {
@@ -62,7 +74,11 @@ public class GameState {
         return gold;
     }
 
-    private boolean isCleared() {
+    public void setGold(final int x) {
+        this.gold = x;
+    }
+
+    public boolean isCleared() {
         if (this.chessBoard.getEnemyPieces().isEmpty())
             return true;
         return false;
@@ -76,11 +92,6 @@ public class GameState {
         }
 
         this.shield = 0;
-        System.out.println(currentHealth);
-        if (this.currentHealth <= 0) {
-            return;
-        }
-
     }
 
     public void doMove(final EnemyPiece enemyPiece) {

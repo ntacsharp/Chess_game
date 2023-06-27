@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.chess.engine.minigame.cards.Card.CardType;
 import com.chess.engine.minigame.pieces.player.PlayerPiece;
 
 public class Deck {
@@ -11,6 +12,8 @@ public class Deck {
     private List<Card> currentDeck;
     private List<Card> hand;
     private List<Card> usedCard;
+    private List<Card> shoppingList;
+    private List<Integer> powerIds;
 
     public Deck(final PlayerPiece playerPiece) {
         this.totalDeck = new ArrayList<Card>();
@@ -21,15 +24,17 @@ public class Deck {
         refillCurrentDeck();
     }
 
-    public void refillCurrentDeck() {
+    private void refillCurrentDeck() {
+        this.currentDeck.clear();
         this.currentDeck.addAll(this.totalDeck);
     }
 
-    public void updateCard(final int cardID, final int powerID, final boolean newVal) {
-        Card card = this.totalDeck.get(cardID);
-        card.setHasPower(powerID, newVal);
-        this.totalDeck.set(cardID, card);
-    }
+    // public void updateCard(final Card card, final int powerID, final boolean newVal) {
+    //     int ind = totalDeck.indexOf(card);
+    //     Card newCard = this.totalDeck.get(ind);
+    //     card.setHasPower(powerID, newVal);
+    //     this.totalDeck.set(cardID, card);
+    // }
 
     public void fillHand(final int cardCount) {
         for (int i = 0; i < cardCount; i++) {
@@ -37,13 +42,38 @@ public class Deck {
         }
     }
 
-    // public void returnHand(){
-    // this.currentDeck.addAll(this.hand);
-    // this.hand.clear();
-    // }
+    public void promote() {
+        boolean flag = false;
+        for (int i = 0; i < hand.size(); i++) {
+            Card card = hand.get(i);
+            if (card.getCardType() == CardType.PAWN) {
+                flag = true;
+                // hand.remove(i);
+                hand.set(i, new QueenCard(card.getHasPower(0), card.getHasPower(1), card.getHasPower(2),
+                        card.getHasPower(3)));
+                break;
+            }
+        }
+        if (!flag) {
+            for (int i = 0; i < currentDeck.size(); i++) {
+                Card card = currentDeck.get(i);
+                if (card.getCardType() == CardType.PAWN) {
+                    flag = true;
+                    currentDeck.set(i, new QueenCard(card.getHasPower(0), card.getHasPower(1), card.getHasPower(2),
+                            card.getHasPower(3)));
+                    break;
+                }
+            }
+        }
+    }
+
+    public void emptyCurrentDeck(){
+        this.currentDeck.clear();
+        this.usedCard.clear();
+    }
 
     public void draw() {
-        if (this.currentDeck.isEmpty()){
+        if (this.currentDeck.isEmpty()) {
             refillCurrentDeck();
             usedCard.clear();
         }
@@ -58,6 +88,7 @@ public class Deck {
     }
 
     public void emptyHand() {
+        this.usedCard.addAll(hand);
         this.hand.clear();
     }
 
@@ -77,8 +108,8 @@ public class Deck {
 
     public void generateShoppingRound() {
         Random rand = new Random();
-        List<Card> shoppingList = new ArrayList<Card>();
-        List<Integer> powerList = new ArrayList<Integer>();
+        shoppingList = new ArrayList<Card>();
+        powerIds = new ArrayList<Integer>();
         for (int i = 0; i < 5; i++) {
             int tmp = rand.nextInt(totalDeck.size());
             Card card = totalDeck.get(tmp);
@@ -91,11 +122,29 @@ public class Deck {
             while (card.getHasPower(tmp)) {
                 tmp = rand.nextInt(4);
             }
-            powerList.add(tmp);
+            powerIds.add(tmp);
         }
     }
 
     public List<Card> getUsedCard() {
         return usedCard;
+    }
+
+    public List<Card> getShoppingList() {
+        return shoppingList;
+    }
+
+    public List<Integer> getPowerIds() {
+        return powerIds;
+    }
+
+    public void removeChoice(Card card, int powerID) {
+        for (int i = 0; i < shoppingList.size(); i++) {
+            if(shoppingList.get(i).equals(card) && powerIds.get(i).equals(powerID)){
+                shoppingList.remove(i);
+                powerIds.remove(i);
+                break;
+            }
+        }
     }
 }
