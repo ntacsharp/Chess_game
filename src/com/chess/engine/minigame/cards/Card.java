@@ -132,6 +132,49 @@ public abstract class Card {
         return false;
     }
 
+    public static Card parseCard(String s){
+        Card res;
+        String[] words = s.split("_");
+        switch(words[0]){
+            case("B"):
+                res = new BishopCard(false, false, false, false);
+                break;
+            case("K"):
+                res = new KingCard(false, false, false, false);
+                break;
+            case("N"):
+                res = new KnightCard(false, false, false, false);
+                break;
+            case("P"):
+                res = new PawnCard(false, false, false, false);
+                break;
+            case("Q"):
+                res = new QueenCard(false, false, false, false);
+                break;
+            default:
+                res = new RookCard(false, false, false, false);
+        }
+        for(String word: words){
+            switch(word){
+                case("+"):
+                    res.setHasPower(0, true);
+                    break;
+                case("x"):
+                    res.setHasPower(1, true);
+                    break;
+                case("s"):
+                    res.setHasPower(2, true);
+                    break;
+                case("c"):
+                    res.setHasPower(3, true);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return res;
+    }
+
     public enum CardType {
         BISHOP("B", "Bishop"),
         KING("K", "King"),

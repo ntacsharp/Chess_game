@@ -1,5 +1,6 @@
 package com.chess.engine.minigame.GUI.Shopping;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -76,6 +77,23 @@ public class ShoppingBoardPanel extends JPanel {
         for (TilePanel tilePanel : tileList) {
             tilePanel.draw(g2);
         }
+        float alpha = 0.9f;
+        for (int i = 0; i < 4; i++) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+            int x = (int) Game.screenSize.getWidth() / 3 + 11 + 2 * ((int) Game.screenSize.getWidth() / 15 - 4) + 5 * i;
+            int y = (int) Game.screenSize.getHeight() / 12 + 4 * ((int) Game.screenSize.getWidth() / 15 - 4) + 80
+                    - i * ((int) Game.screenSize.getWidth() / 60 - 4);
+            int width = (int) Game.screenSize.getWidth() / 15 - 6 - 10 * i;
+            g2.setColor(ColorList.lightBorderColor);
+            g2.fillRect(x, y, width, (int) Game.screenSize.getWidth() / 60 - 4);
+            y = (int) Game.screenSize.getHeight() / 12 +  80 - i * ((int) Game.screenSize.getWidth() / 60 - 4);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha + 0.1f));
+            g2.setColor(ColorList.lightTileColor);
+            g2.fillRect(x, y, width, (int) Game.screenSize.getWidth() / 60 - 4);
+            alpha -= 0.2f;
+        }
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+
         playerPanel.draw(g2);
         for (ChoicePanel choicePanel : choices) {
             choicePanel.draw(g2);
@@ -116,16 +134,7 @@ public class ShoppingBoardPanel extends JPanel {
         private boolean isEntered = false;
         private boolean isMovable = true;
         private ChoicePanel choice;
-
-        TilePanel(final ShoppingBoardPanel sbp, final int r, final int c) {
-            super(new FlowLayout());
-            this.sbp = sbp;
-            this.r = r;
-            this.c = c;
-            this.choice = checkTile(r, c);
-            this.setPreferredSize(new Dimension(85, 85));
-            this.isFocusable();
-            this.addMouseListener(new MouseListener() {
+        private final MouseListener msln = new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (isMovable) {
@@ -136,11 +145,13 @@ public class ShoppingBoardPanel extends JPanel {
                         } else {
                             if (choice != null) {
                                 if (choice.getCard() != null) {
-                                    //gp.getGameState().getDeck().updateCard(choice.getCard(), choice.getPowerID(), true);
+                                    // gp.getGameState().getDeck().updateCard(choice.getCard(), choice.getPowerID(),
+                                    // true);
                                     choice.getCard().setHasPower(choice.getPowerID(), true);
                                     gp.getGameState().getDeck().removeChoice(choice.getCard(), choice.getPowerID());
-                                }else{
+                                } else {
                                     gp.getGameState().setMaxHealth(gp.getGameState().getMaxHealth() + 1);
+                                    gp.getGameState().setCurrentHealth(gp.getGameState().getCurrentHealth() + 1);
                                 }
                                 gp.getGameState().setGold(gp.getGameState().getGold() - choice.price);
                             }
@@ -172,7 +183,16 @@ public class ShoppingBoardPanel extends JPanel {
                     gp.shoppingEastPanel.setPowerEntered(-1);
                 }
 
-            });
+            };
+
+        TilePanel(final ShoppingBoardPanel sbp, final int r, final int c) {
+            super(new FlowLayout());
+            this.sbp = sbp;
+            this.r = r;
+            this.c = c;
+            this.choice = checkTile(r, c);
+            this.setPreferredSize(new Dimension(85, 85));
+            this.isFocusable();
         }
 
         private void draw(final Graphics2D g2) {
@@ -195,6 +215,10 @@ public class ShoppingBoardPanel extends JPanel {
         }
 
         private void update() {
+            if (this.getMouseListeners().length == 0 && !gp.isPausing())
+                this.addMouseListener(msln);
+            if (this.getMouseListeners().length > 0 && gp.isPausing())
+                this.removeMouseListener(msln);
             if (choice != null && choice.getPrice() > gp.getGameState().getGold())
                 this.isMovable = false;
         }
@@ -220,7 +244,7 @@ public class ShoppingBoardPanel extends JPanel {
                 this.card = gp.getGameState().getDeck().getShoppingList().get(ind);
             }
             Random rand = new Random();
-            this.price = rand.nextInt(1, 10);
+            this.price = rand.nextInt(4, 10);
             this.x = (int) Game.screenSize.getWidth() / 3 + 20
                     + c * ((int) Game.screenSize.getWidth() / 15 - 4);
             this.y = (int) Game.screenSize.getHeight() / 12 + 10

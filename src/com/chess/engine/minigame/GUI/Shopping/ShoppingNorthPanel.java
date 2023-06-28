@@ -39,7 +39,34 @@ public class ShoppingNorthPanel extends JPanel {
         goldPanel.draw(g2);
     }
 
+    public void update(){
+        leftPanel.update();
+    }
+
     private class LeftPanel extends JPanel {
+        private final MouseListener msln = new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                gp.setPausing(true);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        };
+
         LeftPanel() {
             super(new FlowLayout(FlowLayout.LEFT, 0, 0));
             setDoubleBuffered(true);
@@ -48,35 +75,20 @@ public class ShoppingNorthPanel extends JPanel {
             JLabel settingLabel = new JLabel();
             settingLabel.setPreferredSize(
                     new Dimension((int) Game.screenSize.getHeight() / 12, (int) Game.screenSize.getHeight() / 12));
-            settingLabel.addMouseListener(new MouseListener() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    System.out.println("setting");
-                }
-
-                @Override
-                public void mousePressed(MouseEvent e) {
-                }
-
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                }
-
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                }
-            });
             this.add(settingLabel);
             validate();
         }
 
-        public void draw(Graphics2D g2) {
+        private void draw(Graphics2D g2) {
             g2.drawImage(Game.imageList.getGearImage(), 10, 10, (int) Game.screenSize.getHeight() / 12 - 20,
                     (int) Game.screenSize.getHeight() / 12 - 20, null);
+        }
+        
+        private void update(){
+            if (this.getMouseListeners().length == 0 && !gp.isPausing())
+                this.addMouseListener(msln);
+            if (this.getMouseListeners().length > 0 && gp.isPausing())
+                this.removeMouseListener(msln);
         }
     }
 
@@ -92,7 +104,8 @@ public class ShoppingNorthPanel extends JPanel {
         public void draw(Graphics2D g2) {
             g2.setFont(new Font("Arial", Font.BOLD, 28));
             g2.setColor(Color.WHITE);
-            g2.drawString("Shopping round of floor " + gp.getGameState().getFloor(), (int) Game.screenSize.getWidth() / 3 + 55, 45);
+            g2.drawString("Shopping round of floor " + gp.getGameState().getFloor(),
+                    (int) Game.screenSize.getWidth() / 3 + 55, 45);
             g2.drawImage(Game.imageList.getBagImage(), (int) Game.screenSize.getWidth() - 50, 10, 50,
                     50, null);
             g2.setFont(new Font("Arial", Font.PLAIN, 24));

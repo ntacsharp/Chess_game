@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -23,10 +25,67 @@ import com.chess.engine.minigame.GUI.Shopping.ShoppingNorthPanel;
 import com.chess.engine.minigame.GUI.Shopping.ShoppingSouthPanel;
 import com.chess.engine.minigame.GUI.Shopping.ShoppingWestPanel;
 import com.chess.engine.minigame.cards.Card;
-import com.chess.engine.minigame.pieces.player.PlayerPiece.PieceType;
 import com.chess.Game;
+import com.chess.History;
 
 public class GamePanel extends JPanel implements Runnable {
+    public History history = new History(this);
+
+    private final MouseListener msln = new MouseListener() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getX() >= 540 && e.getX() <= 820 && e.getY() >= 465 && e.getY() <= 515)
+                System.exit(0);
+
+            if (e.getX() >= 625 && e.getX() <= 735 && e.getY() >= 660 && e.getY() <= 710)
+                isPausing = false;
+
+            if (e.getX() >= 560 && e.getX() <= 800 && e.getY() >= 540 && e.getY() <= 580) {
+                History.abandon();
+                gameThread = null;
+                Game.exitToMenu();
+            }
+
+            if (e.getX() >= 445 && e.getX() <= 920 && e.getY() >= 125 && e.getY() <= 145) {
+                if (e.getX() < 435)
+                    Game.sound.setBGVolume(0);
+                else if (e.getX() > 910)
+                    Game.sound.setBGVolume(100);
+                else {
+                    int scale = (e.getX() - 435) * 100 / 475;
+                    Game.sound.setBGVolume(scale);
+                }
+            }
+
+            if (e.getX() >= 445 && e.getX() <= 920 && e.getY() >= 300 && e.getY() <= 315) {
+                if (e.getX() < 435)
+                    Game.sound.setSEVolume(0);
+                else if (e.getX() > 910)
+                    Game.sound.setSEVolume(100);
+                else {
+                    int scale = (e.getX() - 435) * 100 / 475;
+                    Game.sound.setSEVolume(scale);
+                }
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+        }
+
+    };
 
     private int FPS = 60;
 
@@ -45,13 +104,14 @@ public class GamePanel extends JPanel implements Runnable {
     public ShoppingSouthPanel shoppingSouthPanel;
     public ShoppingWestPanel shoppingWestPanel;
 
-    private Thread gameThread;
+    public Thread gameThread;
 
     private double timeToChangeState;
-    private int state = 0;
+
     private float alpha = 0.0f;
     private int dir = 1;
-    private boolean playedSound = false;
+    private boolean playedSound = false, isPausing = false;
+    private int state = 0;
     // 0 - playing
     // 1 - displaying "victory"
     // 2 - shopping
@@ -60,7 +120,8 @@ public class GamePanel extends JPanel implements Runnable {
     // 5 - Win
 
     public GamePanel() {
-        this.gameState = new GameState(PieceType.BABARIAN);
+        this.gameState = new GameState(history);
+        history.load();
         this.setPreferredSize(Game.screenSize);
         this.setLayout(new BorderLayout());
         this.setDoubleBuffered(true);
@@ -68,6 +129,7 @@ public class GamePanel extends JPanel implements Runnable {
         Game.sound.playBG();
         validate();
         setUpPlay();
+        // setUpShopping();
     }
 
     private void setUpPlay() {
@@ -106,6 +168,10 @@ public class GamePanel extends JPanel implements Runnable {
         gameThread.start();
     }
 
+    public void stopGameThread() {
+        gameThread = null;
+    }
+
     public void update() {
         if (System.nanoTime() >= timeToChangeState) {
             if (gameState.getCurrentHealth() <= 0) {
@@ -129,9 +195,9 @@ public class GamePanel extends JPanel implements Runnable {
                 else if (alpha >= 0.9f)
                     dir = -1;
                 this.addMouseListener(new MouseListener() {
-
                     @Override
                     public void mouseClicked(MouseEvent e) {
+                        stopGameThread();
                         Game.exitToMenu();
                     }
 
@@ -150,15 +216,16 @@ public class GamePanel extends JPanel implements Runnable {
                     @Override
                     public void mouseExited(MouseEvent e) {
                     }
-
                 });
             }
         }
         if (state == 0 || state == 1) {
             this.boardPanel.update();
             this.southPanel.update();
+            this.northPanel.update();
         } else if (state == 2) {
             this.shoppingBoardPanel.update();
+            this.shoppingNorthPanel.update();
         }
     }
 
@@ -189,12 +256,13 @@ public class GamePanel extends JPanel implements Runnable {
                     (int) Game.screenSize.getHeight() / 2);
         } else if (state == 4) {
             if (!playedSound) {
+                History.abandon();
                 Game.sound.stop();
                 Game.sound.playSE("sound\\over.wav");
                 playedSound = true;
             }
             g2.setFont(new Font("Monospaced", Font.PLAIN, 100));
-            g2.setColor(ColorList.RedColor);
+            g2.setColor(ColorList.transparentRedColor);
             g2.drawString("You died", (int) Game.screenSize.getWidth() / 3, (int) Game.screenSize.getHeight() / 2);
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
             g2.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -205,6 +273,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         } else if (state == 5) {
             if (!playedSound) {
+                History.abandon();
                 Game.sound.stop();
                 Game.sound.playSE("sound\\win.wav");
                 playedSound = true;
@@ -219,7 +288,55 @@ public class GamePanel extends JPanel implements Runnable {
                     (int) Game.screenSize.getHeight() * 7 / 8);
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
+        if (isPausing) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
+            g2.setColor(ColorList.darkTileColor);
+            g2.fillRect(0, 0, (int) Game.screenSize.getWidth(), (int) Game.screenSize.getHeight());
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+            g2.setColor(ColorList.lightBorderColor);
+            g2.fillRect((int) Game.screenSize.getWidth() / 3,
+                    (int) Game.screenSize.getHeight() / 6 + 10, (int) Game.screenSize.getWidth() / 3, 5);
+            g2.fillRect((int) Game.screenSize.getWidth() / 3,
+                    (int) Game.screenSize.getHeight() / 3 + 50, (int) Game.screenSize.getWidth() / 3, 5);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            g2.setColor(ColorList.chosenBackground);
+            g2.fillRect((int) Game.screenSize.getWidth() / 3,
+                    (int) Game.screenSize.getHeight() / 6 + 10,
+                    (int) Game.screenSize.getWidth() * Game.sound.getBgVolumeScale() / 300, 5);
+            g2.fillRect((int) Game.screenSize.getWidth() / 3,
+                    (int) Game.screenSize.getHeight() / 3 + 50,
+                    (int) Game.screenSize.getWidth() * Game.sound.getSeVolumeScale() / 300, 5);
+            g2.setFont(new Font("Serif", Font.BOLD, 26));
+            g2.drawString("Music Volume", (int) Game.screenSize.getWidth() / 2 - 85,
+                    (int) Game.screenSize.getHeight() / 6 - 10);
+            g2.drawString("Effect Volume", (int) Game.screenSize.getWidth() / 2 - 87,
+                    (int) Game.screenSize.getHeight() / 3 + 30);
+            g2.setFont(new Font("Serif", Font.BOLD, 40));
+            g2.setColor(ColorList.chosenBackground);
+            g2.drawString("Exit to Desktop", (int) Game.screenSize.getWidth() / 2 - 135,
+                    (int) Game.screenSize.getHeight() * 2 / 3 - 10);
+            g2.drawString("Abandon run", (int) Game.screenSize.getWidth() / 2 - 115,
+                    (int) Game.screenSize.getHeight() * 3 / 4);
+            g2.setFont(new Font("Serif", Font.BOLD, 45));
+            g2.drawString("Back", (int) Game.screenSize.getWidth() / 2 - 55,
+                    (int) Game.screenSize.getHeight() * 7 / 8 + 30);
+        }
         g2.dispose();
+    }
+
+    public boolean isPausing() {
+        return isPausing;
+    }
+
+    public void setPausing(boolean isPausing) {
+
+        if (isPausing == true) {
+            this.addMouseListener(msln);
+        } else {
+            this.removeMouseListener(msln);
+        }
+        this.isPausing = isPausing;
     }
 
     public GameState getGameState() {

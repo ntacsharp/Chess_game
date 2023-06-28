@@ -17,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 import com.chess.Game;
 import com.chess.engine.minigame.GUI.ColorList;
 import com.chess.engine.minigame.GUI.GamePanel;
+import com.chess.engine.minigame.GUI.Sound;
 import com.chess.engine.minigame.board.MiniTile;
 import com.chess.engine.minigame.pieces.MiniPiece;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
@@ -80,10 +81,12 @@ public class BoardPanel extends JPanel {
     }
 
     public void update() {
-        if(damages.isEmpty()) isDmging = false;
+        if (damages.isEmpty())
+            isDmging = false;
         if (gp.getGameState().getMoveLeft() == 0 && !isDmging && isMoving == null) {
-            if (!calculatedDmg)
+            if (!calculatedDmg) {
                 gp.getGameState().doDamage();
+            }
             calculatedDmg = true;
             EnemyPiece enemyPiece = gp.getGameState().getChessBoard().getNotMovedPiece(turn);
             if (enemyPiece != null) {
@@ -180,20 +183,11 @@ public class BoardPanel extends JPanel {
         private boolean isEntered = false;
         private boolean isInRange = false;
         private boolean isMovable = false;
-
-        TilePanel(final BoardPanel bp, final int r, final int c) {
-            super(new FlowLayout());
-            this.bp = bp;
-            this.r = r;
-            this.c = c;
-            this.setPreferredSize(new Dimension(85, 85));
-            this.isFocusable();
-            this.addMouseListener(new MouseListener() {
+        private final MouseListener msln = new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (isMovable && gp.getGameState().getMoveLeft() > 0) {
                         // bp.playerPanel.setNewRC(r, c);
-                        Game.sound.playSE("sound\\move.wav");
                         oldR = gp.getGameState().getChessBoard().getPlayerPiece().getRow();
                         gp.getGameState().doMove(gp.getChosenCard(), r, c);
                         gp.getGameState().getDeck().getHand().remove(gp.getChosenCard());
@@ -250,11 +244,22 @@ public class BoardPanel extends JPanel {
                     isEntered = false;
                     tileEntered = null;
                 }
-            });
+            };
+
+        TilePanel(final BoardPanel bp, final int r, final int c) {
+            super(new FlowLayout());
+            this.bp = bp;
+            this.r = r;
+            this.c = c;
+            this.setPreferredSize(new Dimension(85, 85));
             validate();
         }
 
         private void update() {
+            if (this.getMouseListeners().length == 0 && !gp.isPausing())
+                this.addMouseListener(msln);
+            if (this.getMouseListeners().length > 0 && gp.isPausing())
+                this.removeMouseListener(msln);
             if (tileEntered == null)
                 this.isInRange = false;
             if (gp.getChosenCard() != null) {
@@ -379,8 +384,11 @@ public class BoardPanel extends JPanel {
                         this.oldC = this.newC;
                     }
                 }
-                if (this.oldX == this.newX && this.oldY == this.newY)
+                if (this.oldX == this.newX && this.oldY == this.newY){
+                    Game.sound.playSE("sound\\move.wav");
                     isMoving = null;
+                }
+                    
             }
         }
 
@@ -511,6 +519,7 @@ public class BoardPanel extends JPanel {
 
         private void update() {
             if ((this.desX - this.x) * this.spdX <= 0 && (this.desY - this.y) * this.spdY <= 0) {
+                Game.sound.playSE("sound\\dmg.wav");
                 damages.remove(this);
 
             } else {

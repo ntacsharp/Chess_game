@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.chess.engine.minigame.cards.Card.CardType;
+import com.chess.engine.minigame.pieces.player.PlayerPiece.PieceType;
 import com.chess.engine.minigame.pieces.player.PlayerPiece;
 
 public class Deck {
@@ -15,13 +16,32 @@ public class Deck {
     private List<Card> shoppingList;
     private List<Integer> powerIds;
 
-    public Deck(final PlayerPiece playerPiece) {
+    public Deck() {
         this.totalDeck = new ArrayList<Card>();
         this.currentDeck = new ArrayList<Card>();
         this.hand = new ArrayList<Card>();
         this.usedCard = new ArrayList<Card>();
-        this.totalDeck.addAll(playerPiece.getDefaultDeck());
-        refillCurrentDeck();
+    }
+
+    public void fillDefaultTotalDeck(final PieceType pieceType) {
+        if (pieceType == PieceType.BABARIAN) {
+            totalDeck.add(new KingCard(false, false, false, false));
+            totalDeck.add(new RookCard(false, false, false, false));
+            totalDeck.add(new RookCard(false, false, false, false));
+            totalDeck.add(new BishopCard(false, false, false, false));
+            totalDeck.add(new BishopCard(false, false, false, false));
+            totalDeck.add(new KnightCard(false, false, false, false));
+            totalDeck.add(new KnightCard(false, false, false, false));
+            totalDeck.add(new PawnCard(false, false, true, false));
+            totalDeck.add(new PawnCard(false, true, true, false));
+            totalDeck.add(new PawnCard(true, false, false, false));
+            totalDeck.add(new PawnCard(false, false, false, true));
+            totalDeck.add(new PawnCard(false, false, false, true));
+        }
+    }
+
+    public void addToTotalDeck(final Card card){
+        totalDeck.add(card);
     }
 
     public void refillCurrentDeck() {
@@ -29,15 +49,17 @@ public class Deck {
         this.currentDeck.addAll(this.totalDeck);
     }
 
-    // public void updateCard(final Card card, final int powerID, final boolean newVal) {
-    //     int ind = totalDeck.indexOf(card);
-    //     Card newCard = this.totalDeck.get(ind);
-    //     card.setHasPower(powerID, newVal);
-    //     this.totalDeck.set(cardID, card);
+    // public void updateCard(final Card card, final int powerID, final boolean
+    // newVal) {
+    // int ind = totalDeck.indexOf(card);
+    // Card newCard = this.totalDeck.get(ind);
+    // card.setHasPower(powerID, newVal);
+    // this.totalDeck.set(cardID, card);
     // }
 
     public void fillHand(final int cardCount) {
-        while(hand.size() < cardCount) draw();
+        while (hand.size() < cardCount)
+            draw();
     }
 
     public void promote() {
@@ -65,7 +87,13 @@ public class Deck {
         }
     }
 
-    public void emptyCurrentDeck(){
+    public void emptyCurrentDeck() {
+        this.currentDeck.clear();
+        this.usedCard.clear();
+    }
+
+    public void emptyTotalDeck() {
+        this.totalDeck.clear();
         this.currentDeck.clear();
         this.usedCard.clear();
     }
@@ -138,7 +166,7 @@ public class Deck {
 
     public void removeChoice(Card card, int powerID) {
         for (int i = 0; i < shoppingList.size(); i++) {
-            if(shoppingList.get(i).equals(card) && powerIds.get(i).equals(powerID)){
+            if (shoppingList.get(i).equals(card) && powerIds.get(i).equals(powerID)) {
                 shoppingList.remove(i);
                 powerIds.remove(i);
                 break;

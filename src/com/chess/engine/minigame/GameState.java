@@ -1,5 +1,6 @@
 package com.chess.engine.minigame;
 
+import com.chess.History;
 import com.chess.engine.minigame.board.MiniBoard;
 import com.chess.engine.minigame.board.MiniBoardUtils;
 import com.chess.engine.minigame.board.MiniMove;
@@ -24,17 +25,20 @@ public class GameState {
     private int shield;
     private int floor;
     private int gold;
+    private History history;
 
-    public GameState(PieceType playerPieceType) {
-        this.chessBoard = MiniBoard.createStandardBoard(1, PieceType.BABARIAN);
-        this.deck = new Deck(this.chessBoard.getPlayerPiece());
+    public GameState(History history) {
+        this.history = history;
+        this.deck = new Deck();
         this.floor = 1;
-        this.moveLeft = 0;
-        this.turn = 1;
         this.maxHealth = 4;
         this.currentHealth = 4;
-        this.shield = 0;
         this.gold = 0;
+        deck.fillDefaultTotalDeck(PieceType.BABARIAN);
+        this.chessBoard = MiniBoard.createStandardBoard(this.floor, PieceType.BABARIAN);
+        this.moveLeft = 0;
+        this.turn = 1;
+        this.shield = 0;
     }
 
     public void createNewFloor() {
@@ -46,7 +50,8 @@ public class GameState {
         this.floor++;
         this.moveLeft = 0;
         this.chessBoard = MiniBoard.createStandardBoard(this.floor, PieceType.BABARIAN);
-        //this.deck.fillHand(3);
+        history.save();
+        // this.deck.fillHand(3);
     }
 
     public void setTurn(final int turn) {
@@ -93,7 +98,8 @@ public class GameState {
         if (this.shield < 0) {
             this.currentHealth += this.shield;
         }
-        if(this.currentHealth < 0) this.currentHealth = 0;
+        if (this.currentHealth < 0)
+            this.currentHealth = 0;
         this.shield = 0;
     }
 

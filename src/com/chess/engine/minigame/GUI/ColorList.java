@@ -14,5 +14,5 @@ public class ColorList {
     public static final Color lightGreen = new Color(85, 169, 119);
     public static final Color transparentBg = new Color(56, 57, 97, 150);
     public static final Color cardBackground = new Color(217, 231, 236);
-    public static final Color RedColor = new Color(238, 66, 102, 123);
+    public static final Color transparentRedColor = new Color(238, 66, 102, 123);
 }
