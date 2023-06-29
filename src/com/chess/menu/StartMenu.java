@@ -12,7 +12,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 public class StartMenu{
-
+    private static ImageIcon logo = new ImageIcon(StartMenu.class.getResource("res/logo.jpg"));
     public static void main(String[] args) {
 //        SimpleMultilevelMenuFrame startMenu=new SimpleMultilevelMenuFrame("Start Menu");
 //        startMenu.setMenuUpperText("A chess game");
@@ -28,8 +28,9 @@ public class StartMenu{
 //        startMenu.setExit((JFrame parent)->{
 //            parent.dispatchEvent(new WindowEvent(parent, WindowEvent.WINDOW_CLOSING));
 //        },new SimpleButton("Exit"));
-//        startMenu.setVisible(true);
+//        startMenu.setVisible(true)
         JFrame startMenu=new JFrame("A chess game: Start Menu");
+        startMenu.setIconImage(logo.getImage());
         startMenu.setSize(Game.screenSize);
         startMenu.setUndecorated(true);
         startMenu.addWindowListener(new WindowAdapter() {
@@ -44,7 +45,7 @@ public class StartMenu{
         startMenu.add(startPanel);
 
         LeveledGenericComponentList<JComponent> upperPanel= new LeveledGenericComponentList<JComponent>(2);
-        upperPanel.addComponentLeveled(new JLabel(new ImageIcon(StartMenu.class.getResource("res/logo.jpg"))),0);
+        upperPanel.addComponentLeveled(new JLabel(logo),0);
         upperPanel.addComponentLeveled(new JLabel("A chess game"),1);
         startPanel.add(upperPanel,0);
 
@@ -52,7 +53,7 @@ public class StartMenu{
         ButtonAbstract startButton=new SimpleButton("Start Game",
                 (JFrame parent)->{
                     //new MiniTable();
-                    Game.main(null);
+                    Game.play();
                     parent.dispose();
                 });
         buttonPanel.addComponentLeveled(startButton,0);

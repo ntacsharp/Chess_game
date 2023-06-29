@@ -19,6 +19,7 @@ import javax.swing.border.EmptyBorder;
 import com.chess.Game;
 import com.chess.engine.minigame.GUI.ColorList;
 import com.chess.engine.minigame.GUI.GamePanel;
+import com.chess.engine.minigame.GUI.Sound;
 import com.chess.engine.minigame.cards.Card;
 
 public class ShoppingBoardPanel extends JPanel {
@@ -154,6 +155,7 @@ public class ShoppingBoardPanel extends JPanel {
                                     gp.getGameState().setCurrentHealth(gp.getGameState().getCurrentHealth() + 1);
                                 }
                                 gp.getGameState().setGold(gp.getGameState().getGold() - choice.price);
+                                Game.sound.playSE("/sound/buy.wav");
                             }
                         }
                     }
@@ -303,6 +305,7 @@ public class ShoppingBoardPanel extends JPanel {
         private final ShoppingBoardPanel sbp;
         private int x, y;
         private int oldR, newR, oldC, newC, oldX, oldY, newX, newY;
+        private  boolean playSound = false;
 
         PlayerPanel(final ShoppingBoardPanel sbp) {
             super();
@@ -325,6 +328,10 @@ public class ShoppingBoardPanel extends JPanel {
         }
 
         public void update() {
+            if(this.oldR == this.newR && this.oldC == this.newC && !playSound){
+                Game.sound.playSE("/sound/move.wav");
+                playSound = true;
+            }else  playSound = false;
             if (this.oldR < this.newR) {
                 int SpeedY = (this.newY - this.oldY) / 20;
                 this.y += SpeedY;

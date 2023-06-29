@@ -385,7 +385,7 @@ public class BoardPanel extends JPanel {
                     }
                 }
                 if (this.oldX == this.newX && this.oldY == this.newY){
-                    Game.sound.playSE("sound\\move.wav");
+                    Game.sound.playSE("/sound/move.wav");
                     isMoving = null;
                 }
                     
@@ -438,7 +438,7 @@ public class BoardPanel extends JPanel {
 
         private void update() {
             if (this.isNew) {
-                Game.sound.playSE("sound\\kill.wav");
+                Game.sound.playSE("/sound/kill.wav");
                 isNew = false;
             }
             if (this.y > this.maxY) {
@@ -513,13 +513,13 @@ public class BoardPanel extends JPanel {
                     + stC * ((int) Game.screenSize.getWidth() / 15 - 4);
             this.y = (int) Game.screenSize.getHeight() / 12 + 45
                     + stR * ((int) Game.screenSize.getWidth() / 15 - 4);
-            this.spdX = (desX - x) / 60;
-            this.spdY = (desY - y) / 60;
+            this.spdX = (desX - x) / 20;
+            this.spdY = (desY - y) / 20;
         }
 
         private void update() {
             if ((this.desX - this.x) * this.spdX <= 0 && (this.desY - this.y) * this.spdY <= 0) {
-                Game.sound.playSE("sound\\dmg.wav");
+                Game.sound.playSE("/sound/dmg.wav");
                 damages.remove(this);
 
             } else {

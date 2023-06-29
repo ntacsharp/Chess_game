@@ -9,12 +9,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 public class ImageList {
-    private static final String OTHER_ICON_PATH = "art\\other\\";
-    private static final String POWER_ICON_PATH = "art\\other\\power\\";
-    private static final String PIECE_ICON_PATH = "art\\pieces\\";
-    private static final String ENEMY_ICON_PATH = "art\\pieces\\enemies\\";
-    private static final String PLAYER_ICON_PATH = "art\\pieces\\player\\";
-
     private static final List<BufferedImage> enemyImages = new ArrayList<>();
     private static final List<BufferedImage> cardImages = new ArrayList<>();
     private static final List<BufferedImage> powerImages = new ArrayList<>();
@@ -31,42 +25,40 @@ public class ImageList {
     private final BufferedImage shieldImage;
     private final BufferedImage nimbleImage;
     private final BufferedImage dmgImage;
-    private final BufferedImage overImage;
 
     public ImageList() throws IOException {
-        playerImage = ImageIO.read(new File(PLAYER_ICON_PATH + "BA.png"));
-        enemyImages.add(ImageIO.read(new File(ENEMY_ICON_PATH + "IF.png")));
-        enemyImages.add(ImageIO.read(new File(ENEMY_ICON_PATH + "BE.png")));
-        enemyImages.add(ImageIO.read(new File(ENEMY_ICON_PATH + "ZM.png")));
-        enemyImages.add(ImageIO.read(new File(ENEMY_ICON_PATH + "SW.png")));
-        enemyImages.add(ImageIO.read(new File(ENEMY_ICON_PATH + "iSW.png")));
-        enemyImages.add(ImageIO.read(new File(ENEMY_ICON_PATH + "AR.png")));
-        enemyImages.add(ImageIO.read(new File(ENEMY_ICON_PATH + "iAR.png")));
-        enemyImages.add(ImageIO.read(new File(ENEMY_ICON_PATH + "SH.png")));
-        enemyImages.add(ImageIO.read(new File(ENEMY_ICON_PATH + "iSH.png")));
-        cardImages.add(ImageIO.read(new File(PIECE_ICON_PATH + "WP.png")));
-        cardImages.add(ImageIO.read(new File(PIECE_ICON_PATH + "WN.png")));
-        cardImages.add(ImageIO.read(new File(PIECE_ICON_PATH + "WB.png")));
-        cardImages.add(ImageIO.read(new File(PIECE_ICON_PATH + "WR.png")));
-        cardImages.add(ImageIO.read(new File(PIECE_ICON_PATH + "WQ.png")));
-        cardImages.add(ImageIO.read(new File(PIECE_ICON_PATH + "WK.png")));
-        powerImages.add(ImageIO.read(new File(POWER_ICON_PATH + "+.png")));
-        powerImages.add(ImageIO.read(new File(POWER_ICON_PATH + "x.png")));
-        powerImages.add(ImageIO.read(new File(POWER_ICON_PATH + "s.png")));
-        powerImages.add(ImageIO.read(new File(POWER_ICON_PATH + "c.png")));
-        bagImage = ImageIO.read(new File(OTHER_ICON_PATH + "bag.png"));
-        coinImage = ImageIO.read(new File(OTHER_ICON_PATH + "coin.png"));
-        crystalImage = ImageIO.read(new File(OTHER_ICON_PATH + "crystal.png"));
-        gearImage = ImageIO.read(new File(OTHER_ICON_PATH + "gear.png"));
-        blightImage = ImageIO.read(new File(OTHER_ICON_PATH + "blight.png"));
-        skipImage = ImageIO.read(new File(OTHER_ICON_PATH + "skip.png"));
-        heartImage = ImageIO.read(new File(OTHER_ICON_PATH + "heart.png"));
-        bheartImage = ImageIO.read(new File(OTHER_ICON_PATH + "bheart.png"));
-        nimbleImage = ImageIO.read(new File(OTHER_ICON_PATH + "nimble.png"));
-        moveImage = ImageIO.read(new File(POWER_ICON_PATH + "c.png"));
-        shieldImage = ImageIO.read(new File(POWER_ICON_PATH + "s.png"));
-        dmgImage = ImageIO.read(new File(OTHER_ICON_PATH + "dmg.png"));
-        overImage = ImageIO.read(new File(OTHER_ICON_PATH + "over.png"));
+        playerImage = ImageIO.read(getClass().getResourceAsStream("/pieces/player/BA.png"));
+        enemyImages.add(ImageIO.read(getClass().getResourceAsStream("/pieces/enemies/IF.png")));
+        enemyImages.add(ImageIO.read(getClass().getResourceAsStream("/pieces/enemies/BE.png")));
+        enemyImages.add(ImageIO.read(getClass().getResourceAsStream("/pieces/enemies/ZM.png")));
+        enemyImages.add(ImageIO.read(getClass().getResourceAsStream("/pieces/enemies/SW.png")));
+        enemyImages.add(ImageIO.read(getClass().getResourceAsStream("/pieces/enemies/iSW.png")));
+        enemyImages.add(ImageIO.read(getClass().getResourceAsStream("/pieces/enemies/AR.png")));
+        enemyImages.add(ImageIO.read(getClass().getResourceAsStream("/pieces/enemies/iAR.png")));
+        enemyImages.add(ImageIO.read(getClass().getResourceAsStream("/pieces/enemies/SH.png")));
+        enemyImages.add(ImageIO.read(getClass().getResourceAsStream("/pieces/enemies/iSH.png")));
+        cardImages.add(ImageIO.read(getClass().getResourceAsStream("/pieces/WP.png")));
+        cardImages.add(ImageIO.read(getClass().getResourceAsStream("/pieces/WN.png")));
+        cardImages.add(ImageIO.read(getClass().getResourceAsStream("/pieces/WB.png")));
+        cardImages.add(ImageIO.read(getClass().getResourceAsStream("/pieces/WR.png")));
+        cardImages.add(ImageIO.read(getClass().getResourceAsStream("/pieces/WQ.png")));
+        cardImages.add(ImageIO.read(getClass().getResourceAsStream("/pieces/WK.png")));
+        powerImages.add(ImageIO.read(getClass().getResourceAsStream("/other/power/+.png")));
+        powerImages.add(ImageIO.read(getClass().getResourceAsStream("/other/power/x.png")));
+        powerImages.add(ImageIO.read(getClass().getResourceAsStream("/other/power/s.png")));
+        powerImages.add(ImageIO.read(getClass().getResourceAsStream("/other/power/c.png")));
+        bagImage = ImageIO.read(getClass().getResourceAsStream("/other/bag.png"));
+        coinImage = ImageIO.read(getClass().getResourceAsStream("/other/coin.png"));
+        crystalImage = ImageIO.read(getClass().getResourceAsStream("/other/crystal.png"));
+        gearImage = ImageIO.read(getClass().getResourceAsStream("/other/gear.png"));
+        blightImage = ImageIO.read(getClass().getResourceAsStream("/other/blight.png"));
+        skipImage = ImageIO.read(getClass().getResourceAsStream("/other/skip.png"));
+        heartImage = ImageIO.read(getClass().getResourceAsStream("/other/heart.png"));
+        bheartImage = ImageIO.read(getClass().getResourceAsStream("/other/bheart.png"));
+        nimbleImage = ImageIO.read(getClass().getResourceAsStream("/other/nimble.png"));
+        moveImage = ImageIO.read(getClass().getResourceAsStream("/other/power/c.png"));
+        shieldImage = ImageIO.read(getClass().getResourceAsStream("/other/power/s.png"));
+        dmgImage = ImageIO.read(getClass().getResourceAsStream("/other/dmg.png"));
     }
 
     public BufferedImage getEnemyImage(final String name) {
@@ -135,10 +127,6 @@ public class ImageList {
 
     public BufferedImage getBagImage() {
         return bagImage;
-    }
-
-    public BufferedImage getOverImage() {
-        return overImage;
     }
 
     public BufferedImage getCoinImage() {

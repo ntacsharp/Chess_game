@@ -19,7 +19,7 @@ public class Sound {
 
     public void playBG(){
         try{
-            AudioInputStream ais = AudioSystem.getAudioInputStream(new File("sound\\background.wav"));
+            AudioInputStream ais = AudioSystem.getAudioInputStream(getClass().getResource("/sound/background.wav"));
             clip = AudioSystem.getClip();
             clip.open(ais);
             bgFc = (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
@@ -33,7 +33,7 @@ public class Sound {
 
     public void playSE(String filename) {
         try{
-            AudioInputStream ais = AudioSystem.getAudioInputStream(new File(filename));
+            AudioInputStream ais = AudioSystem.getAudioInputStream(getClass().getResource(filename));
             Clip newClip = AudioSystem.getClip();
             newClip.open(ais);
             seFc = (FloatControl)newClip.getControl(FloatControl.Type.MASTER_GAIN);

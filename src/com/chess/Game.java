@@ -28,7 +28,7 @@ public class Game {
         gameFrame.dispose();
     }
 
-    public static void main(String[] args) {
+    public static void play() {
         try {
             imageList = new ImageList();
         } catch (IOException exception) {
