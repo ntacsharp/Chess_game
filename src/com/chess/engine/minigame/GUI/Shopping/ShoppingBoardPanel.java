@@ -111,8 +111,7 @@ public class ShoppingBoardPanel extends JPanel {
         for (TilePanel tile : tileList) {
             if (tile.choice != null && !choices.contains(tile.choice))
                 tile.choice = null;
-            if (tile.choice != null)
-                tile.update();
+            tile.update();
         }
         playerPanel.update();
     }
@@ -138,6 +137,7 @@ public class ShoppingBoardPanel extends JPanel {
         private final MouseListener msln = new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
+                    System.out.println(isMovable);
                     if (isMovable) {
                         playerPanel.setNewRC(r, c);
                         if (r == 0 && c == 2) {
@@ -223,6 +223,7 @@ public class ShoppingBoardPanel extends JPanel {
                 this.removeMouseListener(msln);
             if (choice != null && choice.getPrice() > gp.getGameState().getGold())
                 this.isMovable = false;
+            else this.isMovable = true;
         }
     }
 

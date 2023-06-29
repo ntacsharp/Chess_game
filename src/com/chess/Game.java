@@ -19,8 +19,6 @@ public class Game {
     public static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); // 1366_768
     public static ImageList imageList;
     public static Sound sound = new Sound();
-    
-
     private static JFrame gameFrame;
 
     public static void exitToMenu() {

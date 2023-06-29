@@ -129,7 +129,7 @@ public class GamePanel extends JPanel implements Runnable {
         Game.sound.playBG();
         validate();
         setUpPlay();
-        // setUpShopping();
+        //setUpShopping();
     }
 
     private void setUpPlay() {
@@ -258,7 +258,7 @@ public class GamePanel extends JPanel implements Runnable {
             if (!playedSound) {
                 History.abandon();
                 Game.sound.stop();
-                Game.sound.playSE("sound\\over.wav");
+                Game.sound.playSE("/sound/over.wav");
                 playedSound = true;
             }
             g2.setFont(new Font("Monospaced", Font.PLAIN, 100));
@@ -275,7 +275,7 @@ public class GamePanel extends JPanel implements Runnable {
             if (!playedSound) {
                 History.abandon();
                 Game.sound.stop();
-                Game.sound.playSE("sound\\win.wav");
+                Game.sound.playSE("/sound/win.wav");
                 playedSound = true;
             }
             g2.setFont(new Font("Monospaced", Font.PLAIN, 100));
