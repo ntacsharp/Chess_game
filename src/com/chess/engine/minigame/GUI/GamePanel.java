@@ -34,36 +34,38 @@ public class GamePanel extends JPanel implements Runnable {
     private final MouseListener msln = new MouseListener() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (e.getX() >= 540 && e.getX() <= 820 && e.getY() >= 465 && e.getY() <= 515)
+            if (e.getX() >= Game.screenSize.getWidth() / 2 - 145 && e.getX() <= Game.screenSize.getWidth() / 2 + 155 && e.getY() >= (int) Game.screenSize.getHeight() * 2 / 3 - 50 && e.getY() <= (int) Game.screenSize.getHeight() * 2 / 3){
                 System.exit(0);
+            }
 
-            if (e.getX() >= 625 && e.getX() <= 735 && e.getY() >= 660 && e.getY() <= 710)
-                isPausing = false;
-
-            if (e.getX() >= 560 && e.getX() <= 800 && e.getY() >= 540 && e.getY() <= 580) {
+            if (e.getX() >= (int) Game.screenSize.getWidth() / 2 - 125 && e.getX() <= (int) Game.screenSize.getWidth() / 2 + 125 && e.getY() >= (int) Game.screenSize.getHeight() * 3 / 4 - 30 && e.getY() <= (int) Game.screenSize.getHeight() * 3 / 4 + 20){
                 History.abandon();
                 gameThread = null;
                 Game.exitToMenu();
             }
 
-            if (e.getX() >= 445 && e.getX() <= 920 && e.getY() >= 125 && e.getY() <= 145) {
-                if (e.getX() < 435)
+            if (e.getX() >= (int) Game.screenSize.getWidth() / 2 - 65 && e.getX() <= (int) Game.screenSize.getWidth() / 2 + 55 && e.getY() >= (int) Game.screenSize.getHeight() * 7 / 8 - 10 && e.getY() <= (int) Game.screenSize.getHeight() * 7 / 8 + 40) {
+                isPausing = false;
+            }
+
+            if (e.getX() >= (int) Game.screenSize.getWidth() / 3 - 20 && e.getX() <= (int) Game.screenSize.getWidth() * 2/ 3 + 20 && e.getY() >= (int) Game.screenSize.getHeight() / 6 - 10 && e.getY() <= (int) Game.screenSize.getHeight() / 6 + 35) {
+                if (e.getX() < (int) Game.screenSize.getWidth() / 3)
                     Game.sound.setBGVolume(0);
-                else if (e.getX() > 910)
+                else if (e.getX() > (int) Game.screenSize.getWidth() * 2 / 3)
                     Game.sound.setBGVolume(100);
                 else {
-                    int scale = (e.getX() - 435) * 100 / 475;
+                    int scale = (e.getX() - (int) Game.screenSize.getWidth() / 3) * 300 / (int) Game.screenSize.getWidth();
                     Game.sound.setBGVolume(scale);
                 }
             }
 
-            if (e.getX() >= 445 && e.getX() <= 920 && e.getY() >= 300 && e.getY() <= 315) {
-                if (e.getX() < 435)
+            if (e.getX() >= (int) Game.screenSize.getWidth() / 3 - 20 && e.getX() <= (int) Game.screenSize.getWidth() * 2/ 3 + 20 && e.getY() >= (int) Game.screenSize.getHeight() / 3 + 30 && e.getY() <= (int) Game.screenSize.getHeight() / 3 + 75) {
+                if (e.getX() < (int) Game.screenSize.getWidth() / 3)
                     Game.sound.setSEVolume(0);
-                else if (e.getX() > 910)
+                else if (e.getX() > (int) Game.screenSize.getWidth() * 2 / 3)
                     Game.sound.setSEVolume(100);
                 else {
-                    int scale = (e.getX() - 435) * 100 / 475;
+                    int scale = (e.getX() - (int) Game.screenSize.getWidth() / 3) * 300 / (int) Game.screenSize.getWidth();
                     Game.sound.setSEVolume(scale);
                 }
             }
@@ -314,6 +316,7 @@ public class GamePanel extends JPanel implements Runnable {
                     (int) Game.screenSize.getHeight() / 3 + 30);
             g2.setFont(new Font("Serif", Font.BOLD, 40));
             g2.setColor(ColorList.chosenBackground);
+//            g2.fillRect((int) Game.screenSize.getWidth() / 2 - 125, (int) Game.screenSize.getHeight() * 3 / 4 - 30, 240, 50);
             g2.drawString("Exit to Desktop", (int) Game.screenSize.getWidth() / 2 - 135,
                     (int) Game.screenSize.getHeight() * 2 / 3 - 10);
             g2.drawString("Abandon run", (int) Game.screenSize.getWidth() / 2 - 115,

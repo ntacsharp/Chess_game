@@ -23,6 +23,8 @@ public class Game {
 
     public static void exitToMenu() {
         StartMenu.main(null);
+        sound.stop();
+        gameFrame.removeAll();
         gameFrame.dispose();
     }
 
