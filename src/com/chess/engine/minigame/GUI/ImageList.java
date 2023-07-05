@@ -1,7 +1,6 @@
 package com.chess.engine.minigame.GUI;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

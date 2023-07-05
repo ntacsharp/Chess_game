@@ -56,9 +56,9 @@ public abstract class MiniMove {
         return this.movePiece.getCorID();
     }
 
-    public boolean isPlayerMove() {
-        return false;
-    }
+    // public boolean isPlayerMove() {
+    //     return false;
+    // }
 
     public abstract MiniBoard execute();
 
@@ -106,10 +106,10 @@ public abstract class MiniMove {
             return this == obj || obj instanceof PlayerMove && super.equals(obj);
         }
 
-        @Override
-        public boolean isPlayerMove() {
-            return true;
-        }
+        // @Override
+        // public boolean isPlayerMove() {
+        //     return true;
+        // }
 
         @Override
         public MiniBoard execute() {
@@ -354,20 +354,4 @@ public abstract class MiniMove {
         }
     }
 
-    // public static class MoveFactory {
-    // private MoveFactory() {
-    // }
-
-    // public static MiniMove findMove(final MiniBoard board,
-    // final Card chosenCard,
-    // final int currentCor,
-    // final int destinationCor) {
-    // for (MiniMove move : chosenCard.legalMoves(board, board.getPlayerPiece())) {
-    // if (move.getCurrentCor() == currentCor && move.getDestinationCor() ==
-    // destinationCor)
-    // return move;
-    // }
-    // return null;
-    // }
-    // }
 }

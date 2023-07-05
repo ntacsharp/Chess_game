@@ -19,7 +19,6 @@ import javax.swing.border.EmptyBorder;
 import com.chess.Game;
 import com.chess.engine.minigame.GUI.ColorList;
 import com.chess.engine.minigame.GUI.GamePanel;
-import com.chess.engine.minigame.GUI.Sound;
 import com.chess.engine.minigame.cards.Card;
 
 public class ShoppingBoardPanel extends JPanel {
@@ -102,12 +101,15 @@ public class ShoppingBoardPanel extends JPanel {
     }
 
     public void update() {
-        for (int i = 0; i < choices.size() - 1; i++) {
-            if (!gp.getGameState().getDeck().getShoppingList().contains(choices.get(i).getCard())) {
-                choices.remove(i);
-                i--;
+        for (int i = 0; i < choices.size(); i++) {
+            if(choices.get(i).getCard() != null){
+                if (!gp.getGameState().getDeck().getShoppingList().contains(choices.get(i).getCard())) {
+                    choices.remove(i);
+                    i--;
+                }
             }
         }
+
         for (TilePanel tile : tileList) {
             if (tile.choice != null && !choices.contains(tile.choice))
                 tile.choice = null;
@@ -130,7 +132,6 @@ public class ShoppingBoardPanel extends JPanel {
 
     private class TilePanel extends JPanel {
         private int r, c;
-        private final ShoppingBoardPanel sbp;
         private boolean isEntered = false;
         private boolean isMovable = true;
         private ChoicePanel choice;
@@ -153,6 +154,7 @@ public class ShoppingBoardPanel extends JPanel {
                                 } else {
                                     gp.getGameState().setMaxHealth(gp.getGameState().getMaxHealth() + 1);
                                     gp.getGameState().setCurrentHealth(gp.getGameState().getCurrentHealth() + 1);
+                                    choices.remove(choices.size() - 1);
                                 }
                                 gp.getGameState().setGold(gp.getGameState().getGold() - choice.price);
                                 Game.sound.playSE("/sound/buy.wav");
@@ -189,7 +191,6 @@ public class ShoppingBoardPanel extends JPanel {
 
         TilePanel(final ShoppingBoardPanel sbp, final int r, final int c) {
             super(new FlowLayout());
-            this.sbp = sbp;
             this.r = r;
             this.c = c;
             this.choice = checkTile(r, c);
@@ -227,15 +228,13 @@ public class ShoppingBoardPanel extends JPanel {
         }
     }
 
-    private class ChoicePanel extends JPanel {
-        private final ShoppingBoardPanel sbp;
+    private class ChoicePanel {
         private final int r, c, powerID, x, y;
         private final Card card;
         private final int price, ind;
 
         ChoicePanel(final ShoppingBoardPanel sbp, final int r, final int c, final int ind) {
             super();
-            this.sbp = sbp;
             this.r = r;
             this.c = c;
             this.ind = ind;
@@ -302,15 +301,12 @@ public class ShoppingBoardPanel extends JPanel {
         }
     }
 
-    private class PlayerPanel extends JPanel {
-        private final ShoppingBoardPanel sbp;
+    private class PlayerPanel {
         private int x, y;
         private int oldR, newR, oldC, newC, oldX, oldY, newX, newY;
         private  boolean playSound = false;
 
         PlayerPanel(final ShoppingBoardPanel sbp) {
-            super();
-            this.sbp = sbp;
             this.oldC = this.newC = 2;
             this.oldR = this.newR = 4;
             this.oldX = this.x = this.newX = (int) Game.screenSize.getWidth() / 3 + 10

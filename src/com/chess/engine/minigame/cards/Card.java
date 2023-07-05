@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.chess.engine.minigame.board.MiniBoard;
-import com.chess.engine.minigame.board.MiniBoardUtils;
 import com.chess.engine.minigame.board.MiniMove;
-import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
 import com.chess.engine.minigame.pieces.player.PlayerPiece;
 
 public abstract class Card {
@@ -58,41 +56,6 @@ public abstract class Card {
 
     public CardType getCardType() {
         return cardType;
-    }
-
-    public List<EnemyPiece> getAffectedPieces(final MiniBoard board, final int r, final int c) {
-        List<EnemyPiece> res = new ArrayList<>();
-        if (this.getHasPower(0)) {
-            for (int[] cor : CROSS_COR) {
-                int tmpR = r + cor[0];
-                int tmpC = c + cor[1];
-                if (MiniBoardUtils.isCorValid(tmpR, tmpC)) {
-                    if (board.getTile(tmpR, tmpC).isOccupied()) {
-                        if (board.getTile(tmpR, tmpC).getPiece() instanceof EnemyPiece) {
-                            EnemyPiece enemyPiece = (EnemyPiece) board.getTile(tmpR, tmpC).getPiece();
-                            if (!enemyPiece.isImmune())
-                                res.add(enemyPiece);
-                        }
-                    }
-                }
-            }
-        }
-        if (this.getHasPower(1)) {
-            for (int[] cor : CROSS_COR) {
-                int tmpR = r + cor[0];
-                int tmpC = c + cor[1];
-                if (MiniBoardUtils.isCorValid(tmpR, tmpC)) {
-                    if (board.getTile(tmpR, tmpC).isOccupied()) {
-                        if (board.getTile(tmpR, tmpC).getPiece() instanceof EnemyPiece) {
-                            EnemyPiece enemyPiece = (EnemyPiece) board.getTile(tmpR, tmpC).getPiece();
-                            if (!enemyPiece.isImmune())
-                                res.add(enemyPiece);
-                        }
-                    }
-                }
-            }
-        }
-        return res;
     }
 
     @Override

@@ -23,14 +23,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.border.LineBorder;
 
 import com.chess.Game;
-import com.chess.engine.minigame.GameState;
 import com.chess.engine.minigame.GUI.ColorList;
 import com.chess.engine.minigame.GUI.GamePanel;
 import com.chess.engine.minigame.cards.Card;
-import com.chess.engine.minigame.cards.Deck;
 import com.chess.engine.minigame.cards.Card.CardType;
 
 public class SouthPanel extends JPanel {
@@ -163,7 +160,6 @@ public class SouthPanel extends JPanel {
 
     private class CardPanel extends JPanel {
         private Card card;
-        private final HandPanel hp;
         private int oldId, newId;
         private int oldX, newX;
         private boolean isEntered = false;
@@ -203,7 +199,6 @@ public class SouthPanel extends JPanel {
             this.setPreferredSize(
                     new Dimension((int) Game.screenSize.getWidth() / 9, (int) Game.screenSize.getHeight() / 3));
             this.card = card;
-            this.hp = hp;
             this.oldId = newId;
             this.newId = newId;
             this.oldX = (int) Game.screenSize.getWidth() / 3 + newId * (int) Game.screenSize.getWidth() / 9;

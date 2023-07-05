@@ -17,7 +17,6 @@ import javax.swing.border.EmptyBorder;
 import com.chess.Game;
 import com.chess.engine.minigame.GUI.ColorList;
 import com.chess.engine.minigame.GUI.GamePanel;
-import com.chess.engine.minigame.GUI.Sound;
 import com.chess.engine.minigame.board.MiniTile;
 import com.chess.engine.minigame.pieces.MiniPiece;
 import com.chess.engine.minigame.pieces.enemy.EnemyPiece;
@@ -179,7 +178,6 @@ public class BoardPanel extends JPanel {
 
     private class TilePanel extends JPanel {
         private int r, c;
-        private BoardPanel bp;
         private boolean isEntered = false;
         private boolean isInRange = false;
         private boolean isMovable = false;
@@ -248,7 +246,6 @@ public class BoardPanel extends JPanel {
 
         TilePanel(final BoardPanel bp, final int r, final int c) {
             super(new FlowLayout());
-            this.bp = bp;
             this.r = r;
             this.c = c;
             this.setPreferredSize(new Dimension(85, 85));
@@ -316,8 +313,7 @@ public class BoardPanel extends JPanel {
         }
     }
 
-    private class PiecePanel extends JPanel {
-        private final BoardPanel bp;
+    private class PiecePanel{
         private final MiniPiece piece;
         private int oldR, oldC, newR, newC;
         private int x, y;
@@ -325,10 +321,7 @@ public class BoardPanel extends JPanel {
         private float alpha = 1.0f;
 
         PiecePanel(final BoardPanel bp, final MiniPiece piece) {
-            super();
-            this.setPreferredSize(new Dimension(1, 1));
             this.piece = piece;
-            this.bp = bp;
             this.oldR = piece.getRow();
             this.oldC = piece.getCol();
             this.newR = piece.getRow();
@@ -419,7 +412,7 @@ public class BoardPanel extends JPanel {
         }
     }
 
-    private class DeadPanel extends JPanel {
+    private class DeadPanel{
         private int x, y;
         private final int maxY;
         private final MiniPiece piece;
@@ -427,7 +420,6 @@ public class BoardPanel extends JPanel {
         private float alpha = 0.7f;
 
         DeadPanel(final MiniPiece piece) {
-            super();
             this.piece = piece;
             this.x = (int) Game.screenSize.getWidth() / 3 + 10
                     + piece.getCol() * ((int) Game.screenSize.getWidth() / 15 - 4);
@@ -458,8 +450,7 @@ public class BoardPanel extends JPanel {
         }
     }
 
-    private class AttackPanel extends JPanel {
-        private final int row, col;
+    private class AttackPanel {
         private final boolean cross, diagonal;
         private int size;
         private final int maxSize = (int) Game.screenSize.getWidth() / 5;
@@ -468,9 +459,6 @@ public class BoardPanel extends JPanel {
         private final int x, y;
 
         AttackPanel(final int row, final int col, final boolean cross, final boolean diagonal) {
-            super();
-            this.row = row;
-            this.col = col;
             this.cross = cross;
             this.diagonal = diagonal;
             this.size = minSize;
@@ -498,13 +486,12 @@ public class BoardPanel extends JPanel {
         }
     }
 
-    private class DamagePanel extends JPanel {
+    private class DamagePanel{
         private final int desX, desY;
         private int x, y;
         private final int spdX, spdY;
 
         DamagePanel(final int desR, final int desC, final int stR, final int stC) {
-            super();
             this.desX = (int) Game.screenSize.getWidth() / 3 + 45
                     + desC * ((int) Game.screenSize.getWidth() / 15 - 4);
             this.desY = (int) Game.screenSize.getHeight() / 12 + 45
@@ -513,8 +500,8 @@ public class BoardPanel extends JPanel {
                     + stC * ((int) Game.screenSize.getWidth() / 15 - 4);
             this.y = (int) Game.screenSize.getHeight() / 12 + 45
                     + stR * ((int) Game.screenSize.getWidth() / 15 - 4);
-            this.spdX = (desX - x) / 20;
-            this.spdY = (desY - y) / 20;
+            this.spdX = (desX - x) / 30;
+            this.spdY = (desY - y) / 30;
         }
 
         private void update() {

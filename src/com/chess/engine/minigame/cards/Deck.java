@@ -6,7 +6,6 @@ import java.util.Random;
 
 import com.chess.engine.minigame.cards.Card.CardType;
 import com.chess.engine.minigame.pieces.player.PlayerPiece.PieceType;
-import com.chess.engine.minigame.pieces.player.PlayerPiece;
 
 public class Deck {
     private List<Card> totalDeck;

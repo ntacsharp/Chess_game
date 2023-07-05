@@ -105,7 +105,7 @@ public class Beast extends EnemyPiece {
     @Override
     public List<String> getInformation(){
         List<String> res = new ArrayList<>();
-        res.add("Close-ranged, spawn an infected unit on death.");
+        res.add("Close-ranged unit with no power.");
         return res;
     }
 
