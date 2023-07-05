@@ -13,13 +13,11 @@ import com.chess.engine.minigame.GUI.GamePanel;
 import com.chess.engine.minigame.cards.Card;
 
 public class ShoppingEastPanel extends JPanel {
-    private final GamePanel gp;
     private Card cardEntered = null;
     private int powerEntered = -1;
 
     public ShoppingEastPanel(final GamePanel gp) {
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        this.gp = gp;
         setDoubleBuffered(true);
         this.setPreferredSize(
                 new Dimension(new Dimension((int) Game.screenSize.getWidth() / 3, (int) Game.screenSize.getHeight())));

@@ -37,9 +37,9 @@ public class MiniBoard {
         return gameBoard.get(row * MiniBoardUtils.NUM_TILE_PER_ROW + col);
     }
 
-    public List<MiniTile> getGameBoard() {
-        return gameBoard;
-    }
+    // public List<MiniTile> getGameBoard() {
+    //     return gameBoard;
+    // }
 
     public Collection<EnemyPiece> getEnemyPieces() {
         return enemyPieces;
@@ -49,18 +49,18 @@ public class MiniBoard {
         return playerPiece;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        for (int r = 0; r < 5; r++) {
-            for (int c = 0; c < 5; c++) {
-                final String tileString = this.gameBoard.get(r * 5 + c).toString();
-                builder.append(String.format("%3s", tileString));
-            }
-            builder.append("\n");
-        }
-        return builder.toString();
-    }
+    // @Override
+    // public String toString() {
+    //     final StringBuilder builder = new StringBuilder();
+    //     for (int r = 0; r < 5; r++) {
+    //         for (int c = 0; c < 5; c++) {
+    //             final String tileString = this.gameBoard.get(r * 5 + c).toString();
+    //             builder.append(String.format("%3s", tileString));
+    //         }
+    //         builder.append("\n");
+    //     }
+    //     return builder.toString();
+    // }
 
     private static List<MiniTile> createGameBoard(final Builder builder) {
         List<MiniTile> tiles = new ArrayList<>();

@@ -31,18 +31,6 @@ public abstract class MiniTile {
         return blighted;
     }
 
-    public int getRow() {
-        return row;
-    }
-
-    public int getCol() {
-        return col;
-    }
-
-    public int getCor() {
-        return row * MiniBoardUtils.NUM_TILE_PER_ROW + col;
-    }
-
     private static class EmptyTile extends MiniTile {
         private EmptyTile(final int row, final int col, final boolean blighted) {
             super(row, col, blighted);

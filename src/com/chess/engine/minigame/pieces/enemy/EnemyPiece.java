@@ -31,10 +31,6 @@ public abstract class EnemyPiece extends MiniPiece {
         return this.pieceType;
     }
 
-    public int getPieceValue() {
-        return this.pieceType.getPieceValue();
-    }
-
     public boolean isCurrentlyNimble() {
         return this.isCurrentlyNimble;
     }
