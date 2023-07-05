@@ -101,12 +101,15 @@ public class ShoppingBoardPanel extends JPanel {
     }
 
     public void update() {
-        for (int i = 0; i < choices.size() - 1; i++) {
-            if (!gp.getGameState().getDeck().getShoppingList().contains(choices.get(i).getCard())) {
-                choices.remove(i);
-                i--;
+        for (int i = 0; i < choices.size(); i++) {
+            if(choices.get(i).getCard() != null){
+                if (!gp.getGameState().getDeck().getShoppingList().contains(choices.get(i).getCard())) {
+                    choices.remove(i);
+                    i--;
+                }
             }
         }
+
         for (TilePanel tile : tileList) {
             if (tile.choice != null && !choices.contains(tile.choice))
                 tile.choice = null;
@@ -151,6 +154,7 @@ public class ShoppingBoardPanel extends JPanel {
                                 } else {
                                     gp.getGameState().setMaxHealth(gp.getGameState().getMaxHealth() + 1);
                                     gp.getGameState().setCurrentHealth(gp.getGameState().getCurrentHealth() + 1);
+                                    choices.remove(choices.size() - 1);
                                 }
                                 gp.getGameState().setGold(gp.getGameState().getGold() - choice.price);
                                 Game.sound.playSE("/sound/buy.wav");
