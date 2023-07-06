@@ -110,7 +110,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     private float alpha = 0.0f;
     private int dir = 1;
-    private boolean playedSound = false, isPausing = false;
+    private boolean playedSound = false, isPausing = false, added = false;
     private int state = 0;
     // 0 - playing
     // 1 - displaying "victory"
@@ -164,6 +164,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void startGameThread() {
+        this.added = false;
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -194,29 +195,32 @@ public class GamePanel extends JPanel implements Runnable {
                     dir = 1;
                 else if (alpha >= 0.9f)
                     dir = -1;
-                this.addMouseListener(new MouseListener() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        stopGameThread();
-                        Game.exitToMenu();
-                    }
+                if(!added){
+                    added = true;
+                    this.addMouseListener(new MouseListener() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            stopGameThread();
+                            Game.exitToMenu();
+                        }
 
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                    }
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                        }
 
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                    }
+                        @Override
+                        public void mouseReleased(MouseEvent e) {
+                        }
 
-                    @Override
-                    public void mouseEntered(MouseEvent e) {
-                    }
+                        @Override
+                        public void mouseEntered(MouseEvent e) {
+                        }
 
-                    @Override
-                    public void mouseExited(MouseEvent e) {
-                    }
-                });
+                        @Override
+                        public void mouseExited(MouseEvent e) {
+                        }
+                    });
+                }
             }
         }
         if (state == 0 || state == 1) {

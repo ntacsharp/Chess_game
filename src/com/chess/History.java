@@ -39,7 +39,6 @@ public class History {
     public static void abandon() {
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter("history.txt"));
-            bw.write(String.valueOf(0));
             bw.close();
         } catch (IOException exception) {
             exception.printStackTrace();
@@ -50,8 +49,8 @@ public class History {
         try {
             BufferedReader br = new BufferedReader(new FileReader("history.txt"));
             String s = br.readLine();
-            gp.getGameState().setTurn(Integer.parseInt(s));
-            if (Integer.parseInt(s) != 0) {
+            if(s != null){
+                gp.getGameState().setTurn(Integer.parseInt(s));
                 gp.getGameState().getDeck().emptyTotalDeck();
                 s = br.readLine();
                 gp.getGameState().setMaxHealth(Integer.parseInt(s));

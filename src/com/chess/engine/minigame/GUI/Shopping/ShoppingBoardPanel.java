@@ -138,7 +138,6 @@ public class ShoppingBoardPanel extends JPanel {
         private final MouseListener msln = new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    System.out.println(isMovable);
                     if (isMovable) {
                         playerPanel.setNewRC(r, c);
                         if (r == 0 && c == 2) {
