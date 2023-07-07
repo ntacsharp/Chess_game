@@ -138,7 +138,6 @@ public class ShoppingBoardPanel extends JPanel {
         private final MouseListener msln = new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    System.out.println(isMovable);
                     if (isMovable) {
                         playerPanel.setNewRC(r, c);
                         if (r == 0 && c == 2) {
@@ -304,7 +303,7 @@ public class ShoppingBoardPanel extends JPanel {
     private class PlayerPanel {
         private int x, y;
         private int oldR, newR, oldC, newC, oldX, oldY, newX, newY;
-        private  boolean playSound = false;
+        private  boolean playSound = true;
 
         PlayerPanel(final ShoppingBoardPanel sbp) {
             this.oldC = this.newC = 2;
@@ -325,9 +324,11 @@ public class ShoppingBoardPanel extends JPanel {
         }
 
         public void update() {
-            if(this.oldR == this.newR && this.oldC == this.newC && !playSound){
-                Game.sound.playSE("/sound/move.wav");
-                playSound = true;
+            if(this.oldR == this.newR && this.oldC == this.newC){
+                if(!playSound){
+                    Game.sound.playSE("/sound/move.wav");
+                    playSound = true;
+                }
             }else  playSound = false;
             if (this.oldR < this.newR) {
                 int SpeedY = (this.newY - this.oldY) / 20;

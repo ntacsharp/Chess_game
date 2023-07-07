@@ -110,7 +110,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     private float alpha = 0.0f;
     private int dir = 1;
-    private boolean playedSound = false, isPausing = false;
+    private boolean playedSound = false, isPausing = false, added = false;
     private int state = 0;
     // 0 - playing
     // 1 - displaying "victory"
@@ -127,6 +127,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.setFocusable(true);
         Game.sound.playBG();
+        this.added = false;
         validate();
         setUpPlay();
         //setUpShopping();
@@ -178,7 +179,7 @@ public class GamePanel extends JPanel implements Runnable {
                 this.state = 4;
             }
             if (this.state == 1) {
-                if (this.gameState.getFloor() < 7) {
+                if (this.gameState.getFloor() < 2) {
                     this.state = 2;
                     setUpShopping();
                 } else {
@@ -194,29 +195,32 @@ public class GamePanel extends JPanel implements Runnable {
                     dir = 1;
                 else if (alpha >= 0.9f)
                     dir = -1;
-                this.addMouseListener(new MouseListener() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        stopGameThread();
-                        Game.exitToMenu();
-                    }
+                if(!added){
+                    added = true;
+                    this.addMouseListener(new MouseListener() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            stopGameThread();
+                            Game.exitToMenu();
+                        }
 
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                    }
+                        @Override
+                        public void mousePressed(MouseEvent e) {
+                        }
 
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                    }
+                        @Override
+                        public void mouseReleased(MouseEvent e) {
+                        }
 
-                    @Override
-                    public void mouseEntered(MouseEvent e) {
-                    }
+                        @Override
+                        public void mouseEntered(MouseEvent e) {
+                        }
 
-                    @Override
-                    public void mouseExited(MouseEvent e) {
-                    }
-                });
+                        @Override
+                        public void mouseExited(MouseEvent e) {
+                        }
+                    });
+                }
             }
         }
         if (state == 0 || state == 1) {
@@ -282,6 +286,7 @@ public class GamePanel extends JPanel implements Runnable {
             g2.setColor(ColorList.chosenBackground);
             g2.drawString("Congratulation!", (int) Game.screenSize.getWidth() / 5,
                     (int) Game.screenSize.getHeight() / 2);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
             g2.setFont(new Font("Arial", Font.PLAIN, 20));
             g2.setColor(Color.WHITE);
             g2.drawString("Click to return...", (int) Game.screenSize.getWidth() / 2 - 60,
