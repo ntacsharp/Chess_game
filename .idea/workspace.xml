@@ -11,7 +11,7 @@
   <component name="ChangeListManager">
     <list default="true" id="5f17f112-3493-4308-ae5a-e5da82fbedb6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/artifacts/Chess_game_jar/Chess_Game.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Chess_game/com/chess/engine/minigame/GUI/GamePanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Chess_game/com/chess/engine/minigame/GUI/GamePanel.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/chess/engine/minigame/GUI/GamePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/chess/engine/minigame/GUI/GamePanel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -59,7 +59,8 @@
       <workItem from="1688661901428" duration="2172000" />
       <workItem from="1688689684154" duration="4229000" />
       <workItem from="1688706400518" duration="2256000" />
-      <workItem from="1688717581921" duration="319000" />
+      <workItem from="1688717581921" duration="1049000" />
+      <workItem from="1688718912763" duration="828000" />
     </task>
     <servers />
   </component>
