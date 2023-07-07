@@ -42,9 +42,9 @@ public class Sound {
         }
     }
 
-    public void loop(){
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
-    }
+//    public void loop(){
+//        clip.loop(Clip.LOOP_CONTINUOUSLY);
+//    }
 
     public void stop() {
         if (clip != null) {

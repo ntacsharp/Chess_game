@@ -127,6 +127,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.setFocusable(true);
         Game.sound.playBG();
+        this.added = false;
         validate();
         setUpPlay();
         //setUpShopping();
@@ -164,7 +165,6 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void startGameThread() {
-        this.added = false;
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -179,7 +179,7 @@ public class GamePanel extends JPanel implements Runnable {
                 this.state = 4;
             }
             if (this.state == 1) {
-                if (this.gameState.getFloor() < 7) {
+                if (this.gameState.getFloor() < 2) {
                     this.state = 2;
                     setUpShopping();
                 } else {
@@ -286,6 +286,7 @@ public class GamePanel extends JPanel implements Runnable {
             g2.setColor(ColorList.chosenBackground);
             g2.drawString("Congratulation!", (int) Game.screenSize.getWidth() / 5,
                     (int) Game.screenSize.getHeight() / 2);
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
             g2.setFont(new Font("Arial", Font.PLAIN, 20));
             g2.setColor(Color.WHITE);
             g2.drawString("Click to return...", (int) Game.screenSize.getWidth() / 2 - 60,

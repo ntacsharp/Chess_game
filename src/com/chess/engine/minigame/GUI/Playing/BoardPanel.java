@@ -381,7 +381,6 @@ public class BoardPanel extends JPanel {
                     Game.sound.playSE("/sound/move.wav");
                     isMoving = null;
                 }
-                    
             }
         }
 
