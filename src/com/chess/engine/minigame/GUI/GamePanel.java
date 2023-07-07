@@ -178,18 +178,7 @@ public class GamePanel extends JPanel implements Runnable {
             if (gameState.getCurrentHealth() <= 0) {
                 this.state = 4;
             }
-            if (this.state == 1) {
-                if (this.gameState.getFloor() < 2) {
-                    this.state = 2;
-                    setUpShopping();
-                } else {
-                    this.state = 5;
-                }
-            } else if (this.state == 3) {
-                this.state = 0;
-                gameState.createNewFloor();
-                setUpPlay();
-            } else if (this.state == 4 || this.state == 5) {
+            if (this.state == 4 || this.state == 5) {
                 alpha += dir * 0.01f;
                 if (alpha <= 0.1f)
                     dir = 1;
@@ -221,6 +210,18 @@ public class GamePanel extends JPanel implements Runnable {
                         }
                     });
                 }
+            }
+            if (this.state == 1) {
+                if (this.gameState.getFloor() < 2) {
+                    this.state = 2;
+                    setUpShopping();
+                } else {
+                    this.state = 5;
+                }
+            } else if (this.state == 3) {
+                this.state = 0;
+                gameState.createNewFloor();
+                setUpPlay();
             }
         }
         if (state == 0 || state == 1) {
