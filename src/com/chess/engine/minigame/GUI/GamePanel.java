@@ -210,12 +210,14 @@ public class GamePanel extends JPanel implements Runnable {
                         }
                     });
                 }
+
             }
             if (this.state == 1) {
                 if (this.gameState.getFloor() < 2) {
                     this.state = 2;
                     setUpShopping();
                 } else {
+                    this.added = false;
                     this.state = 5;
                 }
             } else if (this.state == 3) {
